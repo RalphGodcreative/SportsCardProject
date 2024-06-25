@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>RG Website</title>
+    <style></style>
+    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  </head>
+  <body>
+    <div th:fragment="header" class="banner-header">
+      <span>
+        <a class="logo" href="/">
+          <img th:src="@{/img/RGForBanner.png}" />
+        </a>
+      </span>
+
+      <ul>
+        <li class="dropdown">
+          <div class="banner-category" onclick="location.href='/random'">
+            <a>Randomizer</a>
+          </div>
+        </li>
+        <li class="dropdown">
+          <div class="banner-category" onclick="location.href='/card'">
+            <a>cards</a>
+          </div>
+
+          <div class="dropdown-content">
+            <a onclick="location.href='/card/addTransaction'"
+              >add Transaction</a
+            >
+            <a onclick="location.href='/card/cards'">view Cards</a>
+            <a onclick="location.href='/card/searchCard'">search Cards</a>
+          </div>
+        </li>
+        <li
+          onclick="window.open('http://localhost:3000','_blank')"
+          title="open new tab"
+        >
+          <div>
+            <a>youtube</a>
+          </div>
+        </li>
+        <!-- <li onclick="location.href='/cheer'">
+                    <div>
+                    <a>cheer</a>
+                    </div>
+                </li> -->
+      </ul>
+    </div>
+  </body>
+</html>

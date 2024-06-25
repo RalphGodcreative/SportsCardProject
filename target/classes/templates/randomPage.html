@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    
+    <title>Random</title>
+
+    <meta charset="UTF-8" />
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script>
+      
+      
+      var pic = true;
+      function changePic(){
+        
+        if(pic){
+
+          $('#img1').hide();
+          $('#img2').show();
+        }else{
+          $('#img2').hide();
+          $('#img1').show();
+        }
+        pic = !pic;
+        
+      }
+
+      function checkIfNull(){
+        var list = $("#nameList").val().trim();
+        if(list.length==0 || list==''){
+          alert('the list can not be empty');
+          return false;
+        }
+      }
+
+    </script>
+
+    <style>
+      #img2{
+        width: 50%;
+        margin-left: 25%;
+        margin-left: 25%;
+      }
+    </style>
+    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+
+  </head>
+  <body>
+    <div th:replace="~{banner.html :: header}"></div>
+    <div class="page-top"  style="display: flex; justify-content: center;">
+      <div style="display: block;">
+        <div style="display: flex; justify-content: center;">
+      <form method="post" th:action="@{/randomize}" onsubmit="return checkIfNull()">
+        <h1>This is a page for randomizing list </h1>
+        <div style="margin-bottom: 10px">
+          <label for="nameList">type your random list below:</label>
+        </div>
+        <textarea
+          th:id="nameList"
+          th:name="nameList"
+          cols="60"
+          rows="10"
+          
+        ></textarea>
+        <input type="hidden" th:name="randomTimes" th:value="0" />
+        <div style="margin-top: 10px">
+          <button type="submit">Randomize</button>
+        </div>
+      </form>
+      </div>
+      <span>
+      <img id="img1" alt="image1" th:src="@{/img/im.jpg}" onclick="changePic()" style="padding: 10px;">
+      <img id="img2" alt="image1" th:src="@{/img/dylt.jpg}" onclick="changePic()" style="padding: 25px; display: none;">
+      </span>
+    </div>
+    </div>
+  </body>
+</html>

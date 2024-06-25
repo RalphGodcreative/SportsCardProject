@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Add Transaction</title>
+
+    <meta charset="UTF-8" />
+
+    <script
+      type="text/javascript"
+      src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+    ></script>
+
+    <script>
+      $(document).ready(function () {
+        //todo
+
+        var clipboardCard = {
+          year: "",
+          publisher: "",
+          set: "",
+          player: "",
+          auto: false,
+          insert: "",
+          parallel: "",
+          numbered: "",
+          sports: "",
+          grade: "",
+          value: "",
+        };
+
+        function getCardList() {
+          var cardList = [];
+          $("#forCards .card-data").each(function () {
+            var cardData = {
+              year: $(this).find(".year").val(),
+              publisher: $(this).find(".publisher").val(),
+              set: $(this).find(".set").val(),
+              player: $(this).find(".player").val(),
+              auto: $(this).find(".auto").is(":checked") ? true : false,
+              insert: $(this).find(".insert").val(),
+              parallel: $(this).find(".parallel").val(),
+              numbered: $(this).find(".numbered").val(),
+              sports: $(this).find(".sports").val(),
+              grade: $(this).find(".grade").val(),
+              value: $(this).find(".value").val(),
+            };
+
+            cardList.push(cardData);
+          });
+          return cardList;
+        }
+
+        function addCard() {
+          var newCard = `
+          <tr class="card-data">
+            <td><input type="text" class="year" size="4" /></td>
+            <td><input type="text" class="sports" size="6" /></td>
+            <td><input type="text" class="publisher" size="6" /></td>
+            <td><input type="text" class="set" size="10" /></td>
+            <td><input type="text" class="player" /></td>
+            <td><input type="checkbox" class="auto" /></td>
+            <td><input type="text" class="insert" size="6" /></td>
+            <td><input type="text" class="parallel" size="6" /></td>
+            <td><input type="text" class="numbered" size="6" /></td>
+            <td><input type="text" class="grade" size="6" /></td>
+            <td><input type="text" class="value" size="6" /></td>
+            
+            <td>
+              <button class="copy">copy</button>
+              <button class="paste">paste</button>
+              <button class="clear">clear</button>
+              <button class="delete-card">delete</button>
+            </td>
+          </tr>`;
+          $("#forCards").append(newCard);
+        }
+
+        function saveTransaction() {
+          var transaction = {
+            date: $("#date").val(),
+            type: $("#type").val(),
+            amount: $("#amount").val(),
+            note: $("#note").val(),
+          };
+
+          if (
+            transaction.date == "" ||
+            null ||
+            transaction.type == "" ||
+            null ||
+            transaction.amount == "" ||
+            null
+          ) {
+            alert("unfilled necessary column");
+            return false;
+          }
+
+          var transactionWithCard = {
+            transaction: transaction,
+            cards: getCardList(),
+          };
+
+          $.ajax({
+            url: "/card/saveTransaction",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(transactionWithCard),
+            success: function (response) {
+              alert("transaction added successfully");
+              window.location.href = "/card";
+            },
+            error: function (error) {
+              alert("error : " + error);
+            },
+          });
+        }
+
+        $("#add-card").on("click", function () {
+          addCard();
+        });
+
+        $("#add-transaction").on("click", function () {
+          saveTransaction();
+        });
+
+        // delete card row
+        $("#forCards").on("click", ".delete-card", function () {
+          var row = $(this).closest(".card-data");
+          row.remove();
+        });
+
+        // clear all data in card row
+        $("#forCards").on("click", ".clear", function () {
+          var row = $(this).closest(".card-data");
+          row.find(".year").val("");
+          row.find(".publisher").val("");
+          row.find(".set").val("");
+          row.find(".player").val("");
+          row.find(".auto").prop("checked", false);
+          row.find(".insert").val("");
+          row.find(".parallel").val("");
+          row.find(".numbered").val("");
+          row.find(".sports").val("");
+          row.find(".grade").val("");
+          row.find(".value").val("");
+        });
+
+        // copy card row data to clipboard
+        $("#forCards").on("click", ".copy", function () {
+          var row = $(this).closest(".card-data");
+          clipboardCard.year = row.find(".year").val();
+          clipboardCard.publisher = row.find(".publisher").val();
+          clipboardCard.set = row.find(".set").val();
+          clipboardCard.player = row.find(".player").val();
+          clipboardCard.auto = row.find(".auto").prop("checked");
+          clipboardCard.insert = row.find(".insert").val();
+          clipboardCard.parallel = row.find(".parallel").val();
+          clipboardCard.numbered = row.find(".numbered").val();
+          clipboardCard.sports = row.find(".sports").val();
+          clipboardCard.grade = row.find(".grade").val();
+          clipboardCard.value = row.find(".value").val();
+        });
+
+        // past clipboard card data to card row
+        $("#forCards").on("click", ".paste", function () {
+          var row = $(this).closest(".card-data");
+          row.find(".year").val(clipboardCard.year);
+          row.find(".publisher").val(clipboardCard.publisher);
+          row.find(".set").val(clipboardCard.set);
+          row.find(".player").val(clipboardCard.player);
+          row.find(".auto").prop("checked", clipboardCard.auto);
+          row.find(".insert").val(clipboardCard.insert);
+          row.find(".parallel").val(clipboardCard.parallel);
+          row.find(".numbered").val(clipboardCard.numbered);
+          row.find(".sports").val(clipboardCard.sports);
+          row.find(".grade").val(clipboardCard.grade);
+          row.find(".value").val(clipboardCard.value);
+        });
+      });
+
+      function showNote() {
+        $("#note").show();
+      }
+      function hideNote() {
+        $("#note").hide();
+      }
+    </script>
+
+    <style>
+      #add {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      #add table,
+      #add tr,
+      #add th,
+      #add td {
+        border: 1px solid #0d0a86;
+        border-collapse: collapse;
+      }
+      #add th {
+        padding-left: 6px;
+        padding-right: 6px;
+      }
+      #add td {
+        padding-left: 6px;
+        padding-right: 6px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+      }
+      i {
+        color: red;
+      }
+
+      .add-note {
+        height: 20px;
+        width: 20px;
+        margin-left: 5px;
+        margin-right: 5px;
+        cursor: pointer;
+      }
+
+      #note {
+        display: none;
+        position: fixed;
+        top: 15%;
+        right: 15%;
+        border: #0d0a86 2px solid;
+        border-radius: 2px;
+        background-color: #16d2b3;
+      }
+
+      #add-tran {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        margin-bottom: 20px;
+        margin-top: 20px;
+      }
+
+      #add-tran table,
+      #add-tran tr,
+      #add-tran th,
+      #add-tran td {
+        border: 1px solid #0d0a86;
+        border-collapse: collapse;
+        border-radius: 10%;
+      }
+      #add-tran th {
+        padding-left: 6px;
+        padding-right: 6px;
+      }
+      #add-tran td {
+        padding-left: 6px;
+        padding-right: 6px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+      }
+
+      th {
+        background-image: linear-gradient(45deg, #8ee8e1, #16d2b3);
+      }
+    </style>
+    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  </head>
+  <body>
+    <div th:replace="~{banner.html :: header}"></div>
+    <div class="page-top" style="justify-content: center; text-align: center">
+      <h1>Add New Transaction</h1>
+      <div id="add-tran">
+        <table id="for-transaction">
+          <tr>
+            <th><i>*</i>date</th>
+            <th><i>*</i>type</th>
+            <th><i>*</i>amount</th>
+            <th>note</th>
+          </tr>
+          <tr>
+            <td><input type="date" id="date" size="10" /></td>
+            <td>
+              <select id="type">
+                <option value="Break">Break</option>
+                <option value="Buy">Buy</option>
+                <option value="Trade">Trade</option>
+                <option value="Giveaway">Giveaway</option>
+              </select>
+            </td>
+            <td><input type="text" id="amount" size="6" /></td>
+            <td>
+              <img
+                class="add-note"
+                alt="add note"
+                th:src="@{/img/notes.png}"
+                onclick="showNote()"
+              />
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="center-div" style="margin-top: 20px; margin-bottom: 20px">
+        <button id="add-card">add card</button>
+      </div>
+      <div id="add">
+        <table id="forCards">
+          <tr>
+            <th><i>*</i>year</th>
+            <th>sports</th>
+            <th>publisher</th>
+            <th><i>*</i>set</th>
+            <th><i>*</i>player</th>
+            <th>auto</th>
+            <th>insert</th>
+            <th>parallel</th>
+            <th>numbered</th>
+            <th>grade</th>
+            <th>value</th>
+            <!-- <th>note</th> -->
+            <th>action</th>
+          </tr>
+          <tr class="card-data">
+            <td><input type="text" class="year" size="4" /></td>
+            <td><input type="text" class="sports" size="6" /></td>
+            <td><input type="text" class="publisher" size="6" /></td>
+            <td><input type="text" class="set" size="10" /></td>
+            <td><input type="text" class="player" /></td>
+            <td><input type="checkbox" class="auto" /></td>
+            <td><input type="text" class="insert" size="6" /></td>
+            <td><input type="text" class="parallel" size="6" /></td>
+            <td><input type="text" class="numbered" size="6" /></td>
+            <td><input type="text" class="grade" size="6" /></td>
+            <td><input type="text" class="value" size="6" /></td>
+            <!-- <td>
+              <img class="add-note" alt="add note" th:src="@{/img/notes.png}" />
+            </td> -->
+            <td>
+              <button class="copy">copy</button>
+              <button class="paste">paste</button>
+              <button class="clear">clear</button>
+              <button class="delete-card">delete</button>
+            </td>
+          </tr>
+        </table>
+
+        <div id="note">
+          <div style="text-align: end">
+            <a style="cursor: pointer; padding-right: 5%" onclick="hideNote()"
+              >x</a
+            >
+          </div>
+          <div>
+            <textarea id="note-text" name="note" cols="30" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="center-div">
+        <button id="add-transaction">Add Transaction</button>
+      </div>
+    </div>
+  </body>
+</html>
