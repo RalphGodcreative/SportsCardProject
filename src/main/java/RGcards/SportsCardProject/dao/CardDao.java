@@ -45,6 +45,30 @@ public class CardDao {
         return cards;
     }
 
+    public List<Card> getCardsByTransactionId(int trancsactionId) {
+        List<Card> cards = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("Select * from cards c inner join transaction_infos ti on ti.card_id = c.id " +
+                " where ti.transaction_id = "+trancsactionId +" order by c.id desc");
+        cards = jdbcTemplate.query(sql.toString(), ((rs, rowNum) -> new Card(
+                        rs.getInt("id"),
+                        rs.getString("year"),
+                        rs.getString("publisher"),
+                        rs.getString("set"),
+                        rs.getString("player"),
+                        rs.getBoolean("auto"),
+                        rs.getString("insert"),
+                        rs.getString("parallel"),
+                        rs.getString("numbered"),
+                        rs.getString("sports"),
+                        rs.getString("grade"),
+                        rs.getDouble("value"),
+                        rs.getString("note")
+                ))
+        );
+
+        return cards;
+    }
+
     public List<Card> getCardByParams(Card paramCard) {
         List<Card> cards = new ArrayList<>();
         String sql = setCardQuery(paramCard);

@@ -16,7 +16,7 @@ class SportsCardProjectApplicationTests {
 
 	@Test
 	void contextLoads() {
-		System.out.println(cardComponent.findTransactionInfoByTransactionId(20));
+		System.out.println(cardComponent.findCardsByTransactionId(33));
 	}
 
 

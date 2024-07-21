@@ -136,4 +136,9 @@ public class CardComponent {
         return transactionInfos;
     }
 
+    public List<Card> findCardsByTransactionId(int transactionId){
+        List<Card> cards = cardDao.getCardsByTransactionId(transactionId);
+        return cards;
+    }
+
 }
