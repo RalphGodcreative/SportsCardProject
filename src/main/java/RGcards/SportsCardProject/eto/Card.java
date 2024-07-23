@@ -1,5 +1,6 @@
 package RGcards.SportsCardProject.eto;
 
+import RGcards.SportsCardProject.util.DataProcessUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,14 +33,14 @@ public class Card {
 
     public Card(String year, String publisher, String set, String player, Boolean auto, String insert, String parallel, String numbered, String sports, String grade, Double value, String note) {
         this.year = year;
-        this.publisher = publisher;
-        this.set = set;
-        this.player = player;
+        this.publisher = DataProcessUtil.upperCaseFirstLetter(publisher);
+        this.set = DataProcessUtil.upperCaseFirstLetter(set);
+        this.player = DataProcessUtil.upperCaseFirstLetter(player);
         this.auto = auto;
-        this.insert = insert;
-        this.parallel = parallel;
+        this.insert = DataProcessUtil.upperCaseFirstLetter(insert);
+        this.parallel = DataProcessUtil.upperCaseFirstLetter(parallel);
         this.numbered = numbered;
-        this.sports = sports;
+        this.sports = DataProcessUtil.upperCaseFirstLetter(sports);
         this.grade = grade;
         this.value = value;
         this.note = note;
@@ -47,14 +48,14 @@ public class Card {
 
     public Card(String year, String publisher, String set, String player, Boolean auto, String insert, String parallel, String numbered, String sports, String grade, Double value) {
         this.year = year;
-        this.publisher = publisher;
-        this.set = set;
-        this.player = player;
+        this.publisher = DataProcessUtil.upperCaseFirstLetter(publisher);
+        this.set = DataProcessUtil.upperCaseFirstLetter(set);
+        this.player = DataProcessUtil.upperCaseFirstLetter(player);
         this.auto = auto;
-        this.insert = insert;
-        this.parallel = parallel;
+        this.insert = DataProcessUtil.upperCaseFirstLetter(insert);
+        this.parallel = DataProcessUtil.upperCaseFirstLetter(parallel);
         this.numbered = numbered;
-        this.sports = sports;
+        this.sports = DataProcessUtil.upperCaseFirstLetter(sports);
         this.grade = grade;
         this.value = value;
     }
