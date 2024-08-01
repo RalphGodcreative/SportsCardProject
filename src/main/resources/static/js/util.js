@@ -49,6 +49,12 @@ function getCompLink(row) {
     link += deno;
     link += "+";
   }
+  var grade = row.find(".show-grade").text();
+  if (grade != "") {
+    link += grade;
+    link += "+";
+  }
+
   link = link.slice(0, -1) + end;
 
   return link;
