@@ -109,6 +109,18 @@ public class CardComponent {
 
     }
 
+    public void deleteTransactionAndAllRef(int transactionId) {
+        List<TransactionInfo> transactionInfos = findTransactionInfoByTransactionId(transactionId);
+        List<Card> cards = findCardsByTransactionId(transactionId);
+        for (TransactionInfo ti : transactionInfos) {
+            tranInfoRepo.deleteById(ti.getId());
+        }
+        for (Card card : cards) {
+            cardRepo.deleteById(card.getId());
+        }
+        tranRepo.deleteById(transactionId);
+    }
+
     public void updateCard() {
         Card card = cardRepo.findCardById(1);
         card.setValue(330.00);
@@ -126,17 +138,17 @@ public class CardComponent {
         return transactions;
     }
 
-    public Transaction findTransactionById(int id){
-        Transaction transaction = tranRepo.findById(id).isPresent()? tranRepo.findById(id).get():null;
+    public Transaction findTransactionById(int id) {
+        Transaction transaction = tranRepo.findById(id).isPresent() ? tranRepo.findById(id).get() : null;
         return transaction;
     }
 
-    public List<TransactionInfo> findTransactionInfoByTransactionId(int transactionId){
+    public List<TransactionInfo> findTransactionInfoByTransactionId(int transactionId) {
         List<TransactionInfo> transactionInfos = tranInfoRepo.getTransactionInfosByTransactionId(transactionId);
         return transactionInfos;
     }
 
-    public List<Card> findCardsByTransactionId(int transactionId){
+    public List<Card> findCardsByTransactionId(int transactionId) {
         List<Card> cards = cardDao.getCardsByTransactionId(transactionId);
         return cards;
     }

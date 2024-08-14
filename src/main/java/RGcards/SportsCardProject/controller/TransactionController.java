@@ -24,6 +24,6 @@ public class TransactionController {
         List<Transaction> transactions = cardComponent.findAllTransactionsSortByDate();
         model.addAttribute("transactions" , transactions);
 
-        return "";
+        return "allTransaction";
     }
 }
