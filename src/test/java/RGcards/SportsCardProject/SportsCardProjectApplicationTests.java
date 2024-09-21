@@ -16,7 +16,10 @@ class SportsCardProjectApplicationTests {
 
 	@Test
 	void contextLoads() {
-		System.out.println(cardComponent.findCardsByTransactionId(33));
+
+			System.out.println(cardComponent.deleteCard(979));
+
+
 	}
 
 

@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @ComponentScan
@@ -53,5 +55,16 @@ public class CardRestController {
             e.printStackTrace();
         }
         return resultCard;
+    }
+
+    @GetMapping("/deleteCard")
+    public String deleteCardById(@RequestParam(name = "cardId") String cardId) throws JsonProcessingException {
+        int deleteCount = component.deleteCard(Integer.parseInt(cardId));
+        Map<String, Integer> response = new HashMap<>();
+        response.put("totalDeleteRow", deleteCount);
+
+        ObjectMapper om = new ObjectMapper();
+        return om.writeValueAsString(response);
+
     }
 }

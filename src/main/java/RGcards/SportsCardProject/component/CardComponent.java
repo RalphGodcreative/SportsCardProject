@@ -112,13 +112,28 @@ public class CardComponent {
     public void deleteTransactionAndAllRef(int transactionId) {
         List<TransactionInfo> transactionInfos = findTransactionInfoByTransactionId(transactionId);
         List<Card> cards = findCardsByTransactionId(transactionId);
-        for (TransactionInfo ti : transactionInfos) {
-            tranInfoRepo.deleteById(ti.getId());
+        if(!transactionInfos.isEmpty()){
+            tranInfoRepo.deleteAll(transactionInfos);
         }
-        for (Card card : cards) {
-            cardRepo.deleteById(card.getId());
+        if(!cards.isEmpty()){
+            cardRepo.deleteAll(cards);
         }
         tranRepo.deleteById(transactionId);
+    }
+
+    public int deleteCard(int cardId){
+        int deleteCount = 0 ;
+        if(!cardRepo.existsById(cardId)) return deleteCount;
+        List<TransactionInfo> transactionInfos = tranInfoRepo.findByCardId(cardId);
+        if(!transactionInfos.isEmpty()){
+            for(TransactionInfo transactionInfo :transactionInfos){
+                tranInfoRepo.deleteById(transactionInfo.getId());
+                deleteCount++;
+            }
+        }
+        cardRepo.deleteById(cardId);
+        deleteCount++;
+        return deleteCount;
     }
 
     public void updateCard() {
