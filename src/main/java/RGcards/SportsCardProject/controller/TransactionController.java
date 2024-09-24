@@ -3,7 +3,6 @@ package RGcards.SportsCardProject.controller;
 import RGcards.SportsCardProject.component.CardComponent;
 import RGcards.SportsCardProject.eto.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,6 @@ import java.util.List;
 
 @RequestMapping("/transaction")
 @Controller
-@ComponentScan
 public class TransactionController {
 
     @Autowired
