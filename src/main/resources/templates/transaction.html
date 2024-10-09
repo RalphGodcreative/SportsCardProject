@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    
+    <title>Transaction
+    </title>
+
+    <meta charset="UTF-8" />
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script>
+    
+    </script>
+
+    <style>
+    </style>
+    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+
+  </head>
+  <body>
+    <div th:replace="~{banner.html :: header}"></div>
+    <div class="page-top"  style="display: flex; justify-content: center;">
+      <div>
+        <table>
+          <tr>
+            <th>id</th>
+            <th>date</th>
+            <th>type</th>
+            <th>amount</th>
+          </tr>
+          <tr>
+            <td>[[${transaction.id}]]</td>
+            <td>[[${transaction.date}]]</td>
+            <td>[[${transaction.type}]]</td>
+            <td>[[${transaction.amount}]]</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

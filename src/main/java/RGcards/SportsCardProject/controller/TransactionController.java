@@ -1,12 +1,14 @@
 package RGcards.SportsCardProject.controller;
 
 import RGcards.SportsCardProject.component.CardComponent;
+import RGcards.SportsCardProject.eto.Card;
 import RGcards.SportsCardProject.eto.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -20,10 +22,20 @@ public class TransactionController {
     private CardComponent cardComponent;
 
     @GetMapping("/")
-    public String allTransaction(Model model){
+    public String allTransaction(Model model) {
         List<Transaction> transactions = cardComponent.findAllTransactionsSortByDate();
-        model.addAttribute("transactions" , transactions);
+        model.addAttribute("transactions", transactions);
 
         return "allTransaction";
+    }
+
+    @GetMapping("/{transactionId}")
+    public String showTransactionById(@PathVariable("transactionId") String transactionId, Model model) {
+        Transaction transaction = cardComponent.findTransactionById(Integer.parseInt(transactionId));
+        List<Card> cards = cardComponent.findCardsByTransactionId(Integer.parseInt(transactionId));
+        model.addAttribute("transaction", transaction);
+        model.addAttribute("cards",cards);
+
+        return "transaction";
     }
 }
