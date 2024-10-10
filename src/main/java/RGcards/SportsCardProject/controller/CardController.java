@@ -5,7 +5,6 @@ import RGcards.SportsCardProject.eto.Card;
 import RGcards.SportsCardProject.eto.SaleWithCard;
 import RGcards.SportsCardProject.eto.TransactionWithCard;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +13,6 @@ import java.util.List;
 
 @RequestMapping("/card")
 @Controller
-@ComponentScan
 public class CardController {
 
     @Autowired

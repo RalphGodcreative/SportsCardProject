@@ -5,7 +5,6 @@ import RGcards.SportsCardProject.eto.Card;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@ComponentScan
 @RequestMapping("/cardRest")
 public class CardRestController {
 
