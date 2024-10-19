@@ -1,6 +1,7 @@
 package RGcards.SportsCardProject.dao;
 
 import RGcards.SportsCardProject.eto.Card;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class CardDao {
 
     @Autowired
@@ -72,7 +74,7 @@ public class CardDao {
     public List<Card> getCardByParams(Card paramCard) {
         List<Card> cards = new ArrayList<>();
         String sql = setCardQuery(paramCard);
-        System.out.println(sql);
+        log.info(sql);
         cards = jdbcTemplate.query(sql, ((rs, rowNum) -> new Card(
                         rs.getInt("id"),
                         rs.getString("year"),
