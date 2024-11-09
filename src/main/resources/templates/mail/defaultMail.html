@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <style>
+            #part table,
+            #part th,
+            #part td {
+              border: 1px solid #5afefe;
+              border-collapse: collapse;
+              padding: 8px;
+            }
+      
+            #part th {
+              font-family: Monospace bold;
+            }
+      
+            .pn {
+              font-family: fantasy;
+            }
+            .jw {
+              color: #f13030;
+            }
+            #part {
+              padding-left: 40%;
+              padding-right: 25%;
+            }
+          </style>
+    </head>
+    <body>
+        <h4 style="color: #5afefe;">[[${message}]]</h4>
+        <h1>please see below</h1>
+        <div class="page-top" style="text-align: center; margin: 8px">
+            <h2 style="color: #5afefe">卡況如圖，有問題皆可詢問</h2>
+          </div>
+          <div>
+            <h1 style="color: #cd1eb0">
+              2022 Bowman Chrome Pink Vapor Refractors Jordan Walker /199 紅雀超級新人
+            </h1>
+          </div>
+          <div id="part">
+            <div style="margin: 20px">20歲或以下初登板連續安打場次 :</div>
+            <table id="tb">
+              <tr>
+                <th>Player</th>
+                <th>Hitting Streak</th>
+                <th>Year</th>
+              </tr>
+              <tr>
+                <td class="pn"><a class="jw">Jordan Walker</a></td>
+                <td><a class="jw">12</a></td>
+                <td><a class="jw">2023</a></td>
+              </tr>
+              <tr>
+                <td class="pn">Eddie Murphy</td>
+                <td>12</td>
+                <td>1912</td>
+              </tr>
+              <tr>
+                <td class="pn">Ted Williams</td>
+                <td>9</td>
+                <td>1939</td>
+              </tr>
+              <tr>
+                <td class="pn">Fred Hutchison</td>
+                <td>8</td>
+                <td>1939</td>
+              </tr>
+            </table>
+          </div>
+    </body>
