@@ -1,41 +1,60 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    
-    <title>Transaction
-    </title>
 
-    <meta charset="UTF-8" />
+<head>
 
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script>
-    
-    </script>
+  <title>Transaction
+  </title>
 
-    <style>
-    </style>
-    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  <meta charset="UTF-8" />
 
-  </head>
-  <body>
-    <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top"  style="display: flex; justify-content: center;">
-      <div>
-        <table>
-          <tr>
-            <th>id</th>
-            <th>date</th>
-            <th>type</th>
-            <th>amount</th>
-          </tr>
-          <tr>
-            <td>[[${transaction.id}]]</td>
-            <td>[[${transaction.date}]]</td>
-            <td>[[${transaction.type}]]</td>
-            <td>[[${transaction.amount}]]</td>
-          </tr>
-        </table>
-      </div>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script>
+
+  </script>
+
+  <style>
+    #tran-table table,
+    tr,
+    th,
+    td {
+      padding: 10px;
+      border: 2px solid black;
+      border-collapse: collapse;
+    }
+
+    #tran-table {
+      border-radius: 10px;
+    }
+
+    #tran-table th {
+      background-color: #75d89b;
+    }
+  </style>
+  <link rel="stylesheet" th:href="@{/assets/style.css}" />
+
+</head>
+
+<body>
+  <div th:replace="~{banner.html :: header}"></div>
+  <div class="page-top" style="display: flex; justify-content: center;">
+    <div id="tran-table">
+      <table>
+        <tr>
+          <th>id</th>
+          <th>date</th>
+          <th>type</th>
+          <th>amount</th>
+        </tr>
+        <tr>
+          <td>[[${transaction.id}]]</td>
+          <td>[[${transaction.date}]]</td>
+          <td>[[${transaction.type}]]</td>
+          <td>[[${transaction.amount}]]</td>
+        </tr>
+      </table>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>
