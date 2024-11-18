@@ -48,7 +48,7 @@
             <th>type</th>
             <th>amount</th>
           </tr>
-          <tr th:each="tran : ${transactions}" class="transaction-row" th:onclick="'location.href=\'/transaction/' + ${tran.id} + '\''">
+          <tr th:each="tran : ${transactions}" class="transaction-row" th:onclick="'location.href=\'/transactions/' + ${tran.id} + '\''">
             <td>[[${tran.id}]]</td>
             <td>[[${tran.date}]]</td>
             <td>[[${tran.type}]]</td>

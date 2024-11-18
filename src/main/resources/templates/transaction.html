@@ -9,8 +9,64 @@
   <meta charset="UTF-8" />
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script type="text/javascript" th:src="@{/js/util.js}"></script>
   <script>
+    $(document).ready(function () {
+        $(".modify").on("click", function () {
+          var row = $(this).closest("tr");
+          row.find(".show").hide();
+          row.find(".update-element").show();
+        });
 
+        $(".comps").on("click", function () {
+          var row = $(this).closest("tr");
+          var link = getCompLink(row);
+          window.open(link, "_blank");
+        });
+
+        $(".cancel").on("click", function () {
+          var row = $(this).closest("tr");
+          row.find(".show").show();
+          row.find(".update-element").hide();
+        });
+
+        $(".save").on("click", function () {
+          var row = $(this).closest("tr");
+
+          var cardData = {
+            id: row.find(".id").val(),
+            year: row.find(".year").val(),
+            publisher: row.find(".publisher").val(),
+            set: row.find(".set").val(),
+            player: row.find(".player").val(),
+            auto: row.find(".auto").is(":checked") ? true : false,
+            insert: row.find(".insert").val(),
+            parallel: row.find(".parallel").val(),
+            numbered: row.find(".numbered").val(),
+            sports: row.find(".sports").val(),
+            grade: row.find(".grade").val(),
+            value: row.find(".value").val(),
+          };
+
+          var formData = $.param(cardData);
+
+          $.ajax({
+            url: "/card/updateCard",
+            type: "POST",
+            // contentType: "application/json",
+            data: formData,
+            success: function (response) {
+              alert("card info updated successfully");
+              window.location.href = "/card/allCard";
+            },
+            error: function (error) {
+              console.log(error);
+              alert("error : " + error);
+            },
+          });
+        });
+
+      });
   </script>
 
   <style>
@@ -55,6 +111,90 @@
       </table>
     </div>
   </div>
+  <div class="center-div" id="all-card" style="display: flex;">
+    <div id="card-table">
+      <table id="card-table">
+        <tr>
+          <th>id</th>
+          <th>year</th>
+          <th>sports</th>
+          <th>publisher</th>
+          <th>set</th>
+          <th>player</th>
+          <th>auto</th>
+          <th>insert</th>
+          <th>parallel</th>
+          <th>numbered</th>
+          <th>grade</th>
+          <th>value</th>
+          <th>note</th>
+          <th>action</th>
+        </tr>
+        <tr th:each="card : ${cards}">
+          <td>
+            <a class="show show-id">[[${card.id}]]</a><input type="text" class="update-element id" size="4"
+              th:value="${card.id}" disabled />
+          </td>
+          <td>
+            <a class="show show-year">[[${card.year}]]</a><input type="text" class="update-element year" size="4"
+              th:value="${card.year}" />
+          </td>
+          <td>
+            <a class="show show-sports">[[${card.sports}]]</a><input type="text" class="update-element sports" size="6"
+              th:value="${card.sports}" />
+          </td>
+          <td>
+            <a class="show show-publisher">[[${card.publisher}]]</a><input type="text" class="update-element publisher"
+              size="6" th:value="${card.publisher}" />
+          </td>
+          <td>
+            <a class="show show-set">[[${card.set}]]</a><input type="text" class="update-element set" size="10"
+              th:value="${card.set}" />
+          </td>
+          <td>
+            <a class="show show-player">[[${card.player}]]</a><input type="text" class="update-element player"
+              th:value="${card.player}" />
+          </td>
+          <td>
+            <a class="show show-auto">[[${card.auto}]]</a><input type="checkbox" class="update-element auto"
+              th:checked="${card.auto}" />
+          </td>
+          <td>
+            <a class="show show-insert">[[${card.insert}]]</a><input type="text" class="update-element insert" size="6"
+              th:value="${card.insert}" />
+          </td>
+          <td>
+            <a class="show show-parallel">[[${card.parallel}]]</a><input type="text" class="update-element parallel"
+              size="6" th:value="${card.parallel}" />
+          </td>
+          <td>
+            <a class="show show-numbered">[[${card.numbered}]]</a><input type="text" class="update-element numbered"
+              size="6" th:value="${card.numbered}" />
+          </td>
+          <td>
+            <a class="show show-grade">[[${card.grade}]]</a><input type="text" class="update-element grade" size="6"
+              th:value="${card.grade}" />
+          </td>
+          <td>
+            <a class="show show-value">[[${card.value}]]</a><input type="text" class="update-element value" size="6"
+              th:value="${card.value}" />
+          </td>
+          <td><a class="show show-note">[[${card.note}]]</a></td>
+          <td>
+            <span style="display: flex">
+              <button class="show action-butt modify">modify</button>
+              <button class="show action-butt comps">comps</button>
+              <button class="update-element action-butt save">save</button>
+              <button class="update-element action-butt cancel">
+                cancel
+              </button>
+            </span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
 </body>
 
 </html>

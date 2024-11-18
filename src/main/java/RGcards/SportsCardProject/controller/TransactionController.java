@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-@RequestMapping("/transaction")
+@RequestMapping("/transactions")
 @Controller
 public class TransactionController {
 
