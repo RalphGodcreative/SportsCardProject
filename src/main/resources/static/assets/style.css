@@ -150,3 +150,33 @@
 .cancel {
   background-color: #e64038;
 }
+
+.link-butt {
+  padding: 10px;
+  margin: 5px;
+  background-color: #f0f0f0;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  
+  /* 3D effect additions */
+  box-shadow: 0 5px 0 #c0c0c0,
+              0 6px 6px rgba(0, 0, 0, 0.3);
+  transform: translateY(0);
+  transition: all 0.1s ease;
+  
+}
+
+.link-butt:hover {
+  transform: translateY(2px);
+  box-shadow: 0 3px 0 #c0c0c0,
+              0 4px 4px rgba(0, 0, 0, 0.2);
+  color: #0f9e6f;            
+}
+
+.link-butt:active {
+  transform: translateY(5px);
+  box-shadow: none;
+  background-color: #e0e0e0;
+}
