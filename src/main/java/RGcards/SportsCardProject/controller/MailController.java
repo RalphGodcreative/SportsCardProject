@@ -26,7 +26,7 @@ public class MailController {
             Context context = new Context();
             context.setVariable("message", message);
             templateEngine.clearTemplateCache();
-            String mailContent = templateEngine.process("mail/defaultMail", context); // Use a dedicated email template
+            String mailContent = templateEngine.process("mail/defaultMail", context);
             emailService.sendHtmlEmail("ralphgodtpe@gmail.com", "templateTest", mailContent);
         } catch (MessagingException e) {
             e.printStackTrace();

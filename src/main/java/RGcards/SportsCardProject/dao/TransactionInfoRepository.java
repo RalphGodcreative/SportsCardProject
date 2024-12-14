@@ -11,5 +11,5 @@ public interface TransactionInfoRepository extends JpaRepository<TransactionInfo
     @Query("select ti from TransactionInfo ti where transactionId = :transactionId")
     List<TransactionInfo> getTransactionInfosByTransactionId(int transactionId);
 
-    List<TransactionInfo> findByCardId(int cardId);
+    TransactionInfo findByCardId(int cardId);
 }

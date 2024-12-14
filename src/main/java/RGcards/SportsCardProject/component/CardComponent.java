@@ -5,12 +5,14 @@ import RGcards.SportsCardProject.dao.CardRepository;
 import RGcards.SportsCardProject.dao.TransactionInfoRepository;
 import RGcards.SportsCardProject.dao.TransactionRepository;
 import RGcards.SportsCardProject.eto.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @Component
 public class CardComponent {
 
@@ -124,13 +126,8 @@ public class CardComponent {
     public int deleteCard(int cardId){
         int deleteCount = 0 ;
         if(!cardRepo.existsById(cardId)) return deleteCount;
-        List<TransactionInfo> transactionInfos = tranInfoRepo.findByCardId(cardId);
-        if(!transactionInfos.isEmpty()){
-            for(TransactionInfo transactionInfo :transactionInfos){
-                tranInfoRepo.deleteById(transactionInfo.getId());
-                deleteCount++;
-            }
-        }
+        TransactionInfo transactionInfo = tranInfoRepo.findByCardId(cardId);
+        if(transactionInfo != null) tranInfoRepo.deleteById(transactionInfo.getId());
         cardRepo.deleteById(cardId);
         deleteCount++;
         return deleteCount;
@@ -166,6 +163,18 @@ public class CardComponent {
     public List<Card> findCardsByTransactionId(int transactionId) {
         List<Card> cards = cardDao.getCardsByTransactionId(transactionId);
         return cards;
+    }
+
+    public Transaction getTransactionByCardId(int cardId){
+
+        try {
+            TransactionInfo ti = tranInfoRepo.findByCardId(cardId);
+            Transaction transaction = tranRepo.findById(ti.getTransactionId()).get();
+            return transaction;
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+        return null;
     }
 
 }

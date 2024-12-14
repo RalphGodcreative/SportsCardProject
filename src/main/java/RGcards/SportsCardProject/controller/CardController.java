@@ -3,6 +3,7 @@ package RGcards.SportsCardProject.controller;
 import RGcards.SportsCardProject.component.CardComponent;
 import RGcards.SportsCardProject.eto.Card;
 import RGcards.SportsCardProject.eto.SaleWithCard;
+import RGcards.SportsCardProject.eto.Transaction;
 import RGcards.SportsCardProject.eto.TransactionWithCard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -94,6 +95,12 @@ public class CardController {
         model.addAttribute("cardCounts", cardCounts);
         model.addAttribute("page", page);
         return "pagingAllCard";
+    }
+
+    @GetMapping("/cardTransaction/{cardId}")
+    public String getTransactionOfCard(Model model,@PathVariable String cardId){
+        Transaction transaction = component.getTransactionByCardId(Integer.parseInt(cardId));
+        return "redirect:/transactions/"+transaction.getId();
     }
 
     @GetMapping("/addTransaction")

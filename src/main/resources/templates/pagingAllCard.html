@@ -266,6 +266,10 @@
               <span style="display: flex">
                 <button class="show action-butt modify">modify</button>
                 <button class="show action-butt comps">comps</button>
+                <button class="show action-butt get-tran"
+                th:onclick="'window.location.href=\'/card/cardTransaction/' + ${card.id} + '\''">
+                transaction
+                </button>
                 <button class="update-element action-butt save">save</button>
                 <button class="update-element action-butt cancel">
                   cancel

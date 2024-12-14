@@ -1,261 +1,218 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <title>Cards</title>
 
-    <meta charset="UTF-8" />
+<head>
+  <title>Cards</title>
 
-    <script
-      type="text/javascript"
-      src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
-    ></script>
-    <script type="text/javascript" th:src="@{/js/util.js}"></script>
-    <script th:inline="javascript">
-      $(document).ready(function () {
-        $(".modify").on("click", function () {
-          var row = $(this).closest("tr");
-          row.find(".show").hide();
-          row.find(".update-element").show();
-        });
+  <meta charset="UTF-8" />
 
-        $(".comps").on("click", function () {
-          var row = $(this).closest("tr");
-          var link = getCompLink(row);
-          window.open(link, "_blank");
-        });
-
-        $(".cancel").on("click", function () {
-          var row = $(this).closest("tr");
-          row.find(".show").show();
-          row.find(".update-element").hide();
-        });
-
-        $(".save").on("click", function () {
-          var row = $(this).closest("tr");
-
-          var cardData = {
-            id: row.find(".id").val(),
-            year: row.find(".year").val(),
-            publisher: row.find(".publisher").val(),
-            set: row.find(".set").val(),
-            player: row.find(".player").val(),
-            auto: row.find(".auto").is(":checked") ? true : false,
-            insert: row.find(".insert").val(),
-            parallel: row.find(".parallel").val(),
-            numbered: row.find(".numbered").val(),
-            sports: row.find(".sports").val(),
-            grade: row.find(".grade").val(),
-            value: row.find(".value").val(),
-          };
-
-          var formData = $.param(cardData);
-
-          $.ajax({
-            url: "/card/updateCard",
-            type: "POST",
-            // contentType: "application/json",
-            data: formData,
-            success: function (response) {
-              alert("card info updated successfully");
-              window.location.href = "/card";
-            },
-            error: function (error) {
-              console.log(error);
-              alert("error : " + error);
-            },
-          });
-        });
-
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script type="text/javascript" th:src="@{/js/util.js}"></script>
+  <script th:inline="javascript">
+    $(document).ready(function () {
+      $(".modify").on("click", function () {
+        var row = $(this).closest("tr");
+        row.find(".show").hide();
+        row.find(".update-element").show();
       });
-    </script>
 
-    <style>
-      #last-card table,
-      #last-card tr,
-      #last-card th,
-      #last-card td {
-        border: 1px solid #1324cf;
-        border-collapse: collapse;
-        padding: 8px;
-      }
-      #last-card {
-        margin-left: 25%;
-        margin-right: 25%;
-        margin-top: 30px;
-        margin-bottom: 30px;
-      }
-      th {
-        background-image: linear-gradient(45deg, #d25bff, #3030f5);
-      }
-      .action-butt {
-        margin-left: 5px;
-        margin-right: 5px;
-      }
-      .update-element {
-        display: none;
-      }
-      .save {
-        background-color: #2bea96;
-      }
-      .cancel {
-        background-color: #e64038;
-      }
-    </style>
-    <link rel="stylesheet" th:href="@{/assets/style.css}" />
-  </head>
-  <body>
-    <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top" style="justify-content: center">
-      <div class="center-div"><h1>Card Management</h1></div>
-      <div class="center-div">
-        <button class="link-butt" onclick="window.location.href='/card/addNewCard'">add new card</button>
-        <button class="link-butt" onclick="window.location.href='/card/cards'">see cards</button>
-        <button class="link-butt" onclick="window.location.href='/card/allCard'">see all cards</button>
-        <button class="link-butt" onclick="window.location.href='card/searchCard'">search card</button>
-        <button class="link-butt" onclick="window.location.href='/card/addTransaction'">add transaction</button>
-        <button class="link-butt" onclick="window.location.href='/card/sellTransaction'">add sales</button>
-      </div>
-      <div class="center-div" id="last-card">
-        <a>the latest card :</a>
-        <table>
-          <tr>
-            <th>id</th>
-            <th>year</th>
-            <th>sports</th>
-            <th>publisher</th>
-            <th>set</th>
-            <th>player</th>
-            <th>auto</th>
-            <th>insert</th>
-            <th>parallel</th>
-            <th>numbered</th>
-            <th>grade</th>
-            <th>value</th>
-            <th>note</th>
-            <th>action</th>
-          </tr>
-          <tr>
-            <td>
-              <a class="show show-id">[[${lastCard.id}]]</a
-              ><input
-                type="text"
-                class="update-element id"
-                size="4"
-                th:value="${lastCard.id}"
-                disabled
-              />
-            </td>
-            <td>
-              <a class="show show-year">[[${lastCard.year}]]</a
-              ><input
-                type="text"
-                class="update-element year"
-                size="4"
-                th:value="${lastCard.year}"
-              />
-            </td>
-            <td>
-              <a class="show show-sports">[[${lastCard.sports}]]</a
-              ><input
-                type="text"
-                class="update-element sports"
-                size="6"
-                th:value="${lastCard.sports}"
-              />
-            </td>
-            <td>
-              <a class="show show-publisher">[[${lastCard.publisher}]]</a
-              ><input
-                type="text"
-                class="update-element publisher"
-                size="6"
-                th:value="${lastCard.publisher}"
-              />
-            </td>
-            <td>
-              <a class="show show-set">[[${lastCard.set}]]</a
-              ><input
-                type="text"
-                class="update-element set"
-                size="10"
-                th:value="${lastCard.set}"
-              />
-            </td>
-            <td>
-              <a class="show show-player">[[${lastCard.player}]]</a
-              ><input
-                type="text"
-                class="update-element player"
-                th:value="${lastCard.player}"
-              />
-            </td>
-            <td>
-              <a class="show show-auto">[[${lastCard.auto}]]</a
-              ><input
-                type="checkbox"
-                class="update-element auto"
-                th:checked="${lastCard.auto}"
-              />
-            </td>
-            <td>
-              <a class="show show-insert">[[${lastCard.insert}]]</a
-              ><input
-                type="text"
-                class="update-element insert"
-                size="6"
-                th:value="${lastCard.insert}"
-              />
-            </td>
-            <td>
-              <a class="show show-parallel">[[${lastCard.parallel}]]</a
-              ><input
-                type="text"
-                class="update-element parallel"
-                size="6"
-                th:value="${lastCard.parallel}"
-              />
-            </td>
-            <td>
-              <a class="show show-numbered">[[${lastCard.numbered}]]</a
-              ><input
-                type="text"
-                class="update-element numbered"
-                size="6"
-                th:value="${lastCard.numbered}"
-              />
-            </td>
-            <td>
-              <a class="show show-grade">[[${lastCard.grade}]]</a
-              ><input
-                type="text"
-                class="update-element grade"
-                size="6"
-                th:value="${lastCard.grade}"
-              />
-            </td>
-            <td>
-              <a class="show show-value">[[${lastCard.value}]]</a
-              ><input
-                type="text"
-                class="update-element value"
-                size="6"
-                th:value="${lastCard.value}"
-              />
-            </td>
-            <td><a class="show show-note">[[${lastCard.note}]]</a></td>
-            <td>
-              <span style="display: flex">
-                <button class="show action-butt modify">modify</button>
-                <button class="show action-butt comps">comps</button>
-                <button class="update-element action-butt save">save</button>
-                <button class="update-element action-butt cancel">
-                  cancel
-                </button>
-              </span>
-            </td>
-          </tr>
-        </table>
-      </div>
+      $(".comps").on("click", function () {
+        var row = $(this).closest("tr");
+        var link = getCompLink(row);
+        window.open(link, "_blank");
+      });
+
+      $(".cancel").on("click", function () {
+        var row = $(this).closest("tr");
+        row.find(".show").show();
+        row.find(".update-element").hide();
+      });
+
+      $(".save").on("click", function () {
+        var row = $(this).closest("tr");
+
+        var cardData = {
+          id: row.find(".id").val(),
+          year: row.find(".year").val(),
+          publisher: row.find(".publisher").val(),
+          set: row.find(".set").val(),
+          player: row.find(".player").val(),
+          auto: row.find(".auto").is(":checked") ? true : false,
+          insert: row.find(".insert").val(),
+          parallel: row.find(".parallel").val(),
+          numbered: row.find(".numbered").val(),
+          sports: row.find(".sports").val(),
+          grade: row.find(".grade").val(),
+          value: row.find(".value").val(),
+        };
+
+        var formData = $.param(cardData);
+
+        $.ajax({
+          url: "/card/updateCard",
+          type: "POST",
+          // contentType: "application/json",
+          data: formData,
+          success: function (response) {
+            alert("card info updated successfully");
+            window.location.href = "/card";
+          },
+          error: function (error) {
+            console.log(error);
+            alert("error : " + error);
+          },
+        });
+      });
+
+    });
+  </script>
+
+  <style>
+    #last-card table,
+    #last-card tr,
+    #last-card th,
+    #last-card td {
+      border: 1px solid #1324cf;
+      border-collapse: collapse;
+      padding: 8px;
+    }
+
+    #last-card {
+      margin-left: 25%;
+      margin-right: 25%;
+      margin-top: 30px;
+      margin-bottom: 30px;
+    }
+
+    th {
+      background-image: linear-gradient(45deg, #d25bff, #3030f5);
+    }
+
+    .action-butt {
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+
+    .update-element {
+      display: none;
+    }
+
+    .save {
+      background-color: #2bea96;
+    }
+
+    .cancel {
+      background-color: #e64038;
+    }
+  </style>
+  <link rel="stylesheet" th:href="@{/assets/style.css}" />
+</head>
+
+<body>
+  <div th:replace="~{banner.html :: header}"></div>
+  <div class="page-top" style="justify-content: center">
+    <div class="center-div">
+      <h1>Card Management</h1>
     </div>
-  </body>
+    <div class="center-div">
+      <button class="link-butt" onclick="window.location.href='/card/addNewCard'">add new card</button>
+      <button class="link-butt" onclick="window.location.href='/card/cards'">see cards</button>
+      <button class="link-butt" onclick="window.location.href='/card/allCard'">see all cards</button>
+      <button class="link-butt" onclick="window.location.href='card/searchCard'">search card</button>
+      <button class="link-butt" onclick="window.location.href='/card/addTransaction'">add transaction</button>
+      <button class="link-butt" onclick="window.location.href='/card/sellTransaction'">add sales</button>
+    </div>
+    <div class="center-div" style="margin-top: 30px;">
+      <a>the latest card :</a>
+    </div>
+    
+    <div class="center-div" id="last-card" style="display: flex;">
+      
+      <table>
+        <tr>
+          <th>id</th>
+          <th>year</th>
+          <th>sports</th>
+          <th>publisher</th>
+          <th>set</th>
+          <th>player</th>
+          <th>auto</th>
+          <th>insert</th>
+          <th>parallel</th>
+          <th>numbered</th>
+          <th>grade</th>
+          <th>value</th>
+          <th>note</th>
+          <th>action</th>
+        </tr>
+        <tr>
+          <td>
+            <a class="show show-id">[[${lastCard.id}]]</a><input type="text" class="update-element id" size="4"
+              th:value="${lastCard.id}" disabled />
+          </td>
+          <td>
+            <a class="show show-year">[[${lastCard.year}]]</a><input type="text" class="update-element year" size="4"
+              th:value="${lastCard.year}" />
+          </td>
+          <td>
+            <a class="show show-sports">[[${lastCard.sports}]]</a><input type="text" class="update-element sports"
+              size="6" th:value="${lastCard.sports}" />
+          </td>
+          <td>
+            <a class="show show-publisher">[[${lastCard.publisher}]]</a><input type="text"
+              class="update-element publisher" size="6" th:value="${lastCard.publisher}" />
+          </td>
+          <td>
+            <a class="show show-set">[[${lastCard.set}]]</a><input type="text" class="update-element set" size="10"
+              th:value="${lastCard.set}" />
+          </td>
+          <td>
+            <a class="show show-player">[[${lastCard.player}]]</a><input type="text" class="update-element player"
+              th:value="${lastCard.player}" />
+          </td>
+          <td>
+            <a class="show show-auto">[[${lastCard.auto}]]</a><input type="checkbox" class="update-element auto"
+              th:checked="${lastCard.auto}" />
+          </td>
+          <td>
+            <a class="show show-insert">[[${lastCard.insert}]]</a><input type="text" class="update-element insert"
+              size="6" th:value="${lastCard.insert}" />
+          </td>
+          <td>
+            <a class="show show-parallel">[[${lastCard.parallel}]]</a><input type="text" class="update-element parallel"
+              size="6" th:value="${lastCard.parallel}" />
+          </td>
+          <td>
+            <a class="show show-numbered">[[${lastCard.numbered}]]</a><input type="text" class="update-element numbered"
+              size="6" th:value="${lastCard.numbered}" />
+          </td>
+          <td>
+            <a class="show show-grade">[[${lastCard.grade}]]</a><input type="text" class="update-element grade" size="6"
+              th:value="${lastCard.grade}" />
+          </td>
+          <td>
+            <a class="show show-value">[[${lastCard.value}]]</a><input type="text" class="update-element value" size="6"
+              th:value="${lastCard.value}" />
+          </td>
+          <td><a class="show show-note">[[${lastCard.note}]]</a></td>
+          <td>
+            <span style="display: flex">
+              <button class="show action-butt modify">modify</button>
+              <button class="show action-butt comps">comps</button>
+              <button class="show action-butt get-tran"
+                th:onclick="'window.location.href=\'/card/cardTransaction/' + ${lastCard.id} + '\''">
+                transaction
+              </button>
+              <button class="update-element action-butt save">save</button>
+              <button class="update-element action-butt cancel">
+                cancel
+              </button>
+            </span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+
 </html>
