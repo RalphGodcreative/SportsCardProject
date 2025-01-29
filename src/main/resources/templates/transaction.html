@@ -12,61 +12,83 @@
   <script type="text/javascript" th:src="@{/js/util.js}"></script>
   <script>
     $(document).ready(function () {
-        $(".modify").on("click", function () {
-          var row = $(this).closest("tr");
-          row.find(".show").hide();
-          row.find(".update-element").show();
-        });
-
-        $(".comps").on("click", function () {
-          var row = $(this).closest("tr");
-          var link = getCompLink(row);
-          window.open(link, "_blank");
-        });
-
-        $(".cancel").on("click", function () {
-          var row = $(this).closest("tr");
-          row.find(".show").show();
-          row.find(".update-element").hide();
-        });
-
-        $(".save").on("click", function () {
-          var row = $(this).closest("tr");
-
-          var cardData = {
-            id: row.find(".id").val(),
-            year: row.find(".year").val(),
-            publisher: row.find(".publisher").val(),
-            set: row.find(".set").val(),
-            player: row.find(".player").val(),
-            auto: row.find(".auto").is(":checked") ? true : false,
-            insert: row.find(".insert").val(),
-            parallel: row.find(".parallel").val(),
-            numbered: row.find(".numbered").val(),
-            sports: row.find(".sports").val(),
-            grade: row.find(".grade").val(),
-            value: row.find(".value").val(),
-          };
-
-          var formData = $.param(cardData);
-
-          $.ajax({
-            url: "/card/updateCard",
-            type: "POST",
-            // contentType: "application/json",
-            data: formData,
-            success: function (response) {
-              alert("card info updated successfully");
-              window.location.href = "/card/allCard";
-            },
-            error: function (error) {
-              console.log(error);
-              alert("error : " + error);
-            },
-          });
-        });
-
+      $(".modify").on("click", function () {
+        var row = $(this).closest("tr");
+        row.find(".show").hide();
+        row.find(".update-element").show();
       });
+
+      $(".comps").on("click", function () {
+        var row = $(this).closest("tr");
+        var link = getCompLink(row);
+        window.open(link, "_blank");
+      });
+
+      $(".cancel").on("click", function () {
+        var row = $(this).closest("tr");
+        row.find(".show").show();
+        row.find(".update-element").hide();
+      });
+
+      $(".save").on("click", function () {
+        var row = $(this).closest("tr");
+
+        var cardData = {
+          id: row.find(".id").val(),
+          year: row.find(".year").val(),
+          publisher: row.find(".publisher").val(),
+          set: row.find(".set").val(),
+          player: row.find(".player").val(),
+          auto: row.find(".auto").is(":checked") ? true : false,
+          insert: row.find(".insert").val(),
+          parallel: row.find(".parallel").val(),
+          numbered: row.find(".numbered").val(),
+          sports: row.find(".sports").val(),
+          grade: row.find(".grade").val(),
+          value: row.find(".value").val(),
+        };
+
+        var formData = $.param(cardData);
+
+        $.ajax({
+          url: "/card/updateCard",
+          type: "POST",
+          // contentType: "application/json",
+          data: formData,
+          success: function (response) {
+            alert("card info updated successfully");
+            window.location.href = "/card/allCard";
+          },
+          error: function (error) {
+            console.log(error);
+            alert("error : " + error);
+          },
+        });
+      });
+
+      $("#delete-butt").on("click", function () {
+        var transactionId = "[[${transaction.id}]]"
+        $.ajax({
+          url: "/transactions/delete",
+          type: "POST",
+          // contentType: "application/json",
+          data: {transactionId:transactionId},
+          success: function (response) {
+            if(response){
+              alert("transaction deleted successfully");
+              window.location.href = "/transactions/";
+            }else{
+              alert("deleted transaction error");
+            }
+          },
+          error: function (error) {
+            console.log(error);
+            alert("error : " + error);
+          },
+        });
+      })
+
+    });
   </script>
 
   <style>
@@ -86,6 +108,17 @@
     #tran-table th {
       background-color: #75d89b;
     }
+
+    #delete-div {
+      text-align: end;
+      margin: 5% 0 5% 0;
+    }
+
+    #delete-butt {
+      background-color: red;
+      color: white;
+      font-size: 20px;
+    }
   </style>
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
 
@@ -94,6 +127,7 @@
 <body>
   <div th:replace="~{banner.html :: header}"></div>
   <div class="page-top" style="display: flex; justify-content: center;">
+
     <div id="tran-table">
       <table>
         <tr>
@@ -109,6 +143,9 @@
           <td>[[${transaction.amount}]]</td>
         </tr>
       </table>
+      <div id="delete-div">
+        <button id="delete-butt">delete</button>
+      </div>
     </div>
   </div>
   <div class="center-div" id="all-card" style="display: flex;">

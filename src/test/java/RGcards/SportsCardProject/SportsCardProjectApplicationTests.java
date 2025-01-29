@@ -21,13 +21,7 @@ class SportsCardProjectApplicationTests {
 	@Test
 	void contextLoads() {
 
-		String mailUsername = System.getenv("MAIL_USERNAME");
-		String mailPassword = System.getenv("MAIL_PASSWORD");
-
-		System.out.println("MAIL_USERNAME: " + mailUsername);
-		System.out.println("MAIL_PASSWORD: " + mailPassword);
-
-		emailService.sendSimpleEmail("ralph8002@gmail.com" , "testing" , "what's up \n it's me again");
+		cardComponent.deleteTransactionAndAllRef(87);
 
 
 	}

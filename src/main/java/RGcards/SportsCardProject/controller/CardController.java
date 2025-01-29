@@ -82,7 +82,9 @@ public class CardController {
     @GetMapping("/allCard")
     public String allCards(Model model) {
         List<Card> cards = component.getAllCardsSortById();
+        int cardCounts = component.findCardsCount();
         model.addAttribute("cards", cards);
+        model.addAttribute("cardCounts", cardCounts);
 
         return "allCard";
     }
