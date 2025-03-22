@@ -1,6 +1,6 @@
 package RGcards.SportsCardProject.dao;
 
-import RGcards.SportsCardProject.eto.Card;
+import RGcards.SportsCardProject.entity.Card;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

@@ -1,10 +1,10 @@
-package RGcards.SportsCardProject.component;
+package RGcards.SportsCardProject.service;
 
 import RGcards.SportsCardProject.dao.CardDao;
 import RGcards.SportsCardProject.dao.CardRepository;
 import RGcards.SportsCardProject.dao.TransactionInfoRepository;
 import RGcards.SportsCardProject.dao.TransactionRepository;
-import RGcards.SportsCardProject.eto.*;
+import RGcards.SportsCardProject.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class CardComponent {
+public class CardService {
 
     @Autowired
     private CardRepository cardRepo;

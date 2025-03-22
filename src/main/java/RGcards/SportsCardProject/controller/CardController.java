@@ -1,10 +1,10 @@
 package RGcards.SportsCardProject.controller;
 
-import RGcards.SportsCardProject.component.CardComponent;
-import RGcards.SportsCardProject.eto.Card;
-import RGcards.SportsCardProject.eto.SaleWithCard;
-import RGcards.SportsCardProject.eto.Transaction;
-import RGcards.SportsCardProject.eto.TransactionWithCard;
+import RGcards.SportsCardProject.service.CardService;
+import RGcards.SportsCardProject.entity.Card;
+import RGcards.SportsCardProject.entity.SaleWithCard;
+import RGcards.SportsCardProject.entity.Transaction;
+import RGcards.SportsCardProject.entity.TransactionWithCard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,12 +17,12 @@ import java.util.List;
 public class CardController {
 
     @Autowired
-    private CardComponent component;
+    private CardService cardService;
 
 
     @GetMapping("")
     public String main(Model model) {
-        Card lastCard = component.getLastCard();
+        Card lastCard = cardService.getLastCard();
         model.addAttribute("lastCard", lastCard);
         return "cardMain";
     }
@@ -41,7 +41,7 @@ public class CardController {
                            @RequestParam(name = "value", defaultValue = "") Double value, @ModelAttribute("note") String note
     ) {
         Card card = new Card(year, publisher, set, player, auto, insert, parallel, numbered, sports, grade, value, note);
-        int resultId = component.saveCard(card);
+        int resultId = cardService.saveCard(card);
         System.out.println("the result id is " + resultId);
 
         return "redirect:/card/allCard";
@@ -57,7 +57,7 @@ public class CardController {
     ) {
         Card card = new Card(Integer.parseInt(id), year, publisher, set, player, auto, insert, parallel, numbered, sports, grade, value, note);
         System.out.println(card);
-        int resultId = component.saveCard(card);
+        int resultId = cardService.saveCard(card);
         System.out.println("the result id is " + resultId);
 
         return "redirect:/card/allCard";
@@ -68,21 +68,21 @@ public class CardController {
     public String saveTransaction(@RequestBody TransactionWithCard transactionWithCard
     ) {
 
-        component.saveTransactionWithCard(transactionWithCard);
+        cardService.saveTransactionWithCard(transactionWithCard);
         return "redirect:/card/allCard";
     }
 
     @PostMapping("/saveSale")
     public String saveSale(@RequestBody SaleWithCard saleWithCard) {
-        component.saveSaleWithCard(saleWithCard);
+        cardService.saveSaleWithCard(saleWithCard);
         return "redirect:/card/allCard";
     }
 
 
     @GetMapping("/allCard")
     public String allCards(Model model) {
-        List<Card> cards = component.getAllCardsSortById();
-        int cardCounts = component.findCardsCount();
+        List<Card> cards = cardService.getAllCardsSortById();
+        int cardCounts = cardService.findCardsCount();
         model.addAttribute("cards", cards);
         model.addAttribute("cardCounts", cardCounts);
 
@@ -91,8 +91,8 @@ public class CardController {
 
     @GetMapping("/cards")
     public String allCardsByPage(Model model, @RequestParam(defaultValue = "1") int page) {
-        List<Card> cards = component.findCardsByPage(page);
-        int cardCounts = component.findCardsCount();
+        List<Card> cards = cardService.findCardsByPage(page);
+        int cardCounts = cardService.findCardsCount();
         model.addAttribute("cards", cards);
         model.addAttribute("cardCounts", cardCounts);
         model.addAttribute("page", page);
@@ -101,7 +101,7 @@ public class CardController {
 
     @GetMapping("/cardTransaction/{cardId}")
     public String getTransactionOfCard(Model model,@PathVariable String cardId){
-        Transaction transaction = component.getTransactionByCardId(Integer.parseInt(cardId));
+        Transaction transaction = cardService.getTransactionByCardId(Integer.parseInt(cardId));
         return "redirect:/transactions/"+transaction.getId();
     }
 

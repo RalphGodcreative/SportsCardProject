@@ -1,4 +1,4 @@
-package RGcards.SportsCardProject.eto;
+package RGcards.SportsCardProject.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SaleWithCard {
+public class TransactionWithCard {
     private Transaction transaction;
-    private List<Integer> cardIds;
+    private List<Card> cards;
 }

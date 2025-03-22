@@ -1,6 +1,6 @@
 package RGcards.SportsCardProject.dao;
 
-import RGcards.SportsCardProject.eto.Card;
+import RGcards.SportsCardProject.entity.Card;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

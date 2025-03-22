@@ -1,4 +1,4 @@
-package RGcards.SportsCardProject.service;
+package RGcards.SportsCardProject.email;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

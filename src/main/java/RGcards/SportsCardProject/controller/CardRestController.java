@@ -1,7 +1,7 @@
 package RGcards.SportsCardProject.controller;
 
-import RGcards.SportsCardProject.component.CardComponent;
-import RGcards.SportsCardProject.eto.Card;
+import RGcards.SportsCardProject.service.CardService;
+import RGcards.SportsCardProject.entity.Card;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class CardRestController {
 
 
     @Autowired
-    private CardComponent component;
+    private CardService component;
 
     @GetMapping("/searchCard")
     public String searchCards(@RequestParam(name = "id", defaultValue = "0") String id, @ModelAttribute("year") String year, @ModelAttribute("publisher") String publisher,

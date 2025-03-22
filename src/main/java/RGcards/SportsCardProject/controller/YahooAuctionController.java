@@ -18,12 +18,8 @@ public class YahooAuctionController {
     private YahooAuctionBot yahooAuctionBot;
 
     @GetMapping("/search")
-    public String searchForNewProduct(Model model){
-        System.setProperty("webdriver.chrome.driver", "C:/cd driver/chromedriver.exe");
-        ChromeOptions co = new ChromeOptions();
-        co.addArguments("--remote-allow-origins=*");
-        WebDriver driver = new ChromeDriver(co);
-        yahooAuctionBot.getNewProductList(driver,"岱縈");
+    public String searchForNewProduct(Model model) {
+        yahooAuctionBot.getNewProductList("岱縈");
         return null;
     }
 }

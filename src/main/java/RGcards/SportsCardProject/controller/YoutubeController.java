@@ -1,6 +1,6 @@
 package RGcards.SportsCardProject.controller;
 
-import RGcards.SportsCardProject.eto.YoutubeVideo;
+import RGcards.SportsCardProject.entity.YoutubeVideo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
-import java.util.concurrent.SynchronousQueue;
 
 @RequestMapping("/youtube")
 @RestController

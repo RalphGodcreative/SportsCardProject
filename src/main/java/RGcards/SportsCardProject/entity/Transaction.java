@@ -1,4 +1,4 @@
-package RGcards.SportsCardProject.eto;
+package RGcards.SportsCardProject.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

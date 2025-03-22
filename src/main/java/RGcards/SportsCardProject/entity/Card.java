@@ -1,4 +1,4 @@
-package RGcards.SportsCardProject.eto;
+package RGcards.SportsCardProject.entity;
 
 import RGcards.SportsCardProject.util.DataProcessUtil;
 import jakarta.persistence.*;
