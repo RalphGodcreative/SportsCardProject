@@ -69,10 +69,9 @@
       $("#delete-butt").on("click", function () {
         var transactionId = "[[${transaction.id}]]"
         $.ajax({
-          url: "/transactions/delete",
-          type: "POST",
+          url: "/transactions/delete/"+transactionId,
+          type: "DELETE",
           // contentType: "application/json",
-          data: {transactionId:transactionId},
           success: function (response) {
             if(response){
               alert("transaction deleted successfully");

@@ -34,11 +34,11 @@ public class TransactionController {
 
         return "transaction";
     }
-    @PostMapping("/delete")
+    @DeleteMapping("/delete/{transactionId}")
     @ResponseBody
-    public Boolean deleteTransaction(@RequestParam(name = "transactionId") String transactionId) throws Exception {
+    public Boolean deleteTransaction(@PathVariable int transactionId) throws Exception {
         try{
-            cardService.deleteTransactionAndAllRef(Integer.parseInt(transactionId));
+            cardService.deleteTransactionAndAllRef(transactionId);
         }catch (Exception e){
             e.printStackTrace();
             return false;
