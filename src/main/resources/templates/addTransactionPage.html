@@ -53,17 +53,17 @@
         function addCard() {
           var newCard = `
           <tr class="card-data">
-            <td><input type="text" class="year" size="4" /></td>
-            <td><input type="text" class="sports" size="6" /></td>
-            <td><input type="text" class="publisher" size="6" /></td>
-            <td><input type="text" class="set" size="10" /></td>
-            <td><input type="text" class="player" /></td>
+            <td><input type="text" class="year" id="year" size="4" /></td>
+            <td><input type="text" class="sports" id="sports" size="6" /></td>
+            <td><input type="text" class="publisher" id="publisher" size="6" /></td>
+            <td><input type="text" class="set" id="set" size="10" /></td>
+            <td><input type="text" class="player" id="player" /></td>
             <td><input type="checkbox" class="auto" /></td>
-            <td><input type="text" class="insert" size="6" /></td>
-            <td><input type="text" class="parallel" size="6" /></td>
-            <td><input type="text" class="numbered" size="6" /></td>
-            <td><input type="text" class="grade" size="6" /></td>
-            <td><input type="text" class="value" size="6" /></td>
+            <td><input type="text" class="insert" id="insert" size="6" /></td>
+            <td><input type="text" class="parallel" id="parallel" size="6" /></td>
+            <td><input type="text" class="numbered" id="numbered" size="6" /></td>
+            <td><input type="text" class="grade" id="grade" size="6" /></td>
+            <td><input type="text" class="value" id="value" size="6" /></td>
             
             <td>
               <button class="copy">copy</button>
@@ -268,6 +268,7 @@
   <body>
     <div th:replace="~{banner.html :: header}"></div>
     <div class="page-top" style="justify-content: center; text-align: center">
+      <div>
       <h1>Add New Transaction</h1>
       <div id="add-tran">
         <table id="for-transaction">
@@ -320,17 +321,17 @@
             <th>action</th>
           </tr>
           <tr class="card-data">
-            <td><input type="text" class="year" size="4" /></td>
-            <td><input type="text" class="sports" size="6" /></td>
-            <td><input type="text" class="publisher" size="6" /></td>
-            <td><input type="text" class="set" size="10" /></td>
-            <td><input type="text" class="player" /></td>
+            <td><input type="text" class="year" id="year" size="4" /></td>
+            <td><input type="text" class="sports" id="sports" size="6" /></td>
+            <td><input type="text" class="publisher" id="publisher" size="6" /></td>
+            <td><input type="text" class="set" id="set" size="10" /></td>
+            <td><input type="text" class="player" id="player" /></td>
             <td><input type="checkbox" class="auto" /></td>
-            <td><input type="text" class="insert" size="6" /></td>
-            <td><input type="text" class="parallel" size="6" /></td>
-            <td><input type="text" class="numbered" size="6" /></td>
-            <td><input type="text" class="grade" size="6" /></td>
-            <td><input type="text" class="value" size="6" /></td>
+            <td><input type="text" class="insert" id="insert" size="6" /></td>
+            <td><input type="text" class="parallel" id="parallel" size="6" /></td>
+            <td><input type="text" class="numbered" id="numbered" size="6" /></td>
+            <td><input type="text" class="grade" id="grade" size="6" /></td>
+            <td><input type="text" class="value" id="value" size="6" /></td>
             <!-- <td>
               <img class="add-note" alt="add note" th:src="@{/img/notes.png}" />
             </td> -->
@@ -356,6 +357,7 @@
       </div>
       <div class="center-div">
         <button id="add-transaction">Add Transaction</button>
+      </div>
       </div>
     </div>
   </body>

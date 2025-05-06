@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <title>Yahoo Auction Crawler
+  </title>
+
+  <meta charset="UTF-8" />
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('.delete-keyword').on("click", function () {
+        if (!confirm("Are you sure you want to delete this keyword?")) {
+          return;
+        }
+        var id = $(this).prev('input[type="hidden"]').val();
+        console.log(id);
+        fetch('/crawler/delete?keywordId=' + id, {
+          method: 'Delete',
+        })
+          .then(res => res.json())
+          .then(success => {
+            if (success) {
+              alert('Successfully delete keyword');
+              location.reload();
+            } else {
+              alert('something went wrong');
+            }
+          });
+      })
+
+    })
+    function addNewKeyword() {
+      var newKeyword = $('#new-keyword').val();
+      console.log(newKeyword);
+      fetch('/crawler/add?keyword=' + newKeyword, {
+        method: 'PUT',
+      })
+        .then(res => res.json())
+        .then(success => {
+          if (success) {
+            alert('Keyword added!');
+            location.reload();
+          } else {
+            alert('Keyword already exists or failed to add.');
+          }
+        });
+
+    }
+
+
+
+  </script>
+
+  <style>
+    #keyword-table th {
+      background-image: linear-gradient(45deg, #f0e54e, #950db1);
+    }
+
+    .delete-keyword {
+      background-color: #e73c39;
+    }
+  </style>
+  <link rel="stylesheet" th:href="@{/assets/style.css}" />
+
+</head>
+
+<body>
+  <div th:replace="~{banner.html :: header}"></div>
+  <div class="page-top">
+    <table class="default-table" id="keyword-table">
+      <tr>
+        <th>keyword</th>
+        <th>last product</th>
+        <th>last search time</th>
+        <th>action</th>
+      </tr>
+      <tr th:each="searchKeyword : ${searchKeywords}">
+        <td>[[${searchKeyword.keyword}]]</td>
+        <td><a th:href="@{'https://tw.bid.yahoo.com/item/' + ${searchKeyword.lastId}}" target="_blank">link</a></td>
+        <td>[[${#temporals.format(searchKeyword.lastSearchTime, 'yyyy-MM-dd HH:mm')}]]</td>
+        <td>
+          <input type="hidden" th:value="${searchKeyword.id}">
+          <button class="delete-keyword">delete</button>
+        </td>
+      </tr>
+    </table>
+
+  </div>
+  <div class="center-div" style="margin-top: 100px;">
+    <input type="text" id="new-keyword">
+    <button id="add-keyword" onclick="addNewKeyword()">add keyword</button>
+  </div>
+</body>
+
+</html>

@@ -1,4 +1,8 @@
-/* for banner */
+/* ==========================================================================
+   Banner/Navigation Styles
+   ========================================================================== */
+
+/* Banner Header Base Styles */
 .banner-header {
   position: fixed;
   top: 0;
@@ -17,21 +21,7 @@
   font-size: 16px !important;
 }
 
-.banner-header table,
-.banner-header tr,
-.banner-header td {
-  border-left: 1px yellow solid !important;
-  border-right: 1px yellow solid !important;
-  border-collapse: collapse !important;
-  height: 100% !important;
-  padding: 8px !important;
-
-}
-
-.banner-dropdown-content {
-  display: block;
-}
-
+/* Banner List Styles */
 .banner-header ul {
   list-style-type: none;
   margin: 0;
@@ -48,10 +38,25 @@
   align-content: center;
 }
 
-.banner-category {
-  height: 100%;
-  text-align: center;
-  align-content: center;
+.banner-header li:hover {
+  background-color: #17E161 !important;
+  cursor: pointer;
+}
+
+/* Banner Table Styles */
+.banner-header table,
+.banner-header tr,
+.banner-header td {
+  border-left: 1px yellow solid !important;
+  border-right: 1px yellow solid !important;
+  border-collapse: collapse !important;
+  height: 100% !important;
+  padding: 8px !important;
+}
+
+/* Dropdown Styles */
+.banner-dropdown-content {
+  display: block;
 }
 
 .dropdown-content {
@@ -59,7 +64,6 @@
   position: absolute;
   background-color: #445567;
   min-width: 100px;
-  /* box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); */
   z-index: 1;
 }
 
@@ -81,31 +85,42 @@
   display: block;
 }
 
-
-
-.banner-header li:hover {
-
-  background-color: #17E161 !important;
-  cursor: pointer;
+.banner-category {
+  height: 100%;
+  text-align: center;
+  align-content: center;
 }
+
+/* ==========================================================================
+   Layout Utilities
+   ========================================================================== */
 
 .page-top {
   margin-top: 100px !important;
+  display: flex;
+  justify-content: center;
 }
-
 
 .center-div {
   justify-content: center;
   text-align: center;
 }
 
-/* for div to center  */
-
 .space {
   margin-top: 20px;
   margin-bottom: 20px;
 }
 
+/* ==========================================================================
+   Card Styles
+   ========================================================================== */
+
+#all-card {
+  margin-left: 25%;
+  margin-right: 25%;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
 
 #all-card table,
 #all-card tr,
@@ -116,19 +131,6 @@
   padding: 8px;
 }
 
-#all-card {
-  margin-left: 25%;
-  margin-right: 25%;
-  margin-top: 30px;
-  margin-bottom: 30px;
-}
-
-#card-table {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border-radius: 5%;
-}
-
 #all-card th {
   background-image: linear-gradient(45deg, #d25bff, #3030f5);
 }
@@ -137,18 +139,19 @@
   background-color: #c9ecf4;
 }
 
+#card-table {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 5%;
+}
+
+/* ==========================================================================
+   Button Styles
+   ========================================================================== */
+
 .action-butt {
   margin-left: 5px;
   margin-right: 5px;
-}
-.update-element {
-  display: none;
-}
-.save {
-  background-color: #2bea96;
-}
-.cancel {
-  background-color: #e64038;
 }
 
 .link-butt {
@@ -159,13 +162,10 @@
   cursor: pointer;
   border-radius: 5px;
   font-weight: bold;
-  
-  /* 3D effect additions */
   box-shadow: 0 5px 0 #c0c0c0,
               0 6px 6px rgba(0, 0, 0, 0.3);
   transform: translateY(0);
   transition: all 0.1s ease;
-  
 }
 
 .link-butt:hover {
@@ -179,4 +179,32 @@
   transform: translateY(5px);
   box-shadow: none;
   background-color: #e0e0e0;
+}
+
+.save {
+  background-color: #2bea96;
+}
+
+.cancel {
+  background-color: #e64038;
+}
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+
+.update-element {
+  display: none;
+}
+
+.default-table{
+  border-collapse: collapse;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.default-table th,
+.default-table td{
+  padding: 10px;
+  border: 1px solid black;
 }
