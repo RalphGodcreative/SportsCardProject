@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <title>product Searching Result
+  </title>
+
+  <meta charset="UTF-8" />
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script>
+
+  </script>
+
+  <style>
+    .keyword-box {
+      border: 1px #5afefe solid;
+      border-radius: 2px;
+      width: calc(50% - 20px);
+      margin: 10px;
+      box-sizing: border-box;
+      vertical-align: top;
+      float: left;
+    }
+
+    .box-container {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .result-box {
+      width: calc(50% - 10px);
+      float: left;
+      margin: 5px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .product-image {
+      max-width: 150px;
+    }
+
+    .product-price {
+      color: #e14008;
+    }
+  </style>
+  <link rel="stylesheet" th:href="@{/assets/style.css}" />
+
+</head>
+
+<body>
+  <div th:replace="~{banner.html :: header}"></div>
+  <div class="page-top">
+    Search Result
+  </div>
+  <div class="box-container">
+
+    <div class="keyword-box" th:each="entry: ${resultList}">
+      <h4 th:text="${entry.key.keyword}"></h4>
+      <div class="result-box" th:each="product : ${entry.value}">
+        <a class="product-link" th:href="${product.link}"  th:text="${product.title}" target="_blank" ></a>
+        <img class="product-image" th:src="${product.image}" />
+        <span class="product-price">$ <span th:text="${product.price}"></span></span>
+        <span th:if="${product.onAuction}"  th:text="${product.timeLeft}"></span>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

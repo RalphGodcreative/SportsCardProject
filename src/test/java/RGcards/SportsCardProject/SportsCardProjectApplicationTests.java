@@ -1,8 +1,11 @@
 package RGcards.SportsCardProject;
 
-import RGcards.SportsCardProject.component.CardComponent;
-import RGcards.SportsCardProject.eto.Card;
-import RGcards.SportsCardProject.service.EmailService;
+import RGcards.SportsCardProject.bot.YahooAuctionBot;
+import RGcards.SportsCardProject.entity.SearchKeyword;
+import RGcards.SportsCardProject.service.CardService;
+import RGcards.SportsCardProject.entity.SearchProduct;
+import RGcards.SportsCardProject.email.EmailService;
+import RGcards.SportsCardProject.service.CrawlerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,16 +16,18 @@ import java.util.List;
 class SportsCardProjectApplicationTests {
 
 	@Autowired
-	private CardComponent cardComponent;
+	private CrawlerService crawlerService;
 
 	@Autowired
 	private EmailService emailService;
 
+	@Autowired
+	private YahooAuctionBot yahooAuctionBot;
+
 	@Test
 	void contextLoads() {
-
-		cardComponent.deleteTransactionAndAllRef(87);
-
+		SearchKeyword keyword = crawlerService.getSearchKeywordByKeyword("岱縈");
+		System.out.println(crawlerService.searchResultForKeyword(keyword));
 
 	}
 

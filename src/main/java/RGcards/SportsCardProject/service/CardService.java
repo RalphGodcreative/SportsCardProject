@@ -59,7 +59,7 @@ public class CardService {
 
     public int findCardsCount() {
         int res = (int) cardRepo.count();
-        System.out.println("cards : " + res);
+        log.info("cards : " + res);
         return res;
     }
 

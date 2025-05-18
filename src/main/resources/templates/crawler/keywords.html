@@ -47,10 +47,25 @@
             alert('Keyword already exists or failed to add.');
           }
         });
-
     }
 
-
+    function resetAll() {
+      if (!confirm("Are you sure you want to reset all keywords?")) {
+        return;
+      }
+      fetch('/crawler/rest-all', {
+        method: 'GET',
+      })
+        .then(res => res.json())
+        .then(success => {
+          if (success) {
+            alert('Successfully reset all keywords');
+            location.reload();
+          } else {
+            alert('Something went wrong');
+          }
+        });
+    }
 
   </script>
 
@@ -61,6 +76,12 @@
 
     .delete-keyword {
       background-color: #e73c39;
+    }
+    .reset-all {
+      background-color: #e73c39;
+    }
+    .search-all {
+      background-color: #4CAF50;
     }
   </style>
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
@@ -79,7 +100,11 @@
       </tr>
       <tr th:each="searchKeyword : ${searchKeywords}">
         <td>[[${searchKeyword.keyword}]]</td>
-        <td><a th:href="@{'https://tw.bid.yahoo.com/item/' + ${searchKeyword.lastId}}" target="_blank">link</a></td>
+        <td>
+          <th:block th:if="${searchKeyword.lastId != null}">
+            <a th:href="@{'https://tw.bid.yahoo.com/item/' + ${searchKeyword.lastId}}" target="_blank">link</a>
+          </th:block>
+        </td>
         <td>[[${#temporals.format(searchKeyword.lastSearchTime, 'yyyy-MM-dd HH:mm')}]]</td>
         <td>
           <input type="hidden" th:value="${searchKeyword.id}">
@@ -92,6 +117,8 @@
   <div class="center-div" style="margin-top: 100px;">
     <input type="text" id="new-keyword">
     <button id="add-keyword" onclick="addNewKeyword()">add keyword</button>
+    <button id="reset-all" onclick="resetAll()" class="reset-all">reset all</button>
+    <button id="search-all" onclick="location.href='/crawler/search-all'" class="search-all">search all</button>
   </div>
 </body>
 
