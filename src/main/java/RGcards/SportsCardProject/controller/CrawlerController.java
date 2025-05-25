@@ -3,6 +3,8 @@ package RGcards.SportsCardProject.controller;
 import RGcards.SportsCardProject.entity.SearchKeyword;
 import RGcards.SportsCardProject.entity.SearchProduct;
 import RGcards.SportsCardProject.service.CrawlerService;
+import RGcards.SportsCardProject.service.EmailService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +22,9 @@ public class CrawlerController {
 
     @Autowired
     private CrawlerService crawlerService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping
     public String CrawlerHome(Model model){
@@ -47,11 +52,20 @@ public class CrawlerController {
         return crawlerService.deleteKeyword(keywordId);
     }
 
+//    @GetMapping("/search-all")
+//    public String searchAll(Model model) {
+//        Map<SearchKeyword,List<SearchProduct>> resultList = crawlerService.getResultForAllKeyword();
+//        System.out.println(resultList);
+//        model.addAttribute("resultList",resultList);
+//        return "/crawler/result";
+//    }
+
     @GetMapping("/search-all")
-    public String searchAll(Model model) {
+    public String searchAll(Model model) throws MessagingException {
         Map<SearchKeyword,List<SearchProduct>> resultList = crawlerService.getResultForAllKeyword();
         System.out.println(resultList);
         model.addAttribute("resultList",resultList);
+        emailService.sendSearchResultEmail(resultList);
         return "/crawler/result";
     }
 

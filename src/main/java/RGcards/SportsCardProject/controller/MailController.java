@@ -1,6 +1,6 @@
 package RGcards.SportsCardProject.controller;
 
-import RGcards.SportsCardProject.email.EmailService;
+import RGcards.SportsCardProject.service.EmailService;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
