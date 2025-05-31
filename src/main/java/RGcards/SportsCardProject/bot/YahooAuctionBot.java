@@ -3,6 +3,7 @@ package RGcards.SportsCardProject.bot;
 import RGcards.SportsCardProject.entity.SearchProduct;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,11 @@ public class YahooAuctionBot implements GeneralBot {
         for (int i = 0; i < productGridList.size(); i++) {
             System.out.print(i + " ");
             try {
-                SearchProduct searchProduct = fetchProduct(productGridList.get(i));
+                WebElement element = productGridList.get(i);
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+                Thread.sleep(300);
+                SearchProduct searchProduct = fetchProduct(element);
+                System.out.println(searchProduct);
                 searchProductList.add(searchProduct);
             } catch (Exception e) {
                 System.out.println("the " + i + "th encounter error");

@@ -25,13 +25,33 @@
                     <h2 style="margin: 0 0 15px 0; color: #333333; font-size: 18px;" th:text="${entry.key.keyword}">
                     </h2>
                     <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr th:each="product : ${entry.value}">
-                        <td style="padding: 10px; text-align: center;">
-                          <a th:href="${product.link}" style="color: #333333; text-decoration: none; display: block;">
-                            <span style="font-weight: bold; display: block; margin-bottom: 10px;" th:text="${product.title}"></span>
-                            <img th:src="${product.image}" style="max-width: 150px; height: auto; margin: 10px 0;" />
-                            <p style="margin: 5px 0; color: #e14008; font-weight: bold;">$ <span th:text="${product.price}"></span></p>
-                            <p th:if="${product.onAuction}" style="margin: 5px 0; color: #666666;" th:text="${product.timeLeft}"></p>
+                      <tr th:each="product, iterStat : ${entry.value}" th:if="${iterStat.index % 2 == 0}">
+                        <td style="padding: 10px; text-align: center; width: 50%;">
+                          <a th:href="${entry.value[iterStat.index].link}"
+                            style="color: #333333; text-decoration: none; display: block; border: 1px solid #03415b; border-radius: 2px; ">
+                            <span style="font-weight: bold; display: block; margin-bottom: 10px; color: #32c257;"
+                              th:text="${entry.value[iterStat.index].title}"></span>
+                            <img th:src="${entry.value[iterStat.index].image}"
+                              style="max-width: 150px; height: auto; margin: 10px 0;" />
+                            <p style="margin: 5px 0; color: #e14008; font-weight: bold;">$ <span
+                                th:text="${entry.value[iterStat.index].price}"></span></p>
+                            <p th:if="${entry.value[iterStat.index].onAuction}" style="margin: 5px 0; color: #666666;"
+                              th:text="${entry.value[iterStat.index].timeLeft}"></p>
+                          </a>
+                        </td>
+                        <td style="padding: 10px; text-align: center; width: 50%;"
+                          th:if="${iterStat.index + 1 < entry.value.size()}">
+                          <a th:href="${entry.value[iterStat.index + 1].link}"
+                            style="color: #333333; text-decoration: none; display: block; border: 1px solid #03415b; border-radius: 2px; ">
+                            <span style="font-weight: bold; display: block; margin-bottom: 10px; color: #32c257;"
+                              th:text="${entry.value[iterStat.index + 1].title}"></span>
+                            <img th:src="${entry.value[iterStat.index + 1].image}"
+                              style="max-width: 150px; height: auto; margin: 10px 0;" />
+                            <p style="margin: 5px 0; color: #e14008; font-weight: bold;">$ <span
+                                th:text="${entry.value[iterStat.index + 1].price}"></span></p>
+                            <p th:if="${entry.value[iterStat.index + 1].onAuction}"
+                              style="margin: 5px 0; color: #666666;"
+                              th:text="${entry.value[iterStat.index + 1].timeLeft}"></p>
                           </a>
                         </td>
                       </tr>
