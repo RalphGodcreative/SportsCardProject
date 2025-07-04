@@ -41,7 +41,6 @@ public class EmailService {
         Map<String, Object> variable = new HashMap<>();
         variable.put("resultList", resultList);
         String mail = buildEmailContent("mail/email-result", variable);
-        System.out.println(mail);
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = today.format(formatter);
@@ -74,7 +73,7 @@ public class EmailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
-            System.out.println(htmlContent);
+//            System.out.println(htmlContent);
             log.info("sending email {} to {}", subject, to);
 
             mailSender.send(message);
