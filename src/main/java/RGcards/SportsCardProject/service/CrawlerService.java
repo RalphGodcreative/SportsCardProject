@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CrawlerService {
@@ -26,12 +23,12 @@ public class CrawlerService {
         return bot.getNewProductList(keyword);
     }
 
-    public List<SearchKeyword> getAllSearchKeyword(){
+    public List<SearchKeyword> getAllSearchKeyword() {
         return searchKeywordRepository.findAll();
     }
 
     public SearchKeyword addKeyword(String keyword) {
-        if(searchKeywordRepository.findByKeyword(keyword)!=null){
+        if (searchKeywordRepository.findByKeyword(keyword) != null) {
             return null;
         }
         SearchKeyword searchKeyword = new SearchKeyword();
@@ -39,11 +36,11 @@ public class CrawlerService {
         return searchKeywordRepository.save(searchKeyword);
     }
 
-    public boolean deleteKeyword(int id){
-        try{
+    public boolean deleteKeyword(int id) {
+        try {
             searchKeywordRepository.deleteById(id);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -69,25 +66,47 @@ public class CrawlerService {
         return productList;
     }
 
-    public SearchKeyword getSearchKeywordByKeyword(String keyword){
+    public SearchKeyword getSearchKeywordByKeyword(String keyword) {
         return searchKeywordRepository.findByKeyword(keyword);
     }
 
-    public Map<SearchKeyword,List<SearchProduct>> getResultForAllKeyword(){
-        Map<SearchKeyword,List<SearchProduct>> resultList = new HashMap<>();
+    public Map<SearchKeyword, List<SearchProduct>> getResultForAllKeyword() {
+        Map<SearchKeyword, List<SearchProduct>> resultList = new HashMap<>();
         List<SearchKeyword> searchKeywordList = searchKeywordRepository.findAll();
-        for (SearchKeyword searchKeyword :searchKeywordList){
-            resultList.put(searchKeyword,searchResultForKeyword(searchKeyword));
+        for (SearchKeyword searchKeyword : searchKeywordList) {
+            resultList.put(searchKeyword, searchResultForKeyword(searchKeyword));
         }
-        return resultList;
+        return moveEmptyListsToEnd(resultList);
     }
 
-    public void resetAllKeyword(){
+    public void resetAllKeyword() {
         List<SearchKeyword> searchKeywordList = searchKeywordRepository.findAll();
-        for (SearchKeyword searchKeyword :searchKeywordList){
-           searchKeyword.setLastId(null);
-           searchKeyword.setLastSearchTime(null);
+        for (SearchKeyword searchKeyword : searchKeywordList) {
+            searchKeyword.setLastId(null);
+            searchKeyword.setLastSearchTime(null);
         }
         searchKeywordRepository.saveAll(searchKeywordList);
+    }
+
+    private Map<SearchKeyword, List<SearchProduct>> moveEmptyListsToEnd(
+            Map<SearchKeyword, List<SearchProduct>> originalMap) {
+
+        Map<SearchKeyword, List<SearchProduct>> orderedMap = new LinkedHashMap<>();
+
+        for (Map.Entry<SearchKeyword, List<SearchProduct>> entry : originalMap.entrySet()) {
+            List<SearchProduct> list = entry.getValue();
+            if (list != null && !list.isEmpty()) {
+                orderedMap.put(entry.getKey(), list);
+            }
+        }
+
+        for (Map.Entry<SearchKeyword, List<SearchProduct>> entry : originalMap.entrySet()) {
+            List<SearchProduct> list = entry.getValue();
+            if (list == null || list.isEmpty()) {
+                orderedMap.put(entry.getKey(), list);
+            }
+        }
+
+        return orderedMap;
     }
 }
