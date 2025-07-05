@@ -14,8 +14,7 @@
 
 .banner-header a {
   color: #5afefe !important;
-  margin-left: 15px !important;
-  margin-right: 15px !important;
+  padding: 0 15px;
   text-decoration: none !important;
   font-family: fantasy !important;
   font-size: 16px !important;
@@ -89,6 +88,10 @@
   height: 100%;
   text-align: center;
   align-content: center;
+  display: block;
+  width: 100%;
+  padding: 15px 0;
+  box-sizing: border-box;
 }
 
 /* ==========================================================================
