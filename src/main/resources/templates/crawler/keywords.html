@@ -67,6 +67,17 @@
         });
     }
 
+    function searchAllAsync() {
+      fetch('/crawler/search-all-async')
+        .then(res => res.text())
+        .then(result => {
+          alert(result);
+        })
+        .catch(err => {
+          alert('Error: ' + err);
+        });
+    }
+
   </script>
 
   <style>
@@ -119,6 +130,7 @@
     <button id="add-keyword" onclick="addNewKeyword()">add keyword</button>
     <button id="reset-all" onclick="resetAll()" class="reset-all">reset all</button>
     <button id="search-all" onclick="location.href='/crawler/search-all'" class="search-all">search all</button>
+    <button id="search-all-async" onclick="searchAllAsync()" class="search-all">search all async</button>
   </div>
 </body>
 

@@ -27,9 +27,9 @@ public class CrawlerController {
     private EmailService emailService;
 
     @GetMapping
-    public String CrawlerHome(Model model){
+    public String CrawlerHome(Model model) {
         List<SearchKeyword> allSearchKeywords = crawlerService.getAllSearchKeyword();
-        model.addAttribute("searchKeywords" , allSearchKeywords);
+        model.addAttribute("searchKeywords", allSearchKeywords);
         return "crawler/keywords";
     }
 
@@ -45,38 +45,38 @@ public class CrawlerController {
         SearchKeyword searchKeyword = crawlerService.addKeyword(keyword);
         return searchKeyword != null;
     }
+
     @DeleteMapping("/delete")
     @ResponseBody
-    public Boolean delete(@RequestParam(name = "keywordId") int keywordId){
+    public Boolean delete(@RequestParam(name = "keywordId") int keywordId) {
 
         return crawlerService.deleteKeyword(keywordId);
     }
 
-//    @GetMapping("/search-all")
-//    public String searchAll(Model model) {
-//        Map<SearchKeyword,List<SearchProduct>> resultList = crawlerService.getResultForAllKeyword();
-//        System.out.println(resultList);
-//        model.addAttribute("resultList",resultList);
-//        return "/crawler/result";
-//    }
-
     @GetMapping("/search-all")
     public String searchAll(Model model) throws MessagingException {
-        Map<SearchKeyword,List<SearchProduct>> resultList = crawlerService.getResultForAllKeyword();
+        Map<SearchKeyword, List<SearchProduct>> resultList = crawlerService.getResultForAllKeyword();
         System.out.println(resultList);
-        model.addAttribute("resultList",resultList);
+        model.addAttribute("resultList", resultList);
         emailService.sendSearchResultEmail(resultList);
         return "/crawler/result";
+    }
+
+    @ResponseBody
+    @GetMapping("/search-all-async")
+    public String searchAllAsync(Model model) throws MessagingException {
+        crawlerService.getResultAsync();
+        return "started the searching process , the email will be sent to you shortly";
     }
 
 
     @GetMapping("/rest-all")
     @ResponseBody
-    public Boolean resetAll(){
-        try{
+    public Boolean resetAll() {
+        try {
             crawlerService.resetAllKeyword();
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }

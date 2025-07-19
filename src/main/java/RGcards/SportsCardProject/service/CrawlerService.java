@@ -4,7 +4,9 @@ import RGcards.SportsCardProject.bot.YahooAuctionBot;
 import RGcards.SportsCardProject.dao.SearchKeywordRepository;
 import RGcards.SportsCardProject.entity.SearchKeyword;
 import RGcards.SportsCardProject.entity.SearchProduct;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,9 @@ public class CrawlerService {
 
     @Autowired
     private YahooAuctionBot bot;
+
+    @Autowired
+    private  EmailService emailService;
 
     @Autowired
     private SearchKeywordRepository searchKeywordRepository;
@@ -53,7 +58,7 @@ public class CrawlerService {
         searchKeyword.setLastSearchTime(LocalDateTime.now());
         if (searchKeyword.getLastId() != null) {
             for (int i = 0; i < productList.size(); i++) {
-                if (productList.get(i).getId().equals(searchKeyword.getLastId())) {
+                if (Long.parseLong(productList.get(i).getId())<=Long.parseLong(searchKeyword.getLastId())) {
                     productList = productList.subList(0, i);
                     break;
                 }
@@ -77,6 +82,12 @@ public class CrawlerService {
             resultList.put(searchKeyword, searchResultForKeyword(searchKeyword));
         }
         return moveEmptyListsToEnd(resultList);
+    }
+
+    @Async
+    public void getResultAsync() throws MessagingException {
+        Map<SearchKeyword, List<SearchProduct>> resultList = getResultForAllKeyword();
+        emailService.sendSearchResultEmail(resultList);
     }
 
     public void resetAllKeyword() {
