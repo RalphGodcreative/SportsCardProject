@@ -4,12 +4,14 @@ import RGcards.SportsCardProject.dao.CardDao;
 import RGcards.SportsCardProject.dao.CardRepository;
 import RGcards.SportsCardProject.dao.TransactionInfoRepository;
 import RGcards.SportsCardProject.dao.TransactionRepository;
+import RGcards.SportsCardProject.dto.TransactionWithCard;
 import RGcards.SportsCardProject.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -126,8 +128,12 @@ public class CardService {
     public int deleteCard(int cardId){
         int deleteCount = 0 ;
         if(!cardRepo.existsById(cardId)) return deleteCount;
-        TransactionInfo transactionInfo = tranInfoRepo.findByCardId(cardId);
-        if(transactionInfo != null) tranInfoRepo.deleteById(transactionInfo.getId());
+        List<TransactionInfo> transactionInfos = tranInfoRepo.findByCardId(cardId);
+        if(!transactionInfos.isEmpty()){
+            for (TransactionInfo transactionInfo:transactionInfos){
+                tranInfoRepo.deleteById(transactionInfo.getId());
+            }
+        }
         cardRepo.deleteById(cardId);
         deleteCount++;
         return deleteCount;
@@ -156,7 +162,7 @@ public class CardService {
     }
 
     public List<TransactionInfo> findTransactionInfoByTransactionId(int transactionId) {
-        List<TransactionInfo> transactionInfos = tranInfoRepo.getTransactionInfosByTransactionId(transactionId);
+        List<TransactionInfo> transactionInfos = tranInfoRepo.findByTransactionId(transactionId);
         return transactionInfos;
     }
 
@@ -165,12 +171,17 @@ public class CardService {
         return cards;
     }
 
-    public Transaction getTransactionByCardId(int cardId){
+    public List<Transaction> getTransactionByCardId(int cardId){
 
         try {
-            TransactionInfo ti = tranInfoRepo.findByCardId(cardId);
-            Transaction transaction = tranRepo.findById(ti.getTransactionId()).get();
-            return transaction;
+            List<TransactionInfo> tis = tranInfoRepo.findByCardId(cardId);
+            List<Transaction> transactions = new ArrayList<>();
+            for(TransactionInfo ti:tis){
+                Transaction transaction = tranRepo.findById(ti.getTransactionId()).isPresent() ? tranRepo.findById(ti.getTransactionId()).get() : null;
+                transactions.add(transaction);
+            }
+
+            return transactions;
         }catch (Exception e){
             log.error(e.getMessage());
         }

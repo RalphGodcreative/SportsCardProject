@@ -1,5 +1,6 @@
 package RGcards.SportsCardProject.controller;
 
+import RGcards.SportsCardProject.dto.TransactionWithCard;
 import RGcards.SportsCardProject.service.CardService;
 import RGcards.SportsCardProject.entity.Card;
 import RGcards.SportsCardProject.entity.Transaction;
@@ -29,8 +30,8 @@ public class TransactionController {
     public String showTransactionById(@PathVariable("transactionId") String transactionId, Model model) {
         Transaction transaction = cardService.findTransactionById(Integer.parseInt(transactionId));
         List<Card> cards = cardService.findCardsByTransactionId(Integer.parseInt(transactionId));
-        model.addAttribute("transaction", transaction);
-        model.addAttribute("cards",cards);
+        TransactionWithCard transactionWithCard = new TransactionWithCard(transaction, cards);
+        model.addAttribute("transactionWithCard", transactionWithCard);
 
         return "transaction";
     }

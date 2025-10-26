@@ -1,5 +1,7 @@
-package RGcards.SportsCardProject.entity;
+package RGcards.SportsCardProject.dto;
 
+import RGcards.SportsCardProject.entity.Card;
+import RGcards.SportsCardProject.entity.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

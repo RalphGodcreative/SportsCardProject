@@ -4,12 +4,13 @@ import RGcards.SportsCardProject.service.CardService;
 import RGcards.SportsCardProject.entity.Card;
 import RGcards.SportsCardProject.entity.SaleWithCard;
 import RGcards.SportsCardProject.entity.Transaction;
-import RGcards.SportsCardProject.entity.TransactionWithCard;
+import RGcards.SportsCardProject.dto.TransactionWithCard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("/card")
@@ -101,8 +102,26 @@ public class CardController {
 
     @GetMapping("/cardTransaction/{cardId}")
     public String getTransactionOfCard(Model model,@PathVariable String cardId){
-        Transaction transaction = cardService.getTransactionByCardId(Integer.parseInt(cardId));
-        return "redirect:/transactions/"+transaction.getId();
+        List<Transaction> transactions = cardService.getTransactionByCardId(Integer.parseInt(cardId));
+        if(transactions.size()==1){
+            Transaction transaction = transactions.get(0);
+            return "redirect:/transactions/"+transaction.getId();
+        }else if(transactions.size() > 1){
+            List<TransactionWithCard> transactionWithCards = new ArrayList<>();
+            for(Transaction transaction:transactions){
+                List<Card> cards = cardService.findCardsByTransactionId(transaction.getId());
+                TransactionWithCard transactionWithCard = new TransactionWithCard(transaction, cards);
+                transactionWithCards.add(transactionWithCard);
+            }
+            model.addAttribute("transactionWithCardList", transactionWithCards);
+            return "transactionList";
+        }else{
+            // No transactions found
+            model.addAttribute("transactionWithCardList", new ArrayList<>());
+            return "transactionList";
+        }
+
+
     }
 
     @GetMapping("/addTransaction")

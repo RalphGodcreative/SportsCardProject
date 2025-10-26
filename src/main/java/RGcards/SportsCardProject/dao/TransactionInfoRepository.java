@@ -8,8 +8,7 @@ import java.util.List;
 
 public interface TransactionInfoRepository extends JpaRepository<TransactionInfo,Integer> {
 
-    @Query("select ti from TransactionInfo ti where transactionId = :transactionId")
-    List<TransactionInfo> getTransactionInfosByTransactionId(int transactionId);
+    List<TransactionInfo> findByTransactionId(int transactionId);
 
-    TransactionInfo findByCardId(int cardId);
+    List<TransactionInfo> findByCardId(int cardId);
 }

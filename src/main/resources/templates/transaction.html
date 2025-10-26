@@ -67,7 +67,7 @@
       });
 
       $("#delete-butt").on("click", function () {
-        var transactionId = "[[${transaction.id}]]"
+        var transactionId = "[[${transactionWithCard.transaction.id}]]"
         $.ajax({
           url: "/transactions/delete/"+transactionId,
           type: "DELETE",
@@ -136,10 +136,10 @@
           <th>amount</th>
         </tr>
         <tr>
-          <td>[[${transaction.id}]]</td>
-          <td>[[${transaction.date}]]</td>
-          <td>[[${transaction.type}]]</td>
-          <td>[[${transaction.amount}]]</td>
+          <td>[[${transactionWithCard.transaction.id}]]</td>
+          <td>[[${transactionWithCard.transaction.date}]]</td>
+          <td>[[${transactionWithCard.transaction.type}]]</td>
+          <td>[[${transactionWithCard.transaction.amount}]]</td>
         </tr>
       </table>
       <div id="delete-div">
@@ -166,7 +166,7 @@
           <th>note</th>
           <th>action</th>
         </tr>
-        <tr th:each="card : ${cards}">
+        <tr th:each="card : ${transactionWithCard.cards}">
           <td>
             <a class="show show-id">[[${card.id}]]</a><input type="text" class="update-element id" size="4"
               th:value="${card.id}" disabled />
