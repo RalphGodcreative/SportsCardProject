@@ -25,7 +25,7 @@ public class CrawlerService {
     private SearchKeywordRepository searchKeywordRepository;
 
     public List<SearchProduct> getProductListByKeyword(String keyword) {
-        return bot.getNewProductList(keyword);
+        return bot.getNewProductList(keyword,null);
     }
 
     public List<SearchKeyword> getAllSearchKeyword() {
@@ -54,16 +54,8 @@ public class CrawlerService {
 
 
     public List<SearchProduct> searchResultForKeyword(SearchKeyword searchKeyword) {
-        List<SearchProduct> productList = bot.getNewProductList(searchKeyword.getKeyword());
+        List<SearchProduct> productList = bot.getNewProductList(searchKeyword.getKeyword(),searchKeyword.getLastId());
         searchKeyword.setLastSearchTime(LocalDateTime.now());
-        if (searchKeyword.getLastId() != null) {
-            for (int i = 0; i < productList.size(); i++) {
-                if (Long.parseLong(productList.get(i).getId())<=Long.parseLong(searchKeyword.getLastId())) {
-                    productList = productList.subList(0, i);
-                    break;
-                }
-            }
-        }
         if (!productList.isEmpty()) {
             searchKeyword.setLastId(productList.get(0).getId());
         }

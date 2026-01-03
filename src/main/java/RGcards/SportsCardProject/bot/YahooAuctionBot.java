@@ -16,7 +16,7 @@ import java.util.List;
 public class YahooAuctionBot implements GeneralBot {
 
 
-    public List<SearchProduct> getNewProductList(String keyword) {
+    public List<SearchProduct> getNewProductList(String keyword , String lastId) {
         WebDriver driver = generateDriver();
         String url = "https://tw.bid.yahoo.com/search/auction/product?p=" + keyword + "&sort=-ptime";
         driver.get(url);
@@ -37,6 +37,9 @@ public class YahooAuctionBot implements GeneralBot {
                 Thread.sleep(300);
                 SearchProduct searchProduct = fetchProduct(element);
                 System.out.println(searchProduct);
+                if(lastId!=null && searchProduct.getId()!=null && Long.parseLong(searchProduct.getId())<=Long.parseLong(lastId)){
+                    break;
+                }
                 searchProductList.add(searchProduct);
             } catch (Exception e) {
                 System.out.println("the " + i + "th encounter error");
