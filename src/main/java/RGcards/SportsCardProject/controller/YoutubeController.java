@@ -4,6 +4,7 @@ import RGcards.SportsCardProject.entity.YoutubeVideo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,7 +17,9 @@ import java.util.*;
 @RestController
 public class YoutubeController {
 
-    private String youtubeApiKey = "AIzaSyBklRaVTlwPzCd-tSXLYvBnEZDQxO8X-ac";
+    @Value("${youtube.api.key}")
+    private String youtubeApiKey;
+
     private String youtubeUrl = "https://www.googleapis.com/youtube/v3/";
 
     @GetMapping("/video")
@@ -88,8 +91,8 @@ public class YoutubeController {
         Map<String, String> params = new HashMap<>();
         params.put("key", youtubeApiKey);
         params.put("id", videoId);
-        params.put("part","snippet");
-        String url= youtubeUrl+"videos?"+setUrlForParams(params);
+        params.put("part", "snippet");
+        String url = youtubeUrl + "videos?" + setUrlForParams(params);
         String result = rt.getForObject(url, String.class, params);
         ObjectMapper om = new ObjectMapper();
         String channeId = om.readTree(result).get("items").get(0).get("snippet").get("channelId").toString().replaceAll("\"", "");
