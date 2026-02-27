@@ -27,3 +27,6 @@ spring.web.resources.static-locations=file:src/main/resources/static/
 
 # YouTube API
 youtube.api.key=YOUR_YOUTUBE_API_KEY
+
+# Gemini API
+gemini.api.key=YOUR_GEMINI_API_KEY
