@@ -25,25 +25,35 @@ public class GeminiService {
     private String geminiApiKey;
 
     private static final String GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/";
-    private static final String DEFAULT_MODEL = "gemini-2.0-flash";
+    private static final String DEFAULT_MODEL = "gemini-2.5-flash";
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
     public String generateContent(String prompt) throws JsonProcessingException {
-        return generateContent(prompt, DEFAULT_MODEL);
+        return generateContent(prompt, DEFAULT_MODEL, false);
     }
 
     public String generateContent(String prompt, String model) throws JsonProcessingException {
+        return generateContent(prompt, model, false);
+    }
+
+    public String generateContent(String prompt, String model, boolean useSearch) throws JsonProcessingException {
         String url = GEMINI_BASE_URL + model + ":generateContent?key=" + geminiApiKey;
 
-        Map<String, Object> requestBody = Map.of(
-                "contents", List.of(
-                        Map.of("parts", List.of(
-                                Map.of("text", prompt)
-                        ))
-                )
+        List<Map<String, Object>> contents = List.of(
+                Map.of("parts", List.of(Map.of("text", prompt)))
         );
+
+        Map<String, Object> requestBody;
+        if (useSearch) {
+            requestBody = Map.of(
+                    "contents", contents,
+                    "tools", List.of(Map.of("google_search", Map.of()))
+            );
+        } else {
+            requestBody = Map.of("contents", contents);
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

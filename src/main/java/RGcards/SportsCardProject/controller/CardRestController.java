@@ -1,5 +1,6 @@
 package RGcards.SportsCardProject.controller;
 
+import RGcards.SportsCardProject.service.CardAiService;
 import RGcards.SportsCardProject.service.CardService;
 import RGcards.SportsCardProject.entity.Card;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,6 +19,9 @@ public class CardRestController {
 
     @Autowired
     private CardService component;
+
+    @Autowired
+    private CardAiService cardAiService;
 
     @GetMapping("/searchCard")
     public String searchCards(@RequestParam(name = "id", defaultValue = "0") String id, @ModelAttribute("year") String year, @ModelAttribute("publisher") String publisher,
@@ -53,6 +57,26 @@ public class CardRestController {
             e.printStackTrace();
         }
         return resultCard;
+    }
+
+    @GetMapping("/{id}/potential")
+    public String getCardPotential(@PathVariable("id") String id) throws JsonProcessingException {
+        Card card = component.getCardById(Integer.parseInt(id));
+        ObjectMapper om = new ObjectMapper();
+        Map<String, String> response = new HashMap<>();
+
+        if (card == null) {
+            response.put("error", "Card not found");
+            return om.writeValueAsString(response);
+        }
+
+        try {
+            response.put("analysis", cardAiService.analyzeCardPotential(card));
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+        }
+
+        return om.writeValueAsString(response);
     }
 
     @GetMapping("/deleteCard")

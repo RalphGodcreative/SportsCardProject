@@ -61,6 +61,37 @@
         window.open(link, "_blank");
       });
 
+      function formatAnalysis(text) {
+        var escaped = $("<div>").text(text).html();
+        var formatted = escaped.replace(/\*\*Potential Rating:\*\*\s*(Low|Medium|High)/gi, function (match, rating) {
+          return "<strong>Potential Rating:</strong> <span class=\"rating-" + rating.toLowerCase() + "\">" + rating + "</span>";
+        });
+        formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+        formatted = formatted.replace(/\n/g, "<br>");
+        return formatted;
+      }
+
+      $(".potential-btn").on("click", function () {
+        var cardId = $(this).data("id");
+        $("#potential-modal-body").text("Loading...");
+        $("#potential-modal").addClass("show");
+        $.ajax({
+          url: "/cardRest/" + cardId + "/potential",
+          type: "GET",
+          success: function (response) {
+            var data = typeof response === "string" ? JSON.parse(response) : response;
+            $("#potential-modal-body").html(formatAnalysis(data.analysis || data.error || "No response."));
+          },
+          error: function () {
+            $("#potential-modal-body").text("Failed to fetch analysis.");
+          },
+        });
+      });
+
+      $("#potential-modal-close").on("click", function () {
+        $("#potential-modal").removeClass("show");
+      });
+
       $(".cancel").on("click", function () {
         var row = $(this).closest("tr");
         row.find(".show").show();
@@ -106,73 +137,18 @@
     });
   </script>
 
-  <style>
-    #all-card table,
-    #all-card tr,
-    #all-card th,
-    #all-card td {
-      border: 1px solid #1324cf;
-      border-collapse: collapse;
-      padding: 8px;
-    }
-
-    #all-card {
-      margin-left: 25%;
-      margin-right: 25%;
-      margin-top: 30px;
-      margin-bottom: 30px;
-    }
-
-    #card-table {
-      margin-top: 20px;
-      margin-bottom: 20px;
-      border-radius: 5%;
-    }
-
-    th {
-      background-image: linear-gradient(45deg, #d25bff, #3030f5);
-    }
-
-    #all-card tr:nth-child(odd) {
-      background-color: #c9ecf4;
-    }
-
-    .action-butt {
-      margin-left: 5px;
-      margin-right: 5px;
-    }
-
-    .update-element {
-      display: none;
-    }
-
-    .save {
-      background-color: #2bea96;
-    }
-
-    .cancel {
-      background-color: #e64038;
-    }
-
-    #page-control {
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
-
-    .index {
-      margin-left: 5px;
-      margin-right: 5px;
-      color: #1912b4;
-    }
-
-    .current-index {
-      color: #128fb4 !important;
-    }
-  </style>
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
 </head>
 
 <body>
+  <div id="potential-modal">
+    <div id="potential-modal-box">
+      <h3>AI Price Rise Potential</h3>
+      <div id="potential-modal-body">Loading...</div>
+      <button id="potential-modal-close">Close</button>
+    </div>
+  </div>
   <div th:replace="~{banner.html :: header}"></div>
   <div class="page-top" style="justify-content: center">
     <div class="center-div">
@@ -270,6 +246,7 @@
                 th:onclick="'window.location.href=\'/card/cardTransaction/' + ${card.id} + '\''">
                 transaction
                 </button>
+                <button class="show action-butt potential-btn" th:data-id="${card.id}">potential</button>
                 <button class="update-element action-butt save">save</button>
                 <button class="update-element action-butt cancel">
                   cancel
