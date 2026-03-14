@@ -22,6 +22,14 @@ A full-stack web application for managing and cataloging a sports trading card c
 - Extract product details including title, image, price, and auction status
 - Email notifications for new listings
 
+### AI Price Potential Analysis
+- Analyze a card's price rise potential using Google Gemini with live Google Search grounding
+- Returns a structured breakdown: Potential Rating (Low / Medium / High), Key Factors, and Main Risk
+- Color-coded rating displayed in a modal on all card list pages
+
+### Card Type Classification
+- Tag cards with a type: `NEUTRAL`, `INVESTMENT`, or `PC` (personal collection)
+
 ### YouTube Integration
 - Search YouTube for card-related videos
 - Query specific channels for content
@@ -50,6 +58,7 @@ SportsCardProject/
 │   ├── dao/           # Data access objects and repositories
 │   ├── dto/           # Data transfer objects
 │   ├── entity/        # JPA entities (Card, Transaction, etc.)
+│   ├── enums/         # Enumerations (CardType, etc.)
 │   ├── service/       # Business logic layer
 │   └── util/          # Utility classes
 ├── src/main/resources/
@@ -66,6 +75,7 @@ SportsCardProject/
 - PostgreSQL database
 - Gmail account (for email notifications)
 - YouTube Data API key (for YouTube integration)
+- Google Gemini API key (for AI price potential analysis)
 
 ## Setup
 
@@ -116,6 +126,9 @@ app.mail.to=<RECIPIENT_EMAIL@gmail.com>
 # YouTube API
 youtube.api.key=<YOUR_YOUTUBE_API_KEY>
 
+# Gemini API
+gemini.api.key=<YOUR_GEMINI_API_KEY>
+
 # Thymeleaf (development settings)
 spring.thymeleaf.cache=false
 spring.thymeleaf.prefix=file:src/main/resources/templates/
@@ -162,9 +175,12 @@ Swagger UI is available at: `http://localhost:8080/swagger-ui.html`
 
 ### REST API Endpoints
 
-- `GET /api/card/{id}` - Get card by ID
-- `GET /api/card/search` - Search cards
-- `DELETE /api/card/{id}` - Delete card
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/cardRest/{id}` | Get card by ID |
+| `GET` | `/cardRest/searchCard` | Search cards by criteria |
+| `GET` | `/cardRest/{id}/potential` | AI price potential analysis for a card |
+| `GET` | `/cardRest/deleteCard` | Delete card by ID |
 
 ## External Services
 
@@ -183,6 +199,12 @@ To use YouTube features:
 2. Enable YouTube Data API v3
 3. Create an API key
 4. Add the key to `application.properties`
+
+### Google Gemini API
+To use AI price potential analysis:
+1. Go to [Google AI Studio](https://aistudio.google.com/)
+2. Generate an API key
+3. Add the key to `application.properties` as `gemini.api.key`
 
 ## Development
 
