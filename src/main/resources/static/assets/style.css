@@ -115,47 +115,8 @@
 }
 
 /* ==========================================================================
-   Card Styles
-   ========================================================================== */
-
-#all-card {
-  margin-left: 25%;
-  margin-right: 25%;
-  margin-top: 30px;
-  margin-bottom: 30px;
-}
-
-#all-card table,
-#all-card tr,
-#all-card th,
-#all-card td {
-  border: 1px solid #1324cf;
-  border-collapse: collapse;
-  padding: 8px;
-}
-
-#all-card th {
-  background-image: linear-gradient(45deg, #d25bff, #3030f5);
-}
-
-#all-card tr:nth-child(odd) {
-  background-color: #c9ecf4;
-}
-
-#card-table {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border-radius: 5%;
-}
-
-/* ==========================================================================
    Button Styles
    ========================================================================== */
-
-.action-butt {
-  margin-left: 5px;
-  margin-right: 5px;
-}
 
 .link-butt {
   padding: 10px;
@@ -184,21 +145,9 @@
   background-color: #e0e0e0;
 }
 
-.save {
-  background-color: #2bea96;
-}
-
-.cancel {
-  background-color: #e64038;
-}
-
 /* ==========================================================================
    Utility Classes
    ========================================================================== */
-
-.update-element {
-  display: none;
-}
 
 .default-table{
   border-collapse: collapse;

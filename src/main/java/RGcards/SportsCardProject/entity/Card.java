@@ -1,5 +1,6 @@
 package RGcards.SportsCardProject.entity;
 
+import RGcards.SportsCardProject.enums.CardType;
 import RGcards.SportsCardProject.util.DataProcessUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,25 @@ public class Card {
     private Double value;
     private String note;
 
+    @Enumerated(EnumType.STRING)
+    private CardType type;
+
+
+    public Card(int id, String year, String publisher, String set, String player, Boolean auto, String insert, String parallel, String numbered, String sports, String grade, Double value, String note) {
+        this.id = id;
+        this.year = year;
+        this.publisher = DataProcessUtil.upperCaseFirstLetter(publisher);
+        this.set = DataProcessUtil.upperCaseFirstLetter(set);
+        this.player = DataProcessUtil.upperCaseFirstLetter(player);
+        this.auto = auto;
+        this.insert = DataProcessUtil.upperCaseFirstLetter(insert);
+        this.parallel = DataProcessUtil.upperCaseFirstLetter(parallel);
+        this.numbered = numbered;
+        this.sports = DataProcessUtil.upperCaseFirstLetter(sports);
+        this.grade = grade;
+        this.value = value;
+        this.note = note;
+    }
 
     public Card(String year, String publisher, String set, String player, Boolean auto, String insert, String parallel, String numbered, String sports, String grade, Double value, String note) {
         this.year = year;
