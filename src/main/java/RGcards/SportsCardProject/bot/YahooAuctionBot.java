@@ -55,7 +55,7 @@ public class YahooAuctionBot implements GeneralBot {
         String link = element.getAttribute("href");
         String image = element.findElement(By.tagName("img")).getAttribute("src");
         String title = element.findElement(By.xpath(".//div/div[2]/span")).getText();
-        String priceTag = element.findElement(By.xpath(".//div/div[2]/div[2]/span")).getText().substring(1);
+        String priceTag = element.findElement(By.xpath(".//div/div[2]/div[2]/div/span")).getText().substring(1);
         int price = Integer.parseInt(priceTag.replace(",", ""));
         Boolean auction = !element.findElements(By.xpath(".//div/div[2]/div[4]/div[1]/span[1]")).isEmpty();
         SearchProduct searchProduct = new SearchProduct(link, title, image, price, auction);
