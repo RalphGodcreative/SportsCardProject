@@ -101,7 +101,14 @@
 
 <body>
   <div th:replace="~{banner.html :: header}"></div>
-  <div class="page-top">
+  <div class="page-top" style="flex-direction: column; align-items: center;">
+    <div class="center-div" style="margin-bottom: 3rem; padding-top: 50px;">
+      <input type="text" id="new-keyword">
+      <button id="add-keyword" onclick="addNewKeyword()">add keyword</button>
+      <button id="reset-all" onclick="resetAll()" class="reset-all">reset all</button>
+      <!-- <button id="search-all" onclick="location.href='/crawler/search-all'" class="search-all">search all</button> -->
+      <button id="search-all-async" onclick="searchAllAsync()" class="search-all">search all in background</button>
+    </div>
     <table class="default-table" id="keyword-table">
       <tr>
         <th>keyword</th>
@@ -124,13 +131,6 @@
       </tr>
     </table>
 
-  </div>
-  <div class="center-div" style="margin-top: 100px;">
-    <input type="text" id="new-keyword">
-    <button id="add-keyword" onclick="addNewKeyword()">add keyword</button>
-    <button id="reset-all" onclick="resetAll()" class="reset-all">reset all</button>
-    <button id="search-all" onclick="location.href='/crawler/search-all'" class="search-all">search all</button>
-    <button id="search-all-async" onclick="searchAllAsync()" class="search-all">search all in background</button>
   </div>
 </body>
 
