@@ -1,13 +1,18 @@
 package RGcards.SportsCardProject.service;
 
-import RGcards.SportsCardProject.dao.CardDao;
 import RGcards.SportsCardProject.dao.CardRepository;
+import RGcards.SportsCardProject.dao.CardSpec;
 import RGcards.SportsCardProject.dao.TransactionInfoRepository;
 import RGcards.SportsCardProject.dao.TransactionRepository;
 import RGcards.SportsCardProject.dto.TransactionWithCard;
-import RGcards.SportsCardProject.entity.*;
+import RGcards.SportsCardProject.entity.Card;
+import RGcards.SportsCardProject.entity.SaleWithCard;
+import RGcards.SportsCardProject.entity.Transaction;
+import RGcards.SportsCardProject.entity.TransactionInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -25,10 +30,6 @@ public class CardService {
     @Autowired
     private TransactionInfoRepository tranInfoRepo;
 
-    @Autowired
-    private CardDao cardDao;
-
-
     public List<Card> getAllCards() {
         List<Card> cards = cardRepo.findAll();
         return cards;
@@ -45,13 +46,12 @@ public class CardService {
     }
 
     public List<Card> findCardsWithParam(Card card) {
-        List<Card> cards = cardDao.getCardByParams(card);
-        return cards;
+        return cardRepo.findAll(CardSpec.build(card), Sort.by(Sort.Direction.DESC, "id"));
     }
 
     public List<Card> findCardsByPage(int page) {
-        List<Card> cards = cardDao.getCardsByPage(page);
-        return cards;
+        PageRequest pageRequest = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "id"));
+        return cardRepo.findAll(pageRequest).getContent();
     }
 
     public List<Card> getSoldCards() {
@@ -116,21 +116,21 @@ public class CardService {
     public void deleteTransactionAndAllRef(int transactionId) {
         List<TransactionInfo> transactionInfos = findTransactionInfoByTransactionId(transactionId);
         List<Card> cards = findCardsByTransactionId(transactionId);
-        if(!transactionInfos.isEmpty()){
+        if (!transactionInfos.isEmpty()) {
             tranInfoRepo.deleteAll(transactionInfos);
         }
-        if(!cards.isEmpty()){
+        if (!cards.isEmpty()) {
             cardRepo.deleteAll(cards);
         }
         tranRepo.deleteById(transactionId);
     }
 
-    public int deleteCard(int cardId){
-        int deleteCount = 0 ;
-        if(!cardRepo.existsById(cardId)) return deleteCount;
+    public int deleteCard(int cardId) {
+        int deleteCount = 0;
+        if (!cardRepo.existsById(cardId)) return deleteCount;
         List<TransactionInfo> transactionInfos = tranInfoRepo.findByCardId(cardId);
-        if(!transactionInfos.isEmpty()){
-            for (TransactionInfo transactionInfo:transactionInfos){
+        if (!transactionInfos.isEmpty()) {
+            for (TransactionInfo transactionInfo : transactionInfos) {
                 tranInfoRepo.deleteById(transactionInfo.getId());
             }
         }
@@ -167,22 +167,21 @@ public class CardService {
     }
 
     public List<Card> findCardsByTransactionId(int transactionId) {
-        List<Card> cards = cardDao.getCardsByTransactionId(transactionId);
-        return cards;
+        return cardRepo.findCardsByTransactionId(transactionId);
     }
 
-    public List<Transaction> getTransactionByCardId(int cardId){
+    public List<Transaction> getTransactionByCardId(int cardId) {
 
         try {
             List<TransactionInfo> tis = tranInfoRepo.findByCardId(cardId);
             List<Transaction> transactions = new ArrayList<>();
-            for(TransactionInfo ti:tis){
+            for (TransactionInfo ti : tis) {
                 Transaction transaction = tranRepo.findById(ti.getTransactionId()).isPresent() ? tranRepo.findById(ti.getTransactionId()).get() : null;
                 transactions.add(transaction);
             }
 
             return transactions;
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
         return null;
