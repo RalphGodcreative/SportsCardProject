@@ -90,6 +90,10 @@
   </script>
 
   <style>
+    .update-element {
+      display: none;
+    }
+
     #tran-table table,
     tr,
     th,
@@ -117,6 +121,23 @@
       color: white;
       font-size: 20px;
     }
+
+    #card-table {
+      border-collapse: collapse;
+      border-radius: 10px;
+    }
+
+    #card-table tr,
+    #card-table th,
+    #card-table td {
+      padding: 10px;
+      border: 2px solid black;
+    }
+
+    #card-table th {
+      background-image: linear-gradient(45deg, #4cca7d, #71ece2);
+    }
+
   </style>
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
 
