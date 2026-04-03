@@ -3,11 +3,12 @@ package RGcards.SportsCardProject.dao;
 import RGcards.SportsCardProject.entity.Card;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface CardRepository extends JpaRepository<Card, Integer> {
+public interface CardRepository extends JpaRepository<Card, Integer>, JpaSpecificationExecutor<Card> {
 
     @Query("SELECT c from Card c order by id desc limit 1")
     Card findLastCard();
@@ -27,5 +28,7 @@ public interface CardRepository extends JpaRepository<Card, Integer> {
     @Query(value = "select c.* from cards c inner join transaction_infos ti on ti.card_id = c.id where ti.move = 'out'",nativeQuery = true)
     List<Card> findSoldCards();
 
+    @Query(value = "select c.* from cards c inner join transaction_infos ti on ti.card_id = c.id where ti.transaction_id = :transactionId order by c.id desc", nativeQuery = true)
+    List<Card> findCardsByTransactionId(@Param("transactionId") int transactionId);
 
 }
