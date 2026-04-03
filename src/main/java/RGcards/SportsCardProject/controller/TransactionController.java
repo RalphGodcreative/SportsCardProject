@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @RequestMapping("/transactions")
 @Controller
@@ -28,12 +29,14 @@ public class TransactionController {
 
     @GetMapping("/{transactionId}")
     public String showTransactionById(@PathVariable("transactionId") String transactionId, Model model) {
-        Transaction transaction = cardService.findTransactionById(Integer.parseInt(transactionId));
-        List<Card> cards = cardService.findCardsByTransactionId(Integer.parseInt(transactionId));
-        TransactionWithCard transactionWithCard = new TransactionWithCard(transaction, cards);
-        model.addAttribute("transactionWithCard", transactionWithCard);
+        int id = Integer.parseInt(transactionId);
+        Transaction transaction = cardService.findTransactionById(id);
+        List<Card> cards = cardService.findCardsByTransactionId(id);
+        List<TransactionWithCard> transactionWithCards = new ArrayList<>();
+        transactionWithCards.add(new TransactionWithCard(transaction, cards));
+        model.addAttribute("transactionWithCardList", transactionWithCards);
 
-        return "transaction";
+        return "transactionList";
     }
     @DeleteMapping("/delete/{transactionId}")
     @ResponseBody

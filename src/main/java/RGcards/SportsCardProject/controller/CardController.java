@@ -101,27 +101,15 @@ public class CardController {
     }
 
     @GetMapping("/cardTransaction/{cardId}")
-    public String getTransactionOfCard(Model model,@PathVariable String cardId){
+    public String getTransactionOfCard(Model model, @PathVariable String cardId) {
         List<Transaction> transactions = cardService.getTransactionByCardId(Integer.parseInt(cardId));
-        if(transactions.size()==1){
-            Transaction transaction = transactions.get(0);
-            return "redirect:/transactions/"+transaction.getId();
-        }else if(transactions.size() > 1){
-            List<TransactionWithCard> transactionWithCards = new ArrayList<>();
-            for(Transaction transaction:transactions){
-                List<Card> cards = cardService.findCardsByTransactionId(transaction.getId());
-                TransactionWithCard transactionWithCard = new TransactionWithCard(transaction, cards);
-                transactionWithCards.add(transactionWithCard);
-            }
-            model.addAttribute("transactionWithCardList", transactionWithCards);
-            return "transactionList";
-        }else{
-            // No transactions found
-            model.addAttribute("transactionWithCardList", new ArrayList<>());
-            return "transactionList";
+        List<TransactionWithCard> transactionWithCards = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            List<Card> cards = cardService.findCardsByTransactionId(transaction.getId());
+            transactionWithCards.add(new TransactionWithCard(transaction, cards));
         }
-
-
+        model.addAttribute("transactionWithCardList", transactionWithCards);
+        return "transactionList";
     }
 
     @GetMapping("/addTransaction")
