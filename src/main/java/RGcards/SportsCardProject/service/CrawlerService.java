@@ -5,6 +5,7 @@ import RGcards.SportsCardProject.dao.SearchKeywordRepository;
 import RGcards.SportsCardProject.entity.SearchKeyword;
 import RGcards.SportsCardProject.entity.SearchProduct;
 import jakarta.mail.MessagingException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -67,6 +68,7 @@ public class CrawlerService {
         return searchKeywordRepository.findByKeyword(keyword);
     }
 
+    @Transactional
     public Map<SearchKeyword, List<SearchProduct>> getResultForAllKeyword() {
         Map<SearchKeyword, List<SearchProduct>> resultList = new HashMap<>();
         List<SearchKeyword> searchKeywordList = searchKeywordRepository.findAll();
@@ -77,6 +79,7 @@ public class CrawlerService {
     }
 
     @Async
+    @Transactional
     public void getResultAsync() throws MessagingException {
         Map<SearchKeyword, List<SearchProduct>> resultList = getResultForAllKeyword();
         emailService.sendSearchResultEmail(resultList);
