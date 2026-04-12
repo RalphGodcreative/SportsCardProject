@@ -30,3 +30,10 @@ youtube.api.key=YOUR_YOUTUBE_API_KEY
 
 # Gemini API
 gemini.api.key=YOUR_GEMINI_API_KEY
+
+# eBay Browse API
+# Get these from developer.ebay.com → Application Keys
+# Use api.sandbox.ebay.com for testing, api.ebay.com for production
+ebay.client.id=YOUR_EBAY_APP_ID
+ebay.client.secret=YOUR_EBAY_CERT_ID
+ebay.api.base-url=https://api.sandbox.ebay.com
