@@ -25,7 +25,7 @@ public interface CardRepository extends JpaRepository<Card, Integer>, JpaSpecifi
     @Query("SELECT c from Card c where year = :year")
     List<Card> findCardsByYear(@Param("year") String year);
 
-    @Query(value = "select c.* from cards c inner join transaction_infos ti on ti.card_id = c.id where ti.move = 'out'",nativeQuery = true)
+    @Query(value = "select c.* from cards c inner join transaction_infos ti on ti.card_id = c.id where ti.move = 'OUT'",nativeQuery = true)
     List<Card> findSoldCards();
 
     @Query(value = "select c.* from cards c inner join transaction_infos ti on ti.card_id = c.id where ti.transaction_id = :transactionId order by c.id desc", nativeQuery = true)
