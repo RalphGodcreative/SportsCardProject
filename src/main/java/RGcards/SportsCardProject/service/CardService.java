@@ -9,6 +9,7 @@ import RGcards.SportsCardProject.entity.Card;
 import RGcards.SportsCardProject.entity.SaleWithCard;
 import RGcards.SportsCardProject.entity.Transaction;
 import RGcards.SportsCardProject.entity.TransactionInfo;
+import RGcards.SportsCardProject.enums.MoveType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -96,7 +97,7 @@ public class CardService {
         int transactionId = saveTransaction(transaction);
         for (Card card : cards) {
             int cardId = saveCard(card);
-            TransactionInfo ti = new TransactionInfo(transactionId, cardId, "in");
+            TransactionInfo ti = new TransactionInfo(transactionId, cardId, MoveType.IN);
             int result = saveTransactionInfo(ti);
         }
 
@@ -107,7 +108,7 @@ public class CardService {
         List<Integer> cardIds = saleWithCard.getCardIds();
         int transactionId = saveTransaction(transaction);
         for (Integer cardId : cardIds) {
-            TransactionInfo ti = new TransactionInfo(transactionId, cardId, "out");
+            TransactionInfo ti = new TransactionInfo(transactionId, cardId, MoveType.OUT);
             int result = saveTransactionInfo(ti);
         }
 

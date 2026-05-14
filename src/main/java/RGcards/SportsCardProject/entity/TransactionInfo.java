@@ -3,6 +3,7 @@ package RGcards.SportsCardProject.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import RGcards.SportsCardProject.enums.MoveType;
 
 @Data
 @NoArgsConstructor
@@ -15,9 +16,11 @@ public class TransactionInfo {
     private int id;
     private int transactionId;
     private int cardId;
-    private String move;
 
-    public TransactionInfo(int transactionId, int cardId, String move) {
+    @Enumerated(EnumType.STRING)
+    private MoveType move;
+
+    public TransactionInfo(int transactionId, int cardId, MoveType move) {
         this.transactionId = transactionId;
         this.cardId = cardId;
         this.move = move;
