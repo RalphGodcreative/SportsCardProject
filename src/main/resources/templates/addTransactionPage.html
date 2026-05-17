@@ -66,10 +66,10 @@
             <td><input type="text" class="value" id="value" size="6" /></td>
             
             <td>
-              <button class="copy">copy</button>
-              <button class="paste">paste</button>
-              <button class="clear">clear</button>
-              <button class="delete-card">delete</button>
+              <button class="copy action-butt">copy</button>
+              <button class="paste action-butt">paste</button>
+              <button class="clear action-butt cancel">clear</button>
+              <button class="delete-card action-butt cancel">delete</button>
             </td>
           </tr>`;
           $("#forCards").append(newCard);
@@ -197,12 +197,15 @@
       #add tr,
       #add th,
       #add td {
-        border: 1px solid #0d0a86;
+        border: 1px solid rgba(250, 201, 56, 0.25);
         border-collapse: collapse;
+        color: #e2e8f0;
       }
       #add th {
         padding-left: 6px;
         padding-right: 6px;
+        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
+        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
       }
       #add td {
         padding-left: 6px;
@@ -211,7 +214,7 @@
         padding-bottom: 4px;
       }
       i {
-        color: red;
+        color: #f0abfc;
       }
 
       .add-note {
@@ -227,9 +230,10 @@
         position: fixed;
         top: 15%;
         right: 15%;
-        border: #0d0a86 2px solid;
+        background: #1e1e2e;
+        border: 1px solid rgba(246, 76, 189, 0.3);
+        box-shadow: 0 0 40px rgba(246, 76, 189, 0.1);
         border-radius: 2px;
-        background-color: #16d2b3;
       }
 
       #add-tran {
@@ -244,13 +248,15 @@
       #add-tran tr,
       #add-tran th,
       #add-tran td {
-        border: 1px solid #0d0a86;
+        border: 1px solid rgba(250, 201, 56, 0.25);
         border-collapse: collapse;
-        /* border-radius: 10%; */
+        color: #e2e8f0;
       }
       #add-tran th {
         padding-left: 6px;
         padding-right: 6px;
+        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
+        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
       }
       #add-tran td {
         padding-left: 6px;
@@ -259,9 +265,6 @@
         padding-bottom: 4px;
       }
 
-      th {
-        background-image: linear-gradient(45deg, #8ee8e1, #16d2b3);
-      }
     </style>
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
   </head>
@@ -301,7 +304,7 @@
         </table>
       </div>
       <div class="center-div" style="margin-top: 20px; margin-bottom: 20px">
-        <button id="add-card">add card</button>
+        <button id="add-card" class="confirm-butt">add card</button>
       </div>
       <div id="add">
         <table id="forCards">
@@ -336,10 +339,10 @@
               <img class="add-note" alt="add note" th:src="@{/img/notes.png}" />
             </td> -->
             <td>
-              <button class="copy">copy</button>
-              <button class="paste">paste</button>
-              <button class="clear">clear</button>
-              <button class="delete-card">delete</button>
+              <button class="copy action-butt">copy</button>
+              <button class="paste action-butt">paste</button>
+              <button class="clear action-butt cancel">clear</button>
+              <button class="delete-card action-butt cancel">delete</button>
             </td>
           </tr>
         </table>
@@ -356,7 +359,7 @@
         </div>
       </div>
       <div class="center-div">
-        <button id="add-transaction">Add Transaction</button>
+        <button id="add-transaction" class="confirm-butt">Add Transaction</button>
       </div>
       </div>
     </div>

@@ -124,7 +124,7 @@
               <button class="action-butt show-card">show</button>
               <button class="action-butt hide-card" style="display:none;">hide</button>
             </td>
-            <td><button class="remove">remove</button></td>
+            <td><button class="remove action-butt cancel">remove</button></td>
           </tr>
           `;
 
@@ -305,12 +305,15 @@
       #add tr,
       #add th,
       #add td {
-        border: 1px solid #0d0a86;
+        border: 1px solid rgba(250, 201, 56, 0.25);
         border-collapse: collapse;
+        color: #e2e8f0;
       }
       #add th {
         padding-left: 6px;
         padding-right: 6px;
+        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
+        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
       }
       #add td {
         padding-left: 6px;
@@ -319,7 +322,7 @@
         padding-bottom: 4px;
       }
       i {
-        color: red;
+        color: #f0abfc;
       }
 
       .add-note {
@@ -335,9 +338,10 @@
         position: fixed;
         top: 15%;
         right: 15%;
-        border: #0d0a86 2px solid;
+        background: #1e1e2e;
+        border: 1px solid rgba(246, 76, 189, 0.3);
+        box-shadow: 0 0 40px rgba(246, 76, 189, 0.1);
         border-radius: 2px;
-        background-color: #16d2b3;
       }
 
       #add-tran {
@@ -352,14 +356,15 @@
       #add-tran tr,
       #add-tran th,
       #add-tran td {
-        border: 1px solid #0d0a86;
+        border: 1px solid rgba(250, 201, 56, 0.25);
         border-collapse: collapse;
-        border-radius: 10%;
+        color: #e2e8f0;
       }
       #add-tran th {
         padding-left: 6px;
         padding-right: 6px;
-        background-image: linear-gradient(45deg, #8ee8e1, #16d2b3);
+        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
+        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
       }
       #add-tran td {
         padding-left: 6px;
@@ -372,23 +377,26 @@
       #include tr,
       #include th,
       #include td {
-        border: 1px solid #0d0a86;
+        border: 1px solid rgba(250, 201, 56, 0.25);
         border-collapse: collapse;
+        color: #e2e8f0;
       }
 
       #include th {
         padding-left: 6px;
         padding-right: 6px;
-        background-image: linear-gradient(45deg, #c6f08b, #2ddc91);
+        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
+        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
       }
 
       #search table,
       #search tr,
       #search th,
       #search td {
-        border: 1px solid #1324cf;
+        border: 1px solid rgba(250, 201, 56, 0.2);
         border-collapse: collapse;
         padding: 8px;
+        color: #e2e8f0;
       }
       #search-table {
         margin-left: 25%;
@@ -405,16 +413,18 @@
       }
 
       #search th {
-        background-image: linear-gradient(45deg, #f7d644, #19991f);
+        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
+        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
       }
 
       #result table,
       #result tr,
       #result th,
       #result td {
-        border: 1px solid #1324cf;
+        border: 1px solid rgba(202, 71, 245, 0.2);
         border-collapse: collapse;
         padding: 8px;
+        color: #e2e8f0;
       }
 
       #result-card {
@@ -425,11 +435,12 @@
       }
 
       #result th {
-        background-image: linear-gradient(45deg, #d25bff, #3030f5);
+        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
+        text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
       }
 
       #result tr:nth-child(odd) {
-        background-color: #c9ecf4;
+        background-color: rgba(202, 71, 245, 0.04);
       }
 
       .action-butt {
@@ -476,7 +487,7 @@
         </table>
       </div>
       <div class="center-div">
-        <button id="add-transaction">Add Transaction</button>
+        <button id="add-transaction" class="confirm-butt">Add Transaction</button>
       </div>
       <div
         id="include"
@@ -529,7 +540,7 @@
           </tr>
         </table>
       </div>
-      <button id="search-butt">search</button>
+      <button id="search-butt" class="confirm-butt">search</button>
     </div>
     <div class="center-div" id="result" style="margin-top: 30px; display: none">
       <table id="result-card">
@@ -550,7 +561,7 @@
           <th>action</th>
         </tr>
       </table>
-      <button id="hide-butt">clear</button>
-    
+      <button id="hide-butt" class="destroy-butt">clear</button>
+    </div>
   </body>
 </html>

@@ -29,12 +29,15 @@
       #add tr,
       #add th,
       #add td {
-        border: 1px solid #0d0a86;
+        border: 1px solid rgba(250, 201, 56, 0.25);
         border-collapse: collapse;
+        color: #e2e8f0;
       }
       #add th {
         padding-left: 6px;
         padding-right: 6px;
+        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
+        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
       }
       #add td {
         padding-left: 6px;
@@ -43,7 +46,7 @@
         padding-bottom: 4px;
       }
       i {
-        color: red;
+        color: #f0abfc;
       }
 
       .add-note {
@@ -59,7 +62,9 @@
         position: fixed;
         top: 50%;
         right: 50%;
-        border: #0d0a86 5px solid;
+        background: #1e1e2e;
+        border: 1px solid rgba(246, 76, 189, 0.3);
+        box-shadow: 0 0 40px rgba(246, 76, 189, 0.1);
         border-radius: 2px;
       }
     </style>
@@ -124,7 +129,7 @@
         </div>
       </div>
       <div class="center-div">
-        <button type="submit">Add This Card</button>
+        <button type="submit" class="confirm-butt">Add This Card</button>
       </div>
     </form>
   </body>

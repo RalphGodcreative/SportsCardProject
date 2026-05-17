@@ -72,9 +72,10 @@
     #last-card tr,
     #last-card th,
     #last-card td {
-      border: 1px solid #1324cf;
+      border: 1px solid rgba(202, 71, 245, 0.2);
       border-collapse: collapse;
       padding: 8px;
+      color: #e2e8f0;
     }
 
     #last-card {
@@ -82,10 +83,13 @@
       margin-right: 25%;
       margin-top: 30px;
       margin-bottom: 30px;
+      background-color: #12121a;
+      box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
     }
 
     th {
-      background-image: linear-gradient(45deg, #d25bff, #3030f5);
+      background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
+      text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
     }
 
     .action-butt {
@@ -97,15 +101,9 @@
       display: none;
     }
 
-    .save {
-      background-color: #2bea96;
-    }
-
-    .cancel {
-      background-color: #e64038;
-    }
   </style>
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
 </head>
 
 <body>

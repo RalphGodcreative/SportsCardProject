@@ -1,26 +1,51 @@
 /* ==========================================================================
+   Neon UI Theme — Surprise Me
+   Generated: 2026-05-14
+   Navbar:  #38C9FA  rgb(56, 201, 250)   hsl(195°)
+   Tables:  #CA47F5  rgb(202, 71, 245)   hsl(285°)
+   Buttons: #31F6B5  rgb(49, 246, 181)   hsl(160°)
+   Forms:   #FAC938  rgb(250, 201, 56)   hsl(45°)
+   Modals:  #F64CBD  rgb(246, 76, 189)   hsl(320°)
+   Paging:  #42BDFA  rgb(66, 189, 250)   hsl(200°)
+   Confirm: #3FF37B  rgb(63, 243, 123)   hsl(140°)
+   Destroy: #F76345  rgb(247, 99, 69)    hsl(10°)
+   ========================================================================== */
+
+body {
+  background-color: #0a0a0f;
+  color: #e2e8f0;
+}
+
+/* ==========================================================================
    Banner/Navigation Styles
    ========================================================================== */
 
-/* Banner Header Base Styles */
 .banner-header {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: black;
+  background-color: #0a0a0f;
+  border-bottom: 1px solid rgba(56, 201, 250, 0.25);
+  box-shadow: 0 2px 20px rgba(56, 201, 250, 0.08);
   display: flex;
   width: 100%;
 }
 
 .banner-header a {
-  color: #5afefe !important;
+  color: #38C9FA !important;
+  text-shadow: 0 0 8px rgba(56, 201, 250, 0.5);
   padding: 0 15px;
   text-decoration: none !important;
   font-family: fantasy !important;
   font-size: 16px !important;
+  transition: all 0.2s ease;
 }
 
-/* Banner List Styles */
+.banner-header a:hover {
+  color: #f0abfc !important;
+  text-shadow: 0 0 12px rgba(240, 171, 252, 0.7) !important;
+}
+
 .banner-header ul {
   list-style-type: none;
   margin: 0;
@@ -30,30 +55,29 @@
 
 .banner-header li {
   float: left;
-  border-right: 1px yellow solid !important;
-  border-left: 1px yellow solid !important;
+  border-right: 1px solid rgba(56, 201, 250, 0.2) !important;
+  border-left: 1px solid rgba(56, 201, 250, 0.2) !important;
   border-collapse: collapse !important;
   height: 100%;
   align-content: center;
+  transition: all 0.2s ease;
 }
 
 .banner-header li:hover {
-  background-color: #17E161 !important;
+  background-color: rgba(56, 201, 250, 0.08) !important;
   cursor: pointer;
 }
 
-/* Banner Table Styles */
 .banner-header table,
 .banner-header tr,
 .banner-header td {
-  border-left: 1px yellow solid !important;
-  border-right: 1px yellow solid !important;
+  border-left: 1px solid rgba(56, 201, 250, 0.2) !important;
+  border-right: 1px solid rgba(56, 201, 250, 0.2) !important;
   border-collapse: collapse !important;
   height: 100% !important;
   padding: 8px !important;
 }
 
-/* Dropdown Styles */
 .banner-dropdown-content {
   display: block;
 }
@@ -61,7 +85,9 @@
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #445567;
+  background-color: #12121a;
+  border: 1px solid rgba(56, 201, 250, 0.2);
+  box-shadow: 0 4px 20px rgba(56, 201, 250, 0.1);
   min-width: 100px;
   z-index: 1;
 }
@@ -74,10 +100,14 @@
   text-decoration: none;
   display: block;
   text-align: left;
+  color: #94a3b8 !important;
+  text-shadow: none !important;
 }
 
 .dropdown-content a:hover {
-  background-color: #3F34E7;
+  background-color: rgba(56, 201, 250, 0.08);
+  color: #38C9FA !important;
+  text-shadow: 0 0 8px rgba(56, 201, 250, 0.5) !important;
 }
 
 .dropdown:hover .dropdown-content {
@@ -121,42 +151,148 @@
 .link-butt {
   padding: 10px;
   margin: 5px;
-  background-color: #f0f0f0;
-  border: none;
+  background: transparent;
+  border: 1px solid rgba(49, 246, 181, 0.35);
+  color: #31F6B5;
+  box-shadow: 0 0 8px rgba(49, 246, 181, 0.12);
   cursor: pointer;
   border-radius: 5px;
   font-weight: bold;
-  box-shadow: 0 5px 0 #c0c0c0,
-              0 6px 6px rgba(0, 0, 0, 0.3);
-  transform: translateY(0);
-  transition: all 0.1s ease;
+  transition: all 0.2s ease;
 }
 
 .link-butt:hover {
-  transform: translateY(2px);
-  box-shadow: 0 3px 0 #c0c0c0,
-              0 4px 4px rgba(0, 0, 0, 0.2);
-  color: #0f9e6f;            
+  background-color: rgba(49, 246, 181, 0.08);
+  box-shadow: 0 0 14px rgba(49, 246, 181, 0.28);
 }
 
 .link-butt:active {
-  transform: translateY(5px);
-  box-shadow: none;
-  background-color: #e0e0e0;
+  background-color: rgba(49, 246, 181, 0.15);
+  box-shadow: 0 0 6px rgba(49, 246, 181, 0.2);
+}
+
+.neon-butt {
+  padding: 6px 12px;
+  margin: 4px;
+  background: transparent;
+  border: 1px solid rgba(49, 246, 181, 0.35);
+  color: #31F6B5;
+  box-shadow: 0 0 8px rgba(49, 246, 181, 0.12);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.neon-butt:hover {
+  background-color: rgba(49, 246, 181, 0.08);
+  box-shadow: 0 0 14px rgba(49, 246, 181, 0.28);
+}
+
+.confirm-butt {
+  padding: 6px 12px;
+  margin: 4px;
+  background: transparent;
+  border: 1px solid rgba(63, 243, 123, 0.5);
+  color: #3FF37B;
+  box-shadow: 0 0 8px rgba(63, 243, 123, 0.2);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.confirm-butt:hover {
+  background-color: rgba(63, 243, 123, 0.1);
+  box-shadow: 0 0 14px rgba(63, 243, 123, 0.35);
+}
+
+.destroy-butt {
+  padding: 6px 12px;
+  margin: 4px;
+  background: transparent;
+  border: 1px solid rgba(247, 99, 69, 0.5);
+  color: #F76345;
+  box-shadow: 0 0 8px rgba(247, 99, 69, 0.2);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.destroy-butt:hover {
+  background-color: rgba(247, 99, 69, 0.1);
+  box-shadow: 0 0 14px rgba(247, 99, 69, 0.35);
 }
 
 /* ==========================================================================
-   Utility Classes
+   Table Utility
    ========================================================================== */
 
-.default-table{
+.default-table {
   border-collapse: collapse;
-  border: 1px solid black;
+  border: 1px solid rgba(202, 71, 245, 0.2);
   border-radius: 10px;
+  background-color: #12121a;
+  box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
 }
 
 .default-table th,
-.default-table td{
+.default-table td {
   padding: 10px;
-  border: 1px solid black;
+  border: 1px solid rgba(202, 71, 245, 0.2);
+  color: #e2e8f0;
+}
+
+.default-table th {
+  background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
+  text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
+}
+
+.default-table tr:nth-child(odd) {
+  background-color: rgba(202, 71, 245, 0.04);
+}
+
+.default-table tr:hover {
+  background-color: rgba(202, 71, 245, 0.08);
+}
+
+/* ==========================================================================
+   Form Element Styles
+   ========================================================================== */
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+input[type="email"],
+textarea,
+select {
+  background-color: #12121a;
+  color: #e2e8f0;
+  border: 1px solid rgba(250, 201, 56, 0.25);
+  border-radius: 4px;
+  padding: 4px 6px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: rgba(250, 201, 56, 0.6);
+  box-shadow: 0 0 10px rgba(250, 201, 56, 0.2);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #4a5568;
+}
+
+select option {
+  background-color: #12121a;
+  color: #e2e8f0;
+}
+
+input[type="checkbox"] {
+  accent-color: #FAC938;
 }

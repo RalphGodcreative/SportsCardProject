@@ -82,18 +82,10 @@
 
   <style>
     #keyword-table th {
-      background-image: linear-gradient(45deg, #f0e54e, #950db1);
+      background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
+      text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
     }
 
-    .delete-keyword {
-      background-color: #e73c39;
-    }
-    .reset-all {
-      background-color: #e73c39;
-    }
-    .search-all {
-      background-color: #4CAF50;
-    }
   </style>
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
 
@@ -104,10 +96,10 @@
   <div class="page-top" style="flex-direction: column; align-items: center;">
     <div class="center-div" style="margin-bottom: 3rem; padding-top: 50px;">
       <input type="text" id="new-keyword">
-      <button id="add-keyword" onclick="addNewKeyword()">add keyword</button>
-      <button id="reset-all" onclick="resetAll()" class="reset-all">reset all</button>
-      <!-- <button id="search-all" onclick="location.href='/crawler/search-all'" class="search-all">search all</button> -->
-      <button id="search-all-async" onclick="searchAllAsync()" class="search-all">search all in background</button>
+      <button id="add-keyword" class="confirm-butt" onclick="addNewKeyword()">add keyword</button>
+      <button id="reset-all" onclick="resetAll()" class="reset-all destroy-butt">reset all</button>
+      <!-- <button id="search-all" onclick="location.href='/crawler/search-all'" class="search-all confirm-butt">search all</button> -->
+      <button id="search-all-async" onclick="searchAllAsync()" class="search-all confirm-butt">search all in background</button>
     </div>
     <table class="default-table" id="keyword-table">
       <tr>
@@ -126,7 +118,7 @@
         <td>[[${#temporals.format(searchKeyword.lastSearchTime, 'yyyy-MM-dd HH:mm')}]]</td>
         <td>
           <input type="hidden" th:value="${searchKeyword.id}">
-          <button class="delete-keyword">delete</button>
+          <button class="delete-keyword destroy-butt">delete</button>
         </td>
       </tr>
     </table>
