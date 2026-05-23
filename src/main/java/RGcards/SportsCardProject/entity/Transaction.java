@@ -17,6 +17,7 @@ public class Transaction {
     private int id;
     private LocalDate date;
     private String type;
+    @Column(columnDefinition = "numeric")
     private Double amount;
     private String note;
 

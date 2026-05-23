@@ -56,9 +56,11 @@ public class CrawlerService {
 
     public List<SearchProduct> searchResultForKeyword(SearchKeyword searchKeyword) {
         List<SearchProduct> productList = bot.getNewProductList(searchKeyword.getKeyword(),searchKeyword.getLastId());
-        searchKeyword.setLastSearchTime(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        searchKeyword.setLastSearchTime(now);
         if (!productList.isEmpty()) {
             searchKeyword.setLastId(productList.get(0).getId());
+            searchKeyword.setLastModifyDate(now);
         }
         searchKeywordRepository.save(searchKeyword);
         return productList;
@@ -90,6 +92,7 @@ public class CrawlerService {
         for (SearchKeyword searchKeyword : searchKeywordList) {
             searchKeyword.setLastId(null);
             searchKeyword.setLastSearchTime(null);
+            searchKeyword.setLastModifyDate(null);
         }
         searchKeywordRepository.saveAll(searchKeywordList);
     }

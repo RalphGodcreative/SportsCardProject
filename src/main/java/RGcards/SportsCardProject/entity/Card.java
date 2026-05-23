@@ -28,6 +28,7 @@ public class Card {
     private String numbered;
     private String sports;
     private String grade;
+    @Column(columnDefinition = "numeric")
     private Double value;
     private String note;
 
