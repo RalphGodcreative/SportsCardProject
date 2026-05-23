@@ -106,6 +106,7 @@
         <th>keyword</th>
         <th>last product</th>
         <th>last search time</th>
+        <th>last modify date</th>
         <th>action</th>
       </tr>
       <tr th:each="searchKeyword : ${searchKeywords}">
@@ -115,7 +116,8 @@
             <a th:href="@{'https://tw.bid.yahoo.com/item/' + ${searchKeyword.lastId}}" target="_blank">link</a>
           </th:block>
         </td>
-        <td>[[${#temporals.format(searchKeyword.lastSearchTime, 'yyyy-MM-dd HH:mm')}]]</td>
+        <td>[[${searchKeyword.lastSearchTime != null ? #temporals.format(searchKeyword.lastSearchTime, 'yyyy-MM-dd HH:mm') : ''}]]</td>
+        <td>[[${searchKeyword.lastModifyDate != null ? #temporals.format(searchKeyword.lastModifyDate, 'yyyy-MM-dd HH:mm') : ''}]]</td>
         <td>
           <input type="hidden" th:value="${searchKeyword.id}">
           <button class="delete-keyword destroy-butt">delete</button>

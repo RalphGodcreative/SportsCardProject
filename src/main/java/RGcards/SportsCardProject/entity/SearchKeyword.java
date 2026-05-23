@@ -20,5 +20,6 @@ public class SearchKeyword {
     private String keyword;
     private String lastId;
     private LocalDateTime lastSearchTime;
+    private LocalDateTime lastModifyDate;
 
 }
