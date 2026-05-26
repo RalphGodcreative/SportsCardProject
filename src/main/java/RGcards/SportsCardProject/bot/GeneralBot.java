@@ -12,6 +12,9 @@ public interface GeneralBot {
         WebDriverManager.chromedriver().setup();
         ChromeOptions co = new ChromeOptions();
         co.addArguments("--remote-allow-origins=*");
+//        co.addArguments("--headless=new");
+//        co.addArguments("--no-sandbox");
+//        co.addArguments("--disable-dev-shm-usage");
         return new ChromeDriver(co);
     }
 }
