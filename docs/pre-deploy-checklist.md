@@ -2,8 +2,9 @@
 
 ## Must-Haves (Blocking)
 
-- [ ] **Authentication** — Add Spring Security with login page. All endpoints are currently public.
+- [ ] **Authentication** — Add Spring Security with login page. All endpoints are currently public. See [`authentication.md`](authentication.md) for full plan.
 - [ ] **User roles** — See [`user-roles.md`](user-roles.md) for role definitions. Restrict destructive endpoints to `ADMIN` only.
+- [ ] **Data ownership** — Add `user_id` to `Card`, `Transaction`, `SearchKeyword`. See [`data-ownership.md`](data-ownership.md) for full plan and migration strategy.
 - [ ] **Externalize secrets** — Replace hardcoded API keys and credentials in `application.properties` with environment variable references (`${ENV_VAR}`).
 - [ ] **Remove spring-boot-devtools** — Development-only tool, must not run in production.
 
