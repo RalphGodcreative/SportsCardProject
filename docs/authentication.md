@@ -24,12 +24,13 @@ Add to `pom.xml`:
 ### 2. User Entity
 Create a `User` entity with fields:
 - `id`
-- `username`
+- `email` (used as login identifier — must be unique)
 - `password` (BCrypt hashed — never store plain text)
 - `role` (`ADMIN` or `USER`)
 - `enabled`
 
 Implement `UserDetails` interface on this entity or a separate `UserDetailsService`.
+Configure `UserDetailsService` to load users by email instead of username.
 
 ### 3. Security Config
 Create a `SecurityConfig` class (`@Configuration`, `@EnableWebSecurity`) with a `SecurityFilterChain` bean:
@@ -42,7 +43,7 @@ Create a `SecurityConfig` class (`@Configuration`, `@EnableWebSecurity`) with a 
 
 ### 4. Login Page
 Create `templates/login.html`:
-- Username and password form
+- Email and password form
 - POST to `/login` (handled automatically by Spring Security)
 - Show error message on failed login
 
@@ -66,6 +67,23 @@ Use Spring Security dialect in templates to show/hide UI elements by role:
 ## User Registration Strategy
 - No self-registration for now — admin creates users manually or via a seeded SQL script.
 - Can revisit if the app is opened to more users later.
+
+## Password Reset Flow
+Since the app already has a mail service (`spring-boot-starter-mail`), password reset can be added with minimal effort:
+
+1. User clicks "Forgot password?" on the login page
+2. User enters their email
+3. App generates a secure random token, stores it in a `password_reset_tokens` table with an expiry (e.g. 15 minutes)
+4. App sends an email with a reset link: `/reset-password?token=<token>`
+5. User clicks the link, enters a new password
+6. App validates the token (exists + not expired), updates the password, invalidates the token
+
+### What needs to be built
+- `PasswordResetToken` entity — fields: `id`, `token`, `user_id`, `expiresAt`
+- `POST /forgot-password` — generates and emails the token
+- `GET /reset-password?token=` — shows the new password form
+- `POST /reset-password` — validates token and updates password
+- Email template for the reset link
 
 ## Session Management
 - Default Spring Security session handling is sufficient.

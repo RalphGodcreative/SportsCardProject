@@ -17,6 +17,7 @@
 ## Nice-to-Haves
 
 - [ ] **Input validation** — Add `@Valid` constraints on form submissions.
+- [ ] **Password reset** — Email-based reset flow using existing mail service. See [`authentication.md`](authentication.md) for full plan.
 
 ## Crawler Strategy (Online Deployment)
 
