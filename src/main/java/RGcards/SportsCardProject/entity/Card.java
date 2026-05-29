@@ -35,6 +35,9 @@ public class Card {
     @Enumerated(EnumType.STRING)
     private CardType type;
 
+    @Column(name = "user_id")
+    private Long userId;
+
 
     public Card(int id, String year, String publisher, String set, String player, Boolean auto, String insert, String parallel, String numbered, String sports, String grade, Double value, String note) {
         this.id = id;

@@ -37,3 +37,5 @@ gemini.api.key=YOUR_GEMINI_API_KEY
 ebay.client.id=YOUR_EBAY_APP_ID
 ebay.client.secret=YOUR_EBAY_CERT_ID
 ebay.api.base-url=https://api.sandbox.ebay.com
+
+app.registration.enabled=false

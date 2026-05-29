@@ -21,6 +21,9 @@ public class Transaction {
     private Double amount;
     private String note;
 
+    @Column(name = "user_id")
+    private Long userId;
+
     public Transaction(LocalDate date, String type, Double amount, String note) {
         this.date = date;
         this.type = type;

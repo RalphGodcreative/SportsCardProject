@@ -40,14 +40,14 @@ public class EmailService {
      * @param resultList Map of SearchKeyword to list of SearchProduct results
      * @throws MessagingException if sending the email fails
      */
-    public void sendSearchResultEmail(Map<SearchKeyword, List<SearchProduct>> resultList) throws MessagingException {
+    public void sendSearchResultEmail(Map<SearchKeyword, List<SearchProduct>> resultList, String toEmail) throws MessagingException {
         Map<String, Object> variable = new HashMap<>();
         variable.put("resultList", resultList);
         String mail = buildEmailContent("mail/email-result", variable);
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = today.format(formatter);
-        sendHtmlEmail(env.getProperty("app.mail.to"), "Yahoo Auction Search Result " + formattedDate, mail);
+        sendHtmlEmail(toEmail, "Yahoo Auction Search Result " + formattedDate, mail);
     }
 
     /**

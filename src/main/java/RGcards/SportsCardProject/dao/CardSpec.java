@@ -5,9 +5,14 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class CardSpec {
 
-    public static Specification<Card> build(Card card) {
+    public static Specification<Card> forUser(Long userId) {
+        return (root, q, cb) -> cb.equal(root.get("userId"), userId);
+    }
+
+    public static Specification<Card> build(Card card, Long userId) {
         return Specification
-                .where(hasId(card.getId()))
+                .where(forUser(userId))
+                .and(hasId(card.getId()))
                 .and(likeYear(card.getYear()))
                 .and(equalsSports(card.getSports()))
                 .and(equalsPublisher(card.getPublisher()))

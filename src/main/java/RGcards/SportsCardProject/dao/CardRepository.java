@@ -2,33 +2,31 @@ package RGcards.SportsCardProject.dao;
 
 import RGcards.SportsCardProject.entity.Card;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CardRepository extends JpaRepository<Card, Integer>, JpaSpecificationExecutor<Card> {
 
-    @Query("SELECT c from Card c order by id desc limit 1")
-    Card findLastCard();
+    Card findFirstByUserIdOrderByIdDesc(Long userId);
 
-    @Query("Select c from Card c where c.id = :id")
-    Card findCardById(@Param("id") int id);
+    Optional<Card> findByIdAndUserId(int id, Long userId);
 
-    @Query("SELECT c from Card c order by id asc")
-    List<Card> findAllCardsSortByIdAsc();
+    List<Card> findByUserIdOrderByIdAsc(Long userId);
 
-    @Query("SELECT c from Card c order by id desc")
-    List<Card> findAllCardsSortByIdDesc();
+    List<Card> findByUserIdOrderByIdDesc(Long userId);
 
-    @Query("SELECT c from Card c where year = :year")
-    List<Card> findCardsByYear(@Param("year") String year);
+    long countByUserId(Long userId);
 
-    @Query(value = "select c.* from cards c inner join transaction_infos ti on ti.card_id = c.id where ti.move = 'OUT'",nativeQuery = true)
-    List<Card> findSoldCards();
+    @Query("SELECT c FROM Card c WHERE c.userId = :userId AND c.year LIKE %:year%")
+    List<Card> findCardsByYearAndUserId(@Param("userId") Long userId, @Param("year") String year);
 
-    @Query(value = "select c.* from cards c inner join transaction_infos ti on ti.card_id = c.id where ti.transaction_id = :transactionId order by c.id desc", nativeQuery = true)
+    @Query(value = "SELECT c.* FROM cards c INNER JOIN transaction_infos ti ON ti.card_id = c.id WHERE ti.move = 'OUT' AND c.user_id = :userId", nativeQuery = true)
+    List<Card> findSoldCards(@Param("userId") Long userId);
+
+    @Query(value = "SELECT c.* FROM cards c INNER JOIN transaction_infos ti ON ti.card_id = c.id WHERE ti.transaction_id = :transactionId ORDER BY c.id DESC", nativeQuery = true)
     List<Card> findCardsByTransactionId(@Param("transactionId") int transactionId);
-
 }
