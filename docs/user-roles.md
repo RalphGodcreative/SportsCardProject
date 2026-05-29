@@ -19,7 +19,7 @@
 ## Future Roles (Planned)
 - `MODERATOR` — can manage content but not system settings (TBD)
 
-## Public Launch Considerations (Post Phase 1)
+## Public Launch Considerations (Post "Put It Online")
 - Add a `username` field to the `User` entity — used as the public-facing display name in the UI
 - Email stays as the private login identifier and is never displayed publicly
 - Username must be unique, chosen at registration

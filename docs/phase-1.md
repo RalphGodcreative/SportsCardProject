@@ -1,4 +1,4 @@
-# Phase 1 — Pre-Deploy Hardening
+# Phase 1 — Put It Online
 
 Work to complete before the app can go online. Tasks 1–2 map to the blocking section of [`pre-deploy-checklist.md`](pre-deploy-checklist.md). Task 3 maps to the Crawler Strategy section. Task 4 is a blocking must-have.
 
