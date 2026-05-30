@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import org.openqa.selenium.WebDriver;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -63,7 +65,13 @@ public class CrawlerService {
     }
 
     public List<SearchProduct> searchResultForKeyword(SearchKeyword searchKeyword) {
-        List<SearchProduct> productList = bot.getNewProductList(searchKeyword.getKeyword(), searchKeyword.getLastId());
+        return searchResultForKeyword(searchKeyword, null);
+    }
+
+    public List<SearchProduct> searchResultForKeyword(SearchKeyword searchKeyword, WebDriver driver) {
+        List<SearchProduct> productList = driver != null
+                ? bot.getNewProductList(driver, searchKeyword.getKeyword(), searchKeyword.getLastId())
+                : bot.getNewProductList(searchKeyword.getKeyword(), searchKeyword.getLastId());
         LocalDateTime now = LocalDateTime.now();
         searchKeyword.setLastSearchTime(now);
         if (!productList.isEmpty()) {
@@ -82,8 +90,13 @@ public class CrawlerService {
     public Map<SearchKeyword, List<SearchProduct>> getResultForUser(Long userId) {
         Map<SearchKeyword, List<SearchProduct>> resultList = new HashMap<>();
         List<SearchKeyword> keywords = searchKeywordRepository.findByUserId(userId);
-        for (SearchKeyword keyword : keywords) {
-            resultList.put(keyword, searchResultForKeyword(keyword));
+        WebDriver driver = bot.generateDriver();
+        try {
+            for (SearchKeyword keyword : keywords) {
+                resultList.put(keyword, searchResultForKeyword(keyword, driver));
+            }
+        } finally {
+            driver.quit();
         }
         return moveEmptyListsToEnd(resultList);
     }
