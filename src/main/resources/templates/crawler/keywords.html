@@ -7,9 +7,18 @@
   </title>
 
   <meta charset="UTF-8" />
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script>
+    function getCsrf() {
+      return {
+        token: document.querySelector('meta[name="_csrf"]').getAttribute('content'),
+        header: document.querySelector('meta[name="_csrf_header"]').getAttribute('content')
+      };
+    }
+
     $(document).ready(function () {
       $('.delete-keyword').on("click", function () {
         if (!confirm("Are you sure you want to delete this keyword?")) {
@@ -17,8 +26,10 @@
         }
         var id = $(this).prev('input[type="hidden"]').val();
         console.log(id);
+        var csrf = getCsrf();
         fetch('/crawler/delete?keywordId=' + id, {
           method: 'Delete',
+          headers: { [csrf.header]: csrf.token }
         })
           .then(res => res.json())
           .then(success => {
@@ -35,8 +46,10 @@
     function addNewKeyword() {
       var newKeyword = $('#new-keyword').val();
       console.log(newKeyword);
+      var csrf = getCsrf();
       fetch('/crawler/add?keyword=' + newKeyword, {
         method: 'PUT',
+        headers: { [csrf.header]: csrf.token }
       })
         .then(res => res.json())
         .then(success => {

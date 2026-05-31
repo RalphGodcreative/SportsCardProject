@@ -2,13 +2,17 @@ package RGcards.SportsCardProject.service;
 
 import RGcards.SportsCardProject.bot.YahooAuctionBot;
 import RGcards.SportsCardProject.dao.SearchKeywordRepository;
+import RGcards.SportsCardProject.dao.UserRepository;
 import RGcards.SportsCardProject.entity.SearchKeyword;
 import RGcards.SportsCardProject.entity.SearchProduct;
+import RGcards.SportsCardProject.entity.User;
 import jakarta.mail.MessagingException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import org.openqa.selenium.WebDriver;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -20,29 +24,37 @@ public class CrawlerService {
     private YahooAuctionBot bot;
 
     @Autowired
-    private  EmailService emailService;
+    private EmailService emailService;
 
     @Autowired
     private SearchKeywordRepository searchKeywordRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public List<SearchProduct> getProductListByKeyword(String keyword) {
-        return bot.getNewProductList(keyword,null);
+        return bot.getNewProductList(keyword, null);
     }
 
-    public List<SearchKeyword> getAllSearchKeyword() {
-        return searchKeywordRepository.findAll();
+    public List<SearchKeyword> getAllSearchKeyword(Long userId) {
+        return searchKeywordRepository.findByUserId(userId);
     }
 
-    public SearchKeyword addKeyword(String keyword) {
-        if (searchKeywordRepository.findByKeyword(keyword) != null) {
+    public SearchKeyword addKeyword(String keyword, Long userId) {
+        if (searchKeywordRepository.findByKeywordAndUserId(keyword, userId) != null) {
             return null;
         }
         SearchKeyword searchKeyword = new SearchKeyword();
         searchKeyword.setKeyword(keyword);
+        searchKeyword.setUserId(userId);
         return searchKeywordRepository.save(searchKeyword);
     }
 
-    public boolean deleteKeyword(int id) {
+    public boolean deleteKeyword(int id, Long userId) {
+        SearchKeyword keyword = searchKeywordRepository.findById(id).orElse(null);
+        if (keyword == null || !keyword.getUserId().equals(userId)) {
+            return false;
+        }
         try {
             searchKeywordRepository.deleteById(id);
             return true;
@@ -50,12 +62,16 @@ public class CrawlerService {
             e.printStackTrace();
             return false;
         }
-
     }
 
-
     public List<SearchProduct> searchResultForKeyword(SearchKeyword searchKeyword) {
-        List<SearchProduct> productList = bot.getNewProductList(searchKeyword.getKeyword(),searchKeyword.getLastId());
+        return searchResultForKeyword(searchKeyword, null);
+    }
+
+    public List<SearchProduct> searchResultForKeyword(SearchKeyword searchKeyword, WebDriver driver) {
+        List<SearchProduct> productList = driver != null
+                ? bot.getNewProductList(driver, searchKeyword.getKeyword(), searchKeyword.getLastId())
+                : bot.getNewProductList(searchKeyword.getKeyword(), searchKeyword.getLastId());
         LocalDateTime now = LocalDateTime.now();
         searchKeyword.setLastSearchTime(now);
         if (!productList.isEmpty()) {
@@ -66,29 +82,46 @@ public class CrawlerService {
         return productList;
     }
 
-    public SearchKeyword getSearchKeywordByKeyword(String keyword) {
-        return searchKeywordRepository.findByKeyword(keyword);
+    public SearchKeyword getSearchKeywordByKeyword(String keyword, Long userId) {
+        return searchKeywordRepository.findByKeywordAndUserId(keyword, userId);
     }
 
     @Transactional
-    public Map<SearchKeyword, List<SearchProduct>> getResultForAllKeyword() {
+    public Map<SearchKeyword, List<SearchProduct>> getResultForUser(Long userId) {
         Map<SearchKeyword, List<SearchProduct>> resultList = new HashMap<>();
-        List<SearchKeyword> searchKeywordList = searchKeywordRepository.findAll();
-        for (SearchKeyword searchKeyword : searchKeywordList) {
-            resultList.put(searchKeyword, searchResultForKeyword(searchKeyword));
+        List<SearchKeyword> keywords = searchKeywordRepository.findByUserId(userId);
+        WebDriver driver = bot.generateDriver();
+        try {
+            for (SearchKeyword keyword : keywords) {
+                resultList.put(keyword, searchResultForKeyword(keyword, driver));
+            }
+        } finally {
+            driver.quit();
         }
         return moveEmptyListsToEnd(resultList);
     }
 
     @Async
     @Transactional
-    public void getResultAsync() throws MessagingException {
-        Map<SearchKeyword, List<SearchProduct>> resultList = getResultForAllKeyword();
-        emailService.sendSearchResultEmail(resultList);
+    public void getResultAsync(Long userId, String toEmail) throws MessagingException {
+        Map<SearchKeyword, List<SearchProduct>> resultList = getResultForUser(userId);
+        emailService.sendSearchResultEmail(resultList, toEmail);
     }
 
-    public void resetAllKeyword() {
-        List<SearchKeyword> searchKeywordList = searchKeywordRepository.findAll();
+    @Async
+    @Transactional
+    public void runCrawlerForAllUsers() throws MessagingException {
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            List<SearchKeyword> keywords = searchKeywordRepository.findByUserId(user.getId());
+            if (keywords.isEmpty()) continue;
+            Map<SearchKeyword, List<SearchProduct>> resultList = getResultForUser(user.getId());
+            emailService.sendSearchResultEmail(resultList, user.getEmail());
+        }
+    }
+
+    public void resetAllKeyword(Long userId) {
+        List<SearchKeyword> searchKeywordList = searchKeywordRepository.findByUserId(userId);
         for (SearchKeyword searchKeyword : searchKeywordList) {
             searchKeyword.setLastId(null);
             searchKeyword.setLastSearchTime(null);
@@ -103,16 +136,14 @@ public class CrawlerService {
         Map<SearchKeyword, List<SearchProduct>> orderedMap = new LinkedHashMap<>();
 
         for (Map.Entry<SearchKeyword, List<SearchProduct>> entry : originalMap.entrySet()) {
-            List<SearchProduct> list = entry.getValue();
-            if (list != null && !list.isEmpty()) {
-                orderedMap.put(entry.getKey(), list);
+            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+                orderedMap.put(entry.getKey(), entry.getValue());
             }
         }
 
         for (Map.Entry<SearchKeyword, List<SearchProduct>> entry : originalMap.entrySet()) {
-            List<SearchProduct> list = entry.getValue();
-            if (list == null || list.isEmpty()) {
-                orderedMap.put(entry.getKey(), list);
+            if (entry.getValue() == null || entry.getValue().isEmpty()) {
+                orderedMap.put(entry.getKey(), entry.getValue());
             }
         }
 

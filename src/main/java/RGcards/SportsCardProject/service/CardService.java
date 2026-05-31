@@ -31,87 +31,73 @@ public class CardService {
     @Autowired
     private TransactionInfoRepository tranInfoRepo;
 
-    public List<Card> getAllCards() {
-        List<Card> cards = cardRepo.findAll();
-        return cards;
+    public List<Card> getAllCardsSortById(Long userId) {
+        return cardRepo.findByUserIdOrderByIdDesc(userId);
     }
 
-    public List<Card> getAllCardsSortById() {
-        List<Card> cards = cardRepo.findAllCardsSortByIdDesc();
-        return cards;
+    public List<Card> getCardsByYear(String year, Long userId) {
+        return cardRepo.findCardsByYearAndUserId(userId, year);
     }
 
-    public List<Card> getCardsByYear(String year) {
-        List<Card> cards = cardRepo.findCardsByYear(year);
-        return cards;
+    public List<Card> findCardsWithParam(Card card, Long userId) {
+        return cardRepo.findAll(CardSpec.build(card, userId), Sort.by(Sort.Direction.DESC, "id"));
     }
 
-    public List<Card> findCardsWithParam(Card card) {
-        return cardRepo.findAll(CardSpec.build(card), Sort.by(Sort.Direction.DESC, "id"));
-    }
-
-    public List<Card> findCardsByPage(int page) {
+    public List<Card> findCardsByPage(int page, Long userId) {
         PageRequest pageRequest = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "id"));
-        return cardRepo.findAll(pageRequest).getContent();
+        return cardRepo.findAll(CardSpec.forUser(userId), pageRequest).getContent();
     }
 
-    public List<Card> getSoldCards() {
-        List<Card> cards = cardRepo.findSoldCards();
-        return cards;
+    public List<Card> getSoldCards(Long userId) {
+        return cardRepo.findSoldCards(userId);
     }
 
-    public int findCardsCount() {
-        int res = (int) cardRepo.count();
-        log.info("cards : " + res);
+    public int findCardsCount(Long userId) {
+        int res = (int) cardRepo.countByUserId(userId);
+        log.info("cards: " + res);
         return res;
     }
 
-    public Card getLastCard() {
-        Card card = cardRepo.findLastCard();
-        return card;
+    public Card getLastCard(Long userId) {
+        return cardRepo.findFirstByUserIdOrderByIdDesc(userId);
     }
 
-    public Card getCardById(int id) {
-        Card card = cardRepo.findCardById(id);
-        return card;
+    public Card getCardById(int id, Long userId) {
+        return cardRepo.findByIdAndUserId(id, userId).orElse(null);
     }
 
     public int saveCard(Card card) {
-        int id = cardRepo.save(card).getId();
-        return id;
+        return cardRepo.save(card).getId();
     }
 
     public int saveTransaction(Transaction transaction) {
-        int id = tranRepo.save(transaction).getId();
-        return id;
+        return tranRepo.save(transaction).getId();
     }
 
     public int saveTransactionInfo(TransactionInfo transactionInfo) {
-        int id = tranInfoRepo.save(transactionInfo).getId();
-        return id;
+        return tranInfoRepo.save(transactionInfo).getId();
     }
 
-    public void saveTransactionWithCard(TransactionWithCard transactionWithCard) {
+    public void saveTransactionWithCard(TransactionWithCard transactionWithCard, Long userId) {
         Transaction transaction = transactionWithCard.getTransaction();
+        transaction.setUserId(userId);
         List<Card> cards = transactionWithCard.getCards();
         int transactionId = saveTransaction(transaction);
         for (Card card : cards) {
+            card.setUserId(userId);
             int cardId = saveCard(card);
-            TransactionInfo ti = new TransactionInfo(transactionId, cardId, MoveType.IN);
-            int result = saveTransactionInfo(ti);
+            saveTransactionInfo(new TransactionInfo(transactionId, cardId, MoveType.IN));
         }
-
     }
 
-    public void saveSaleWithCard(SaleWithCard saleWithCard) {
+    public void saveSaleWithCard(SaleWithCard saleWithCard, Long userId) {
         Transaction transaction = saleWithCard.getTransaction();
+        transaction.setUserId(userId);
         List<Integer> cardIds = saleWithCard.getCardIds();
         int transactionId = saveTransaction(transaction);
         for (Integer cardId : cardIds) {
-            TransactionInfo ti = new TransactionInfo(transactionId, cardId, MoveType.OUT);
-            int result = saveTransactionInfo(ti);
+            saveTransactionInfo(new TransactionInfo(transactionId, cardId, MoveType.OUT));
         }
-
     }
 
     public void deleteTransactionAndAllRef(int transactionId) {
@@ -140,31 +126,20 @@ public class CardService {
         return deleteCount;
     }
 
-    public void updateCard() {
-        Card card = cardRepo.findCardById(1);
-        card.setValue(330.00);
-        cardRepo.save(card);
-        System.out.println(cardRepo.findCardById(1));
+    public List<Transaction> findAllTransactionsSortByDate(Long userId) {
+        return tranRepo.getTransactionsSortByDate(userId);
     }
 
-    public List<Transaction> findAllTransactionsSortByDate() {
-        List<Transaction> transactions = tranRepo.getTransactionsSortByDate();
-        return transactions;
-    }
-
-    public List<Transaction> findTransactionsInDateRange(LocalDate startDate, LocalDate endDate) {
-        List<Transaction> transactions = tranRepo.getTransactionsInDateRange(startDate, endDate);
-        return transactions;
+    public List<Transaction> findTransactionsInDateRange(LocalDate startDate, LocalDate endDate, Long userId) {
+        return tranRepo.getTransactionsInDateRange(userId, startDate, endDate);
     }
 
     public Transaction findTransactionById(int id) {
-        Transaction transaction = tranRepo.findById(id).isPresent() ? tranRepo.findById(id).get() : null;
-        return transaction;
+        return tranRepo.findById(id).orElse(null);
     }
 
     public List<TransactionInfo> findTransactionInfoByTransactionId(int transactionId) {
-        List<TransactionInfo> transactionInfos = tranInfoRepo.findByTransactionId(transactionId);
-        return transactionInfos;
+        return tranInfoRepo.findByTransactionId(transactionId);
     }
 
     public List<Card> findCardsByTransactionId(int transactionId) {
@@ -172,20 +147,16 @@ public class CardService {
     }
 
     public List<Transaction> getTransactionByCardId(int cardId) {
-
         try {
             List<TransactionInfo> tis = tranInfoRepo.findByCardId(cardId);
             List<Transaction> transactions = new ArrayList<>();
             for (TransactionInfo ti : tis) {
-                Transaction transaction = tranRepo.findById(ti.getTransactionId()).isPresent() ? tranRepo.findById(ti.getTransactionId()).get() : null;
-                transactions.add(transaction);
+                tranRepo.findById(ti.getTransactionId()).ifPresent(transactions::add);
             }
-
             return transactions;
         } catch (Exception e) {
             log.error(e.getMessage());
         }
         return null;
     }
-
 }

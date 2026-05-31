@@ -1,11 +1,13 @@
 package RGcards.SportsCardProject.controller;
 
+import RGcards.SportsCardProject.entity.User;
 import RGcards.SportsCardProject.service.CardService;
 import RGcards.SportsCardProject.entity.Card;
 import RGcards.SportsCardProject.entity.SaleWithCard;
 import RGcards.SportsCardProject.entity.Transaction;
 import RGcards.SportsCardProject.dto.TransactionWithCard;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +22,9 @@ public class CardController {
     @Autowired
     private CardService cardService;
 
-
     @GetMapping("")
-    public String main(Model model) {
-        Card lastCard = cardService.getLastCard();
-        model.addAttribute("lastCard", lastCard);
+    public String main(Model model, @AuthenticationPrincipal User currentUser) {
+        model.addAttribute("lastCard", cardService.getLastCard(currentUser.getId()));
         return "cardMain";
     }
 
@@ -39,12 +39,12 @@ public class CardController {
                            @RequestParam(name = "auto", defaultValue = "false") Boolean auto, @ModelAttribute("insert") String insert,
                            @ModelAttribute("parallel") String parallel, @ModelAttribute("numbered") String numbered,
                            @ModelAttribute("sports") String sports, @ModelAttribute("grade") String grade,
-                           @RequestParam(name = "value", defaultValue = "") Double value, @ModelAttribute("note") String note
+                           @RequestParam(name = "value", defaultValue = "") Double value, @ModelAttribute("note") String note,
+                           @AuthenticationPrincipal User currentUser
     ) {
         Card card = new Card(year, publisher, set, player, auto, insert, parallel, numbered, sports, grade, value, note);
-        int resultId = cardService.saveCard(card);
-        System.out.println("the result id is " + resultId);
-
+        card.setUserId(currentUser.getId());
+        cardService.saveCard(card);
         return "redirect:/card/allCard";
     }
 
@@ -54,46 +54,43 @@ public class CardController {
                              @RequestParam(name = "auto", defaultValue = "false") Boolean auto, @ModelAttribute("insert") String insert,
                              @ModelAttribute("parallel") String parallel, @ModelAttribute("numbered") String numbered,
                              @ModelAttribute("sports") String sports, @ModelAttribute("grade") String grade,
-                             @RequestParam(name = "value", defaultValue = "") Double value, @ModelAttribute("note") String note
+                             @RequestParam(name = "value", defaultValue = "") Double value, @ModelAttribute("note") String note,
+                             @AuthenticationPrincipal User currentUser
     ) {
         Card card = new Card(Integer.parseInt(id), year, publisher, set, player, auto, insert, parallel, numbered, sports, grade, value, note);
-        System.out.println(card);
-        int resultId = cardService.saveCard(card);
-        System.out.println("the result id is " + resultId);
-
+        card.setUserId(currentUser.getId());
+        cardService.saveCard(card);
         return "redirect:/card/allCard";
     }
 
-
     @PostMapping("/saveTransaction")
-    public String saveTransaction(@RequestBody TransactionWithCard transactionWithCard
-    ) {
-
-        cardService.saveTransactionWithCard(transactionWithCard);
+    public String saveTransaction(@RequestBody TransactionWithCard transactionWithCard,
+                                  @AuthenticationPrincipal User currentUser) {
+        cardService.saveTransactionWithCard(transactionWithCard, currentUser.getId());
         return "redirect:/card/allCard";
     }
 
     @PostMapping("/saveSale")
-    public String saveSale(@RequestBody SaleWithCard saleWithCard) {
-        cardService.saveSaleWithCard(saleWithCard);
+    public String saveSale(@RequestBody SaleWithCard saleWithCard,
+                           @AuthenticationPrincipal User currentUser) {
+        cardService.saveSaleWithCard(saleWithCard, currentUser.getId());
         return "redirect:/card/allCard";
     }
 
-
     @GetMapping("/allCard")
-    public String allCards(Model model) {
-        List<Card> cards = cardService.getAllCardsSortById();
-        int cardCounts = cardService.findCardsCount();
+    public String allCards(Model model, @AuthenticationPrincipal User currentUser) {
+        List<Card> cards = cardService.getAllCardsSortById(currentUser.getId());
+        int cardCounts = cardService.findCardsCount(currentUser.getId());
         model.addAttribute("cards", cards);
         model.addAttribute("cardCounts", cardCounts);
-
         return "allCard";
     }
 
     @GetMapping("/cards")
-    public String allCardsByPage(Model model, @RequestParam(defaultValue = "1") int page) {
-        List<Card> cards = cardService.findCardsByPage(page);
-        int cardCounts = cardService.findCardsCount();
+    public String allCardsByPage(Model model, @RequestParam(defaultValue = "1") int page,
+                                 @AuthenticationPrincipal User currentUser) {
+        List<Card> cards = cardService.findCardsByPage(page, currentUser.getId());
+        int cardCounts = cardService.findCardsCount(currentUser.getId());
         model.addAttribute("cards", cards);
         model.addAttribute("cardCounts", cardCounts);
         model.addAttribute("page", page);
@@ -116,7 +113,6 @@ public class CardController {
     public String addTransaction(Model model) {
         return "addTransactionPage";
     }
-
 
     @GetMapping("/searchCard")
     public String searchCard(Model model) {

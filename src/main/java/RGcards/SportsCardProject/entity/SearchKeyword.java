@@ -22,4 +22,7 @@ public class SearchKeyword {
     private LocalDateTime lastSearchTime;
     private LocalDateTime lastModifyDate;
 
+    @Column(name = "user_id")
+    private Long userId;
+
 }
