@@ -6,7 +6,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # ── Runtime stage ─────────────────────────────────────────────────────────────
-FROM eclipse-temurin:17-jre-bookworm
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
 # Install Google Chrome (WebDriverManager downloads matching ChromeDriver at runtime)
