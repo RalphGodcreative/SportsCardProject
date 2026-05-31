@@ -14,7 +14,7 @@ public class CrawlerScheduler {
 
     private final CrawlerService crawlerService;
 
-    @Scheduled(cron = "0 0 20 * * *")
+    @Scheduled(cron = "0 0 21 * * *")
     public void scheduledCrawl() throws MessagingException {
         log.info("Scheduled crawler started");
         crawlerService.runCrawlerForAllUsers();

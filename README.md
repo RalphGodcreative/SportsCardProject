@@ -121,7 +121,6 @@ spring.mail.username=<YOUR_EMAIL@gmail.com>
 spring.mail.password=<YOUR_APP_PASSWORD>
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
-app.mail.to=<RECIPIENT_EMAIL@gmail.com>
 
 # YouTube API
 youtube.api.key=<YOUR_YOUTUBE_API_KEY>
