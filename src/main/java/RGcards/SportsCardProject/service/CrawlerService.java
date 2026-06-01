@@ -96,7 +96,11 @@ public class CrawlerService {
                 resultList.put(keyword, searchResultForKeyword(keyword, driver));
             }
         } finally {
-            driver.quit();
+            try {
+                driver.quit();
+            } catch (Exception e) {
+                // Chrome process may already be gone on Render; safe to ignore
+            }
         }
         return moveEmptyListsToEnd(resultList);
     }
