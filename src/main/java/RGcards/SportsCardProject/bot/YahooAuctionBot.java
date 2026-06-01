@@ -21,7 +21,11 @@ public class YahooAuctionBot implements GeneralBot {
         try {
             return getNewProductList(driver, keyword, lastId);
         } finally {
-            driver.quit();
+            try {
+                driver.quit();
+            } catch (Exception e) {
+                // Chrome process may already be gone on Render; safe to ignore
+            }
         }
     }
 
@@ -31,30 +35,28 @@ public class YahooAuctionBot implements GeneralBot {
         try {
             Thread.sleep(8000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.warn("Sleep interrupted while waiting for page load: {}", e.getMessage());
         }
 
         List<WebElement> productGridList = driver.findElement(By.className("gridList")).findElements(By.tagName("a"));
         List<SearchProduct> searchProductList = new ArrayList<>();
-        System.out.println("product list size : " + productGridList.size());
+        log.info("product list size : {}", productGridList.size());
         for (int i = 0; i < productGridList.size(); i++) {
-            System.out.print(i + " ");
             try {
                 WebElement element = productGridList.get(i);
                 ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
                 Thread.sleep(300);
                 SearchProduct searchProduct = fetchProduct(element);
-                System.out.println(searchProduct);
+                log.info("item {}: {}", i, searchProduct);
                 if (lastId != null && searchProduct.getId() != null && Long.parseLong(searchProduct.getId()) <= Long.parseLong(lastId)) {
                     break;
                 }
                 searchProductList.add(searchProduct);
             } catch (Exception e) {
-                System.out.println("the " + i + "th encounter error");
-                e.printStackTrace();
+                log.warn("the {}th encounter error: {}", i, e.getMessage());
             }
         }
-        System.out.println(searchProductList);
+        log.info("total new products found: {}", searchProductList.size());
         return searchProductList;
     }
 
