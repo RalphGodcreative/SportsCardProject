@@ -1,6 +1,5 @@
 package RGcards.SportsCardProject.service;
 
-import RGcards.SportsCardProject.bot.YahooAuctionBot;
 import RGcards.SportsCardProject.dao.SearchKeywordRepository;
 import RGcards.SportsCardProject.dao.UserRepository;
 import RGcards.SportsCardProject.entity.SearchKeyword;
@@ -12,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import org.openqa.selenium.WebDriver;
-
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -21,7 +18,7 @@ import java.util.*;
 public class CrawlerService {
 
     @Autowired
-    private YahooAuctionBot bot;
+    private YahooAuctionHttpService yahooAuctionHttpService;
 
     @Autowired
     private EmailService emailService;
@@ -33,7 +30,7 @@ public class CrawlerService {
     private UserRepository userRepository;
 
     public List<SearchProduct> getProductListByKeyword(String keyword) {
-        return bot.getNewProductList(keyword, null);
+        return yahooAuctionHttpService.getNewProductList(keyword, null);
     }
 
     public List<SearchKeyword> getAllSearchKeyword(Long userId) {
@@ -65,13 +62,8 @@ public class CrawlerService {
     }
 
     public List<SearchProduct> searchResultForKeyword(SearchKeyword searchKeyword) {
-        return searchResultForKeyword(searchKeyword, null);
-    }
-
-    public List<SearchProduct> searchResultForKeyword(SearchKeyword searchKeyword, WebDriver driver) {
-        List<SearchProduct> productList = driver != null
-                ? bot.getNewProductList(driver, searchKeyword.getKeyword(), searchKeyword.getLastId())
-                : bot.getNewProductList(searchKeyword.getKeyword(), searchKeyword.getLastId());
+        List<SearchProduct> productList = yahooAuctionHttpService.getNewProductList(
+                searchKeyword.getKeyword(), searchKeyword.getLastId());
         LocalDateTime now = LocalDateTime.now();
         searchKeyword.setLastSearchTime(now);
         if (!productList.isEmpty()) {
@@ -90,17 +82,8 @@ public class CrawlerService {
     public Map<SearchKeyword, List<SearchProduct>> getResultForUser(Long userId) {
         Map<SearchKeyword, List<SearchProduct>> resultList = new HashMap<>();
         List<SearchKeyword> keywords = searchKeywordRepository.findByUserId(userId);
-        WebDriver driver = bot.generateDriver();
-        try {
-            for (SearchKeyword keyword : keywords) {
-                resultList.put(keyword, searchResultForKeyword(keyword, driver));
-            }
-        } finally {
-            try {
-                driver.quit();
-            } catch (Exception e) {
-                // Chrome process may already be gone on Render; safe to ignore
-            }
+        for (SearchKeyword keyword : keywords) {
+            resultList.put(keyword, searchResultForKeyword(keyword));
         }
         return moveEmptyListsToEnd(resultList);
     }
