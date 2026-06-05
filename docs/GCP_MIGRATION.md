@@ -37,15 +37,18 @@ This guide covers moving the SportsCardProject (Spring Boot 3.1, Java 17, Postgr
 
 > The e2-micro in us-central1/us-east1/us-west1 is free: 1 instance per billing account, up to 30 GB disk, 1 GB egress/month. Stay within these limits to avoid charges.
 
-### 1.3 Open Port 8080 (if not using a reverse proxy)
+### 1.3 Open Port 80 in GCP Firewall
+
+> **Note:** Checking "Allow HTTP traffic" during VM creation does NOT always create the firewall rule. Create it manually to be safe.
 
 In **VPC Network → Firewall → Create Firewall Rule**:
-- Name: `allow-8080`
-- Targets: All instances
-- Source IP ranges: `0.0.0.0/0`
-- Protocols and ports: TCP `8080`
+- Name: `allow-http`
+- Direction: Ingress
+- Targets: All instances in the network
+- Source IPv4 ranges: `0.0.0.0/0`
+- Protocols and ports: TCP `80`
 
-Or use port 80 if you set up a reverse proxy (see Part 4).
+Click **Create**.
 
 ---
 
@@ -128,7 +131,58 @@ The JAR will be at:
 
 ---
 
-## Part 4 — Run as a systemd Service (24/7)
+## Part 4 — Set Up Nginx Reverse Proxy
+
+Cloudflare connects to your VM on port 80. The app runs on port 8080. Nginx bridges the two.
+
+### 4.1 Install Nginx
+
+```bash
+sudo apt install -y nginx
+```
+
+### 4.2 Create the Site Config
+
+```bash
+sudo nano /etc/nginx/sites-available/sportscard
+```
+
+Paste:
+
+```nginx
+server {
+    listen 80;
+    server_name rgsportscards.com www.rgsportscards.com;
+
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+### 4.3 Enable the Site
+
+```bash
+sudo ln -s /etc/nginx/sites-available/sportscard /etc/nginx/sites-enabled/
+sudo rm /etc/nginx/sites-enabled/default
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+Verify nginx is proxying to the app:
+
+```bash
+curl -v http://localhost
+# Should return HTTP 302 redirect to /login
+```
+
+---
+
+## Part 5 — Run as a systemd Service (24/7)
 
 ### 4.1 Create the Service File
 
@@ -178,7 +232,7 @@ The app will now:
 
 ---
 
-## Part 5 — Cloudflare DNS Update
+## Part 6 — Cloudflare DNS Update
 
 Once the app is running and confirmed healthy on GCP:
 
@@ -208,7 +262,7 @@ For simplicity with Cloudflare proxying, **Flexible** mode works without any cer
 
 ---
 
-## Part 6 — Deploying Updates
+## Part 7 — Deploying Updates
 
 When you push new code, the update flow is:
 
@@ -228,12 +282,16 @@ sudo systemctl restart sportscard
 ## Checklist
 
 - [ ] GCP account created with billing account attached
-- [ ] e2-micro VM created in us-central1/us-east1/us-west1
-- [ ] Java 17 installed on VM
+- [ ] e2-micro VM created in us-central1/us-east1/us-west1 with Standard persistent disk (30 GB)
+- [ ] GCP firewall rule `allow-http` created for TCP port 80
+- [ ] Java 17, Git, Maven installed on VM
 - [ ] `/etc/sportscard/env` created with all environment variables (Neon JDBC URL included)
-- [ ] JAR uploaded to VM
+- [ ] Repo cloned and JAR built (`./mvnw clean package -DskipTests -Pprod`)
+- [ ] Nginx installed, site config created, default site removed
 - [ ] `sportscard.service` created and enabled
 - [ ] App starts and logs look healthy (`journalctl -u sportscard -f`)
-- [ ] Cloudflare A record updated to GCP external IP
+- [ ] Cloudflare A record (`@`) updated to GCP external IP, CNAME `www` pointing to root
+- [ ] Cloudflare SSL/TLS mode set to **Flexible**
 - [ ] Email (SMTP) tested and working
-- [ ] Cron job fires at scheduled time (9 PM)
+- [ ] Yahoo Auction search tested and working
+- [ ] Cron job fires at scheduled time (9 PM Taiwan time)
