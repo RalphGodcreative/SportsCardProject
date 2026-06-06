@@ -131,7 +131,8 @@ body {
 .page-top {
   margin-top: 100px !important;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .center-div {

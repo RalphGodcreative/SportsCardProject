@@ -19,13 +19,13 @@
 
 #all-card,
 #result-card {
+  width: 100%;
   max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
   margin-top: 30px;
   margin-bottom: 30px;
   padding-left: 15px;
   padding-right: 15px;
+  box-sizing: border-box;
 }
 
 #card-table {
