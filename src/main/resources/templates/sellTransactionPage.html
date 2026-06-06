@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <title>Add Sale</title>
@@ -342,6 +342,12 @@
         margin-left: 5px;
         margin-right: 5px;
         cursor: pointer;
+        filter: invert(1) brightness(1.2);
+      }
+
+      #date::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
       }
 
       #note {
@@ -503,8 +509,9 @@
       <div
         id="include"
         class="center-div"
-        style="margin-top: 20px; margin-bottom: 20px; display: flex"
+        style="margin-top: 20px; margin-bottom: 20px"
       >
+        <div class="table-center">
         <table id="include-card">
           <tr>
             <th>card id</th>
@@ -512,6 +519,7 @@
             <th>action</th>
           </tr>
         </table>
+        </div>
       </div>
     </div>
     <div class="center-div" style="margin-top: 20px; margin-bottom: 20px">
@@ -520,6 +528,7 @@
     <div class="center-div" id="card">
       <h3>search card to add in sale</h3>
       <div id="search">
+        <div class="table-center">
         <table id="search-table">
           <tr>
             <th>id</th>
@@ -550,10 +559,12 @@
             <td><input type="text" id="value" size="6" /></td>
           </tr>
         </table>
+        </div>
       </div>
       <button id="search-butt" class="confirm-butt">search</button>
     </div>
     <div class="center-div" id="result" style="margin-top: 30px; display: none">
+      <div class="table-center">
       <table id="result-card">
         <tr>
           <th>id</th>
@@ -572,7 +583,9 @@
           <th>action</th>
         </tr>
       </table>
+      </div>
       <button id="hide-butt" class="destroy-butt">clear</button>
     </div>
   </body>
 </html>
+

@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RG Website</title>
     <style></style>
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
@@ -14,7 +15,8 @@
         </a>
       </span>
 
-      <ul>
+      <!-- Desktop nav (hidden on mobile via CSS) -->
+      <ul id="nav-links">
         <li class="dropdown">
           <a class="banner-category" href="/random">
             Randomizer
@@ -24,7 +26,6 @@
           <a class="banner-category" href="/card">
             cards
           </a>
-
           <div class="dropdown-content">
             <a href="/card/addTransaction">add Transaction</a>
             <a href="/card/cards">view Cards</a>
@@ -37,17 +38,31 @@
             yahoo crawler
           </a>
         </li>
-        <li title="open new tab">
-          <a class="banner-category" href="http://localhost:3000" target="_blank">
-            youtube
-          </a>
-        </li>
-        <!-- <li onclick="location.href='/cheer'">
-                    <div>
-                    <a>cheer</a>
-                    </div>
-                </li> -->
       </ul>
+
+      <!-- Mobile nav (hidden on desktop via CSS) -->
+      <div class="mobile-nav">
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <div class="mobile-menu" id="mobile-menu">
+          <a href="/random">Randomizer</a>
+          <a href="/card">Cards</a>
+          <a href="/card/addTransaction" class="mobile-sub">add Transaction</a>
+          <a href="/card/cards" class="mobile-sub">view Cards</a>
+          <a href="/card/searchCard" class="mobile-sub">search Cards</a>
+          <a href="/transactions/" class="mobile-sub">view Transactions</a>
+          <a href="/crawler">Yahoo Crawler</a>
+        </div>
+      </div>
+
+      <script>
+        document.getElementById('nav-toggle').addEventListener('click', function (e) {
+          e.stopPropagation();
+          document.getElementById('mobile-menu').classList.toggle('open');
+        });
+        document.addEventListener('click', function () {
+          document.getElementById('mobile-menu').classList.remove('open');
+        });
+      </script>
     </div>
   </body>
 </html>

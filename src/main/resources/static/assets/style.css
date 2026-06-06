@@ -131,7 +131,8 @@ body {
 .page-top {
   margin-top: 100px !important;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .center-div {
@@ -295,4 +296,103 @@ select option {
 
 input[type="checkbox"] {
   accent-color: #FAC938;
+}
+
+/* ==========================================================================
+   Table centering + mobile scroll utility
+   ========================================================================== */
+
+.table-center {
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ==========================================================================
+   Mobile nav — separate from desktop nav, shown only on small screens
+   ========================================================================== */
+
+.mobile-nav {
+  display: none;
+  margin-left: auto;
+  align-self: center;
+  position: relative;
+  margin-right: 10px;
+}
+
+.nav-toggle {
+  background: transparent;
+  border: 1px solid rgba(56, 201, 250, 0.3);
+  color: #38C9FA;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.nav-toggle:hover {
+  background-color: rgba(56, 201, 250, 0.08);
+}
+
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background: #0a0a0f;
+  border: 1px solid rgba(56, 201, 250, 0.2);
+  box-shadow: 0 4px 20px rgba(56, 201, 250, 0.1);
+  z-index: 200;
+}
+
+.mobile-menu.open {
+  display: flex;
+}
+
+.mobile-menu a {
+  color: #38C9FA !important;
+  text-decoration: none !important;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(56, 201, 250, 0.08);
+  font-family: fantasy !important;
+  font-size: 15px !important;
+  text-shadow: 0 0 8px rgba(56, 201, 250, 0.4);
+  transition: all 0.2s ease;
+  display: block;
+}
+
+.mobile-menu a:hover {
+  background-color: rgba(56, 201, 250, 0.08);
+  color: #f0abfc !important;
+  text-shadow: 0 0 12px rgba(240, 171, 252, 0.7) !important;
+}
+
+.mobile-menu .mobile-sub {
+  padding-left: 36px;
+  font-size: 13px !important;
+  color: #94a3b8 !important;
+  text-shadow: none;
+}
+
+.mobile-menu .mobile-sub:hover {
+  color: #38C9FA !important;
+}
+
+@media (max-width: 768px) {
+  #nav-links {
+    display: none !important;
+  }
+
+  .mobile-nav {
+    display: block;
+  }
+
+  .page-top {
+    margin-top: 60px !important;
+  }
 }
