@@ -299,21 +299,25 @@ input[type="checkbox"] {
 }
 
 /* ==========================================================================
-   Responsive — hamburger nav + mobile layout
+   Mobile nav — separate from desktop nav, shown only on small screens
    ========================================================================== */
 
-.nav-toggle {
+.mobile-nav {
   display: none;
+  margin-left: auto;
+  align-self: center;
+  position: relative;
+  margin-right: 10px;
+}
+
+.nav-toggle {
   background: transparent;
   border: 1px solid rgba(56, 201, 250, 0.3);
   color: #38C9FA;
   font-size: 20px;
   cursor: pointer;
   padding: 6px 14px;
-  margin-left: auto;
-  margin-right: 10px;
   border-radius: 4px;
-  align-self: center;
   transition: all 0.2s ease;
 }
 
@@ -321,41 +325,59 @@ input[type="checkbox"] {
   background-color: rgba(56, 201, 250, 0.08);
 }
 
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background: #0a0a0f;
+  border: 1px solid rgba(56, 201, 250, 0.2);
+  box-shadow: 0 4px 20px rgba(56, 201, 250, 0.1);
+  z-index: 200;
+}
+
+.mobile-menu.open {
+  display: flex;
+}
+
+.mobile-menu a {
+  color: #38C9FA !important;
+  text-decoration: none !important;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(56, 201, 250, 0.08);
+  font-family: fantasy !important;
+  font-size: 15px !important;
+  text-shadow: 0 0 8px rgba(56, 201, 250, 0.4);
+  transition: all 0.2s ease;
+  display: block;
+}
+
+.mobile-menu a:hover {
+  background-color: rgba(56, 201, 250, 0.08);
+  color: #f0abfc !important;
+  text-shadow: 0 0 12px rgba(240, 171, 252, 0.7) !important;
+}
+
+.mobile-menu .mobile-sub {
+  padding-left: 36px;
+  font-size: 13px !important;
+  color: #94a3b8 !important;
+  text-shadow: none;
+}
+
+.mobile-menu .mobile-sub:hover {
+  color: #38C9FA !important;
+}
+
 @media (max-width: 768px) {
-  .nav-toggle {
+  #nav-links {
+    display: none !important;
+  }
+
+  .mobile-nav {
     display: block;
-  }
-
-  .banner-header {
-    flex-wrap: wrap;
-  }
-
-  .banner-header ul {
-    display: none;
-    width: 100%;
-    flex-direction: column;
-    border-top: 1px solid rgba(56, 201, 250, 0.15);
-  }
-
-  .banner-header ul.nav-open {
-    display: flex;
-  }
-
-  .banner-header li {
-    float: none;
-    width: 100%;
-    border-right: none !important;
-    border-left: none !important;
-    border-bottom: 1px solid rgba(56, 201, 250, 0.1) !important;
-  }
-
-  .dropdown-content {
-    position: static;
-    box-shadow: none;
-    border: none;
-    border-left: 2px solid rgba(56, 201, 250, 0.2);
-    margin-left: 16px;
-    min-width: unset;
   }
 
   .page-top {
