@@ -124,9 +124,13 @@
     <div class="center-div" style="margin-top: 30px;">
       <a>the latest card :</a>
     </div>
-    
-    <div class="center-div" id="last-card" style="display: flex;">
-      
+
+    <div th:if="${lastCard == null}" class="center-div" style="margin-top: 20px; color: #aaa;">
+      No cards yet. Add your first card above!
+    </div>
+
+    <div th:if="${lastCard != null}" class="center-div" id="last-card" style="display: flex;">
+
       <table>
         <tr>
           <th>id</th>
@@ -214,5 +218,6 @@
   </div>
 </div>
 </body>
+
 
 </html>

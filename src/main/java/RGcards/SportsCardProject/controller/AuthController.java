@@ -2,6 +2,7 @@ package RGcards.SportsCardProject.controller;
 
 import RGcards.SportsCardProject.dao.UserRepository;
 import RGcards.SportsCardProject.entity.User;
+import RGcards.SportsCardProject.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -41,6 +42,15 @@ public class AuthController {
             Model model
     ) {
         if (!registrationEnabled) return "redirect:/login";
+        email = email.toLowerCase();
+        if (!ValidationUtil.isValidEmail(email)) {
+            model.addAttribute("error", "Please enter a valid email address.");
+            return "register";
+        }
+        if (!ValidationUtil.isValidPassword(password)) {
+            model.addAttribute("error", "Password must be at least 8 characters and contain at least one letter and one number.");
+            return "register";
+        }
         User user = new User();
         user.setEmail(email);
         user.setUsername(username);
@@ -54,4 +64,5 @@ public class AuthController {
         }
         return "redirect:/login?registered";
     }
+
 }

@@ -24,11 +24,14 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
     @Column(nullable = false)
     private String role;
+
+    @Column(nullable = false)
+    private String provider = "local";
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -38,6 +41,10 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    public String getDisplayName() {
+        return username;
     }
 
     @Override public boolean isAccountNonExpired()     { return true; }
