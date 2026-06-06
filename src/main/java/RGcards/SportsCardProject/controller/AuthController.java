@@ -42,6 +42,7 @@ public class AuthController {
             Model model
     ) {
         if (!registrationEnabled) return "redirect:/login";
+        email = email.toLowerCase();
         if (!ValidationUtil.isValidEmail(email)) {
             model.addAttribute("error", "Please enter a valid email address.");
             return "register";

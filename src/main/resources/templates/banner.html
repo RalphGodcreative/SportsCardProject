@@ -47,7 +47,7 @@
         </div>
         <div class="user-dropdown" sec:authorize="isAuthenticated()">
           <button class="user-btn" id="user-toggle">
-            <span sec:authentication="principal.displayName">User</span>
+            <span th:text="${displayUsername}">User</span>
             <span>&#9660;</span>
           </button>
           <div class="user-menu" id="user-menu">
@@ -74,7 +74,7 @@
             <a href="/login">Login</a>
           </div>
           <div sec:authorize="isAuthenticated()">
-            <span class="mobile-username" sec:authentication="principal.displayName">User</span>
+            <span class="mobile-username" th:text="${displayUsername}">User</span>
             <form th:action="@{/logout}" method="post" style="margin:0">
               <button type="submit" class="mobile-logout">Logout</button>
             </form>

@@ -23,18 +23,21 @@ public class UserController {
 
     @GetMapping("/edit")
     public String editPage(@AuthenticationPrincipal User user, Model model) {
+        if (user == null) return "redirect:/";
         model.addAttribute("user", user);
         return "edit-user";
     }
 
     @PostMapping("/edit")
     public String edit(
-            @AuthenticationPrincipal User currentUser,
+            @AuthenticationPrincipal(errorOnInvalidType = false) User currentUser,
             @RequestParam String username,
             @RequestParam String email,
             @RequestParam(required = false) String password,
             Model model
     ) {
+        if (currentUser == null) return "redirect:/";
+        email = email.toLowerCase();
         if (userRepository.existsByUsernameAndIdNot(username, currentUser.getId())) {
             model.addAttribute("user", currentUser);
             model.addAttribute("error", "Username is already taken.");
