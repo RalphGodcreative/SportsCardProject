@@ -130,26 +130,6 @@
   box-shadow: 0 0 14px rgba(247, 99, 69, 0.35) !important;
 }
 
-/* Responsive table scroll wrapper */
-.table-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  width: 100%;
-}
-
-@media (max-width: 768px) {
-  #all-card,
-  #result-card {
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-
-  #search-table {
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-}
-
 /* Paging */
 #page-control {
   margin-top: 10px;

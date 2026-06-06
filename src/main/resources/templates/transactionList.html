@@ -139,10 +139,6 @@
     }
 
     #card-table-wrap {
-      width: max-content;
-      max-width: calc(100vw - 30px);
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
       border-radius: 3px;
       background-color: #12121a;
       box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
@@ -176,6 +172,7 @@
   <div th:each="transactionWithCard : ${transactionWithCardList}">
     <div class="page-top">
       <div id="tran-table">
+        <div class="table-center">
         <table>
           <tr>
             <th>id</th>
@@ -190,11 +187,13 @@
             <td>[[${transactionWithCard.transaction.amount}]]</td>
           </tr>
         </table>
+        </div>
         <div id="delete-div">
           <button class="delete-butt destroy-butt" th:attr="data-id=${transactionWithCard.transaction.id}">delete</button>
         </div>
       </div>
       <div id="card-table-wrap">
+        <div class="table-center">
         <table id="card-table">
           <tr>
             <th>id</th>
@@ -274,6 +273,7 @@
             </td>
           </tr>
         </table>
+        </div>
       </div>
     </div>
   </div>
