@@ -40,6 +40,10 @@ public class User implements UserDetails {
         return email;
     }
 
+    public String getDisplayName() {
+        return username;
+    }
+
     @Override public boolean isAccountNonExpired()     { return true; }
     @Override public boolean isAccountNonLocked()      { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }

@@ -10,7 +10,7 @@ Open the app to a small group of external users for real-world testing and feedb
   - Homepage should display useful content for non-logged-in visitors (**Content TBD**)
 
 ### 2. Banner Auth Panel
-- [ ] Add a login/register auth panel to the site banner (visible on all pages)
+- [x] Add a login/register auth panel to the site banner (visible on all pages)
   - When logged out: show **Login** and **Register** buttons
   - **Register** button must respect the `app.registration.enabled` flag — hide when off
   - When logged in: show the **username** with a dropdown containing at minimum a **Logout** option

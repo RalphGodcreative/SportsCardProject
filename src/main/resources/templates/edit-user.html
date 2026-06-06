@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Profile</title>
+  <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  <style>
+    .edit-profile-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+    .edit-profile-box {
+      background: #0f0f18;
+      border: 1px solid rgba(56, 201, 250, 0.2);
+      border-radius: 8px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    }
+    .edit-profile-box h2 {
+      color: #CA47F5;
+      text-shadow: 0 0 10px rgba(202, 71, 245, 0.5);
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-family: fantasy;
+    }
+    .edit-profile-box label {
+      display: block;
+      color: #38C9FA;
+      font-size: 0.82rem;
+      margin-bottom: 0.3rem;
+      font-family: fantasy;
+      text-shadow: 0 0 6px rgba(56, 201, 250, 0.3);
+    }
+    .edit-profile-box input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid rgba(56, 201, 250, 0.25);
+      border-radius: 4px;
+      background: #0a0a0f;
+      color: #e2e8f0;
+      font-size: 1rem;
+      margin-bottom: 1.1rem;
+      transition: border-color 0.2s ease;
+    }
+    .edit-profile-box input:focus {
+      outline: none;
+      border-color: #38C9FA;
+      box-shadow: 0 0 8px rgba(56, 201, 250, 0.2);
+    }
+    .edit-profile-box .hint {
+      color: #555;
+      font-size: 0.75rem;
+      margin-top: -0.9rem;
+      margin-bottom: 1rem;
+    }
+    .edit-profile-box button[type=submit] {
+      width: 100%;
+      padding: 0.7rem;
+      background: linear-gradient(135deg, rgba(56, 201, 250, 0.15), rgba(202, 71, 245, 0.15));
+      border: 1px solid rgba(56, 201, 250, 0.4);
+      border-radius: 4px;
+      color: #38C9FA;
+      font-family: fantasy;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .edit-profile-box button[type=submit]:hover {
+      background: linear-gradient(135deg, rgba(56, 201, 250, 0.25), rgba(202, 71, 245, 0.25));
+      border-color: #38C9FA;
+      color: #f0abfc;
+    }
+    .change-pwd-btn {
+      width: 100%;
+      padding: 0.6rem;
+      background: none;
+      border: 1px solid rgba(202, 71, 245, 0.35);
+      border-radius: 4px;
+      color: #CA47F5;
+      font-family: fantasy;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 1.1rem;
+    }
+    .change-pwd-btn:hover {
+      background: rgba(202, 71, 245, 0.08);
+      border-color: #CA47F5;
+      color: #f0abfc;
+    }
+    .pwd-section { margin-bottom: 0.5rem; }
+    .field-error { color: #f87171; font-size: 0.78rem; margin: -0.7rem 0 1rem; }
+    .pwd-rules { background: #0a0a0f; border: 1px solid rgba(56, 201, 250, 0.15); border-radius: 4px; padding: 0.6rem 0.8rem; margin: -0.7rem 0 1rem; display: flex; flex-direction: column; gap: 0.3rem; }
+    .pwd-rule { font-size: 0.82rem; color: #555; transition: color 0.2s ease; }
+    .pwd-rule.met { color: #4ade80; }
+    .msg { text-align: center; font-size: 0.875rem; margin-top: 1rem; }
+    .msg.error { color: #f87171; }
+    .msg.success { color: #4ade80; }
+  </style>
+</head>
+<body>
+  <div th:replace="~{banner.html :: header}"></div>
+  <div class="page-top edit-profile-wrap">
+    <div class="edit-profile-box">
+      <h2>Edit Profile</h2>
+
+      <div th:if="${error}" class="msg error" th:text="${error}"></div>
+      <div th:if="${param.saved}" class="msg success">Changes saved.</div>
+
+      <form th:action="@{/user/edit}" method="post">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required
+               th:value="${user.displayName}" />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required
+               th:value="${user.email}" />
+
+        <button type="button" class="change-pwd-btn" id="toggle-pwd">Change Password</button>
+
+        <div class="pwd-section" id="pwd-section" style="display:none;">
+          <label for="password">New Password</label>
+          <input type="password" id="password" name="password" autocomplete="new-password"
+                 minlength="8" pattern="^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$"
+                 title="At least 8 characters, including 1 letter and 1 number" />
+          <div class="pwd-rules">
+            <div class="pwd-rule" id="rule-length">&#10007; At least 8 characters</div>
+            <div class="pwd-rule" id="rule-letter">&#10007; At least 1 letter</div>
+            <div class="pwd-rule" id="rule-number">&#10007; At least 1 number</div>
+          </div>
+
+          <label for="confirm-pwd">Confirm New Password</label>
+          <input type="password" id="confirm-pwd" autocomplete="new-password" />
+          <p class="field-error" id="pwd-confirm-error" style="display:none;">Passwords do not match.</p>
+        </div>
+
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+  </div>
+  <script>
+    var toggleBtn = document.getElementById('toggle-pwd');
+    var pwdSection = document.getElementById('pwd-section');
+    var pwdInput = document.getElementById('password');
+    var confirmInput = document.getElementById('confirm-pwd');
+    var confirmError = document.getElementById('pwd-confirm-error');
+    var ruleLength = document.getElementById('rule-length');
+    var ruleLetter = document.getElementById('rule-letter');
+    var ruleNumber = document.getElementById('rule-number');
+    var form = document.querySelector('form');
+    var pwdOpen = false;
+
+    function setRule(el, met, text) {
+      el.textContent = (met ? '✓ ' : '✗ ') + text;
+      el.classList.toggle('met', met);
+    }
+
+    function resetRules() {
+      setRule(ruleLength, false, 'At least 8 characters');
+      setRule(ruleLetter, false, 'At least 1 letter');
+      setRule(ruleNumber, false, 'At least 1 number');
+    }
+
+    pwdInput.addEventListener('input', function () {
+      var val = pwdInput.value;
+      setRule(ruleLength, val.length >= 8, 'At least 8 characters');
+      setRule(ruleLetter, /[a-zA-Z]/.test(val), 'At least 1 letter');
+      setRule(ruleNumber, /[0-9]/.test(val), 'At least 1 number');
+    });
+
+    toggleBtn.addEventListener('click', function () {
+      pwdOpen = !pwdOpen;
+      pwdSection.style.display = pwdOpen ? 'block' : 'none';
+      toggleBtn.textContent = pwdOpen ? 'Cancel Password Change' : 'Change Password';
+      if (!pwdOpen) {
+        pwdInput.value = '';
+        confirmInput.value = '';
+        confirmError.style.display = 'none';
+        confirmInput.setCustomValidity('');
+        resetRules();
+      }
+    });
+
+    confirmInput.addEventListener('input', function () {
+      if (confirmInput.value && confirmInput.value !== pwdInput.value) {
+        confirmError.style.display = 'block';
+        confirmInput.setCustomValidity('Passwords do not match.');
+      } else {
+        confirmError.style.display = 'none';
+        confirmInput.setCustomValidity('');
+      }
+    });
+
+    form.addEventListener('submit', function (e) {
+      if (pwdOpen && pwdInput.value !== confirmInput.value) {
+        e.preventDefault();
+        confirmError.style.display = 'block';
+        confirmInput.setCustomValidity('Passwords do not match.');
+      }
+    });
+  </script>
+</body>
+</html>

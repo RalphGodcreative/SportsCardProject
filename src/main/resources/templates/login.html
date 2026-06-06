@@ -20,7 +20,7 @@
 </head>
 <body>
   <div class="auth-box">
-    <h2>RG Cards</h2>
+    <h2>RG SportsCards</h2>
     <form th:action="@{/login}" method="post">
       <label for="email">Email</label>
       <input type="email" id="email" name="email" required autofocus />
@@ -34,6 +34,9 @@
     <p class="msg error" th:if="${param.error}">Invalid email or password.</p>
     <p class="msg success" th:if="${param.logout}">You have been signed out.</p>
     <p class="msg success" th:if="${param.registered}">Account created — you can now sign in.</p>
+    <p class="msg" th:if="${registrationEnabled}" style="color:#aaa;">
+      Don't have an account? <a href="/register" style="color:#c8a84b; text-decoration:none;">Register</a>
+    </p>
   </div>
 </body>
 </html>
