@@ -205,6 +205,25 @@ To use AI price potential analysis:
 2. Generate an API key
 3. Add the key to `application.properties` as `gemini.api.key`
 
+## Deploying Updates to Production
+
+The app runs on a GCP e2-micro VM. When you push new code, SSH into the VM and run:
+
+```bash
+cd ~/SportsCardProject
+git pull
+./mvnw clean package -DskipTests -Pprod
+sudo systemctl restart sportscard
+```
+
+Check the logs after restart:
+
+```bash
+sudo journalctl -u sportscard -f
+```
+
+> Full migration guide: [`docs/GCP_MIGRATION.md`](docs/GCP_MIGRATION.md)
+
 ## Development
 
 Hot reload is enabled via Spring DevTools. Changes to templates and code will be automatically reloaded during development.
