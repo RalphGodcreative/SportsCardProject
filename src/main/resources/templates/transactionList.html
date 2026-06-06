@@ -139,8 +139,11 @@
     }
 
     #card-table-wrap {
-      border-radius: 3px;
+      width: max-content;
+      max-width: calc(100vw - 30px);
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 3px;
       background-color: #12121a;
       box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
     }
@@ -171,7 +174,7 @@
 <body>
   <div th:replace="~{banner.html :: header}"></div>
   <div th:each="transactionWithCard : ${transactionWithCardList}">
-    <div class="page-top" style="display: flex; justify-content: center;">
+    <div class="page-top">
       <div id="tran-table">
         <table>
           <tr>
@@ -191,8 +194,6 @@
           <button class="delete-butt destroy-butt" th:attr="data-id=${transactionWithCard.transaction.id}">delete</button>
         </div>
       </div>
-    </div>
-    <div class="center-div" id="all-card" style="display: flex; justify-content: center;">
       <div id="card-table-wrap">
         <table id="card-table">
           <tr>
@@ -276,6 +277,7 @@
       </div>
     </div>
   </div>
+
 
 </body>
 
