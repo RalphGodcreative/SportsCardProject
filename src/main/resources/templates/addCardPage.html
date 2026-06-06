@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <title>Add New card</title>
@@ -55,6 +55,7 @@
         margin-left: 5px;
         margin-right: 5px;
         cursor: pointer;
+        filter: invert(1) brightness(1.2);
       }
 
       #note {
@@ -81,6 +82,7 @@
 
     <form method="get" th:action="@{/card/saveCard}">
       <div id="add">
+        <div class="table-center">
         <table>
           <tr>
             <th><i>*</i>year</th>
@@ -118,7 +120,8 @@
             </td>
           </tr>
         </table>
-        
+        </div>
+
         <div id="note">
           <div style="align-items: end">
             <a style="cursor: pointer;" onclick="hideNote()">x</a>
@@ -134,3 +137,4 @@
     </form>
   </body>
 </html>
+

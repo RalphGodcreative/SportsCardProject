@@ -118,7 +118,7 @@
 
     #tran-table {
       border-radius: 3px;
-      overflow: hidden;
+      overflow-x: auto;
       background-color: #12121a;
       box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
     }
@@ -170,8 +170,9 @@
 <body>
   <div th:replace="~{banner.html :: header}"></div>
   <div th:each="transactionWithCard : ${transactionWithCardList}">
-    <div class="page-top" style="display: flex; justify-content: center;">
+    <div class="page-top">
       <div id="tran-table">
+        <div class="table-center">
         <table>
           <tr>
             <th>id</th>
@@ -186,13 +187,13 @@
             <td>[[${transactionWithCard.transaction.amount}]]</td>
           </tr>
         </table>
+        </div>
         <div id="delete-div">
           <button class="delete-butt destroy-butt" th:attr="data-id=${transactionWithCard.transaction.id}">delete</button>
         </div>
       </div>
-    </div>
-    <div class="center-div" id="all-card" style="display: flex; justify-content: center;">
       <div id="card-table-wrap">
+        <div class="table-center">
         <table id="card-table">
           <tr>
             <th>id</th>
@@ -272,9 +273,11 @@
             </td>
           </tr>
         </table>
+        </div>
       </div>
     </div>
   </div>
+
 
 </body>
 
