@@ -16,7 +16,7 @@ Open the app to a small group of external users for real-world testing and feedb
   - When logged in: show the **username** with a dropdown containing at minimum a **Logout** option
 
 ### 3. Google OAuth2 Login
-- [ ] Implement Google login alongside existing username/password auth
+- [x] Implement Google login alongside existing username/password auth
   - Register the app in Google Cloud Console (separate from the GCP VM — this is an OAuth2 credential)
   - Auto-create a local user record on first Google login
   - See [impl-google-oauth2.md](impl-google-oauth2.md) for detailed code changes
