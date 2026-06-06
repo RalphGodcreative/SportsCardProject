@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RG Website</title>
     <style></style>
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
@@ -14,7 +15,8 @@
         </a>
       </span>
 
-      <ul>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <ul id="nav-links">
         <li class="dropdown">
           <a class="banner-category" href="/random">
             Randomizer
@@ -49,5 +51,10 @@
                 </li> -->
       </ul>
     </div>
+  <script>
+    document.getElementById('nav-toggle').addEventListener('click', function () {
+      document.getElementById('nav-links').classList.toggle('nav-open');
+    });
+  </script>
   </body>
 </html>

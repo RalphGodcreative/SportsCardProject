@@ -296,3 +296,68 @@ select option {
 input[type="checkbox"] {
   accent-color: #FAC938;
 }
+
+/* ==========================================================================
+   Responsive — hamburger nav + mobile layout
+   ========================================================================== */
+
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid rgba(56, 201, 250, 0.3);
+  color: #38C9FA;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px 14px;
+  margin-left: auto;
+  margin-right: 10px;
+  border-radius: 4px;
+  align-self: center;
+  transition: all 0.2s ease;
+}
+
+.nav-toggle:hover {
+  background-color: rgba(56, 201, 250, 0.08);
+}
+
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: block;
+  }
+
+  .banner-header {
+    flex-wrap: wrap;
+  }
+
+  .banner-header ul {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    border-top: 1px solid rgba(56, 201, 250, 0.15);
+  }
+
+  .banner-header ul.nav-open {
+    display: flex;
+  }
+
+  .banner-header li {
+    float: none;
+    width: 100%;
+    border-right: none !important;
+    border-left: none !important;
+    border-bottom: 1px solid rgba(56, 201, 250, 0.1) !important;
+  }
+
+  .dropdown-content {
+    position: static;
+    box-shadow: none;
+    border: none;
+    border-left: 2px solid rgba(56, 201, 250, 0.2);
+    margin-left: 16px;
+    min-width: unset;
+  }
+
+  .page-top {
+    margin-top: 60px !important;
+  }
+}

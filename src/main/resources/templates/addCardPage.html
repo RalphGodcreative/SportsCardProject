@@ -82,6 +82,7 @@
 
     <form method="get" th:action="@{/card/saveCard}">
       <div id="add">
+        <div class="table-scroll">
         <table>
           <tr>
             <th><i>*</i>year</th>
@@ -119,7 +120,8 @@
             </td>
           </tr>
         </table>
-        
+        </div>
+
         <div id="note">
           <div style="align-items: end">
             <a style="cursor: pointer;" onclick="hideNote()">x</a>

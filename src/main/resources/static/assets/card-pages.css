@@ -19,10 +19,13 @@
 
 #all-card,
 #result-card {
-  margin-left: 25%;
-  margin-right: 25%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 30px;
   margin-bottom: 30px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 #card-table {
@@ -61,10 +64,13 @@
 }
 
 #search-table {
-  margin-left: 25%;
-  margin-right: 25%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 30px;
   margin-bottom: 30px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 #search {
@@ -122,6 +128,26 @@
 .cancel:hover {
   background-color: rgba(247, 99, 69, 0.1) !important;
   box-shadow: 0 0 14px rgba(247, 99, 69, 0.35) !important;
+}
+
+/* Responsive table scroll wrapper */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  #all-card,
+  #result-card {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  #search-table {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
 }
 
 /* Paging */
