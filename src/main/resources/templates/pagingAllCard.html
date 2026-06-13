@@ -11,6 +11,7 @@
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{/js/util.js}"></script>
+  <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
   <script h:inline="javascript">
     $(document).ready(function () {
       $.ajaxSetup({
@@ -151,6 +152,7 @@
 
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
   <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
+  <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
 </head>
 
 <body>
@@ -183,7 +185,7 @@
         total cards: <span th:text="${cardCounts}"></span>
       </div>
       <div class="table-center">
-        <table id="card-table">
+        <table id="card-table" class="mobile-cards">
           <tr>
             <th>id</th>
             <th>year</th>

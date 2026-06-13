@@ -12,6 +12,7 @@
       type="text/javascript"
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
+    <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
 
     <script>
       $(document).ready(function () {
@@ -470,6 +471,7 @@
       }
     </style>
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
@@ -530,7 +532,7 @@
       <h3>search card to add in sale</h3>
       <div id="search">
         <div class="table-center">
-        <table id="search-table">
+        <table id="search-table" class="mobile-form">
           <tr>
             <th>id</th>
             <th>year</th>
@@ -566,7 +568,7 @@
     </div>
     <div class="center-div" id="result" style="margin-top: 30px; display: none">
       <div class="table-center">
-      <table id="result-card">
+      <table id="result-card" class="mobile-cards">
         <tr>
           <th>id</th>
           <th>year</th>

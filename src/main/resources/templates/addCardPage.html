@@ -10,6 +10,7 @@
       type="text/javascript"
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
+    <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
     <script>
       function showNote() {
         $("#note").show();
@@ -71,6 +72,7 @@
       }
     </style>
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
@@ -84,7 +86,7 @@
     <form method="get" th:action="@{/card/saveCard}">
       <div id="add">
         <div class="table-center">
-        <table>
+        <table class="mobile-form">
           <tr>
             <th><i>*</i>year</th>
             <th>publisher</th>
