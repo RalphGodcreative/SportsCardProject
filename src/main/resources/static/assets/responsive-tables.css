@@ -1,0 +1,164 @@
+/* ==========================================================================
+   Mobile: turn wide tables into stacked cards (<= 768px)
+   --------------------------------------------------------------------------
+   Opt a table in with a class:
+     .mobile-cards  -> data lists; key fields shown, the rest collapsed behind
+                       a tap (responsive-card-table.js toggles .expanded).
+     .mobile-form   -> input forms; every field stacked, always visible.
+   Column labels are NOT hard-coded here: responsive-card-table.js copies each
+   table's own <th> text onto its cells as data-label, so any column order
+   works and AJAX-injected rows are handled too.
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Let the scroll wrappers around our tables fill the screen instead */
+  .table-center:has(.mobile-cards),
+  .table-center:has(.mobile-form) {
+    width: 100%;
+    overflow-x: visible;
+  }
+
+  .mobile-cards,
+  .mobile-form {
+    display: block;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* The original <th> header row makes no sense repeated per card */
+  .mobile-cards tr:first-child,
+  .mobile-form tr:first-child {
+    display: none;
+  }
+
+  /* Each row becomes a card */
+  .mobile-cards tr,
+  .mobile-form tr {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 0 0 18px;
+    padding: 6px 0 4px;
+    border: 1px solid rgba(202, 71, 245, 0.25);
+    border-radius: 10px;
+    background-color: #12121a;
+    box-shadow: 0 0 18px rgba(202, 71, 245, 0.06);
+  }
+
+  /* Each cell: label on the left, value/input on the right */
+  .mobile-cards td,
+  .mobile-form td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    text-align: right;
+    word-break: break-word;
+    border: none !important;
+    border-bottom: 1px solid rgba(202, 71, 245, 0.08) !important;
+    padding: 9px 16px !important;
+  }
+
+  /* Printed label — populated from the column header by the JS */
+  .mobile-cards td::before,
+  .mobile-form td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #c084fc;
+    text-transform: capitalize;
+    text-align: left;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  /* ---- Collapsed view (lists only) ------------------------------------- */
+  /* All .mobile-cards tables share the same 14-column order, so the key /
+     detail split can be addressed by position. */
+  .mobile-cards td:nth-child(2)  { order: 0; } /* year     */
+  .mobile-cards td:nth-child(5)  { order: 1; } /* set      */
+  .mobile-cards td:nth-child(6)  { order: 2; } /* player   */
+  .mobile-cards td:nth-child(7)  { order: 3; } /* auto     */
+  .mobile-cards td:nth-child(9)  { order: 4; } /* parallel */
+  .mobile-cards td:nth-child(10) { order: 5; } /* numbered */
+  .mobile-cards td:nth-child(14) { order: 7; } /* action   */
+
+  /* Detail fields: hidden until the card is expanded */
+  .mobile-cards td:nth-child(1),
+  .mobile-cards td:nth-child(3),
+  .mobile-cards td:nth-child(4),
+  .mobile-cards td:nth-child(8),
+  .mobile-cards td:nth-child(11),
+  .mobile-cards td:nth-child(12),
+  .mobile-cards td:nth-child(13) {
+    order: 6;
+    display: none;
+  }
+
+  .mobile-cards tr.expanded td {
+    display: flex;
+  }
+
+  /* Emphasise the two headline fields when present */
+  .mobile-cards td:nth-child(6) .show {
+    font-size: 1.15em;
+    font-weight: 700;
+    color: #f0abfc;
+  }
+  .mobile-cards td:nth-child(12) .show {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #34d399;
+  }
+
+  /* Tap hint / toggle indicator at the bottom of each card */
+  .mobile-cards tr::after {
+    content: "\25B8 details";
+    order: 8;
+    padding: 7px 0 3px;
+    text-align: center;
+    color: #8b5cf6;
+    font-size: 0.82em;
+    letter-spacing: 0.04em;
+  }
+  .mobile-cards tr.expanded::after {
+    content: "\25BE less";
+  }
+
+  /* Action column: no label, centre and wrap the buttons */
+  .mobile-cards td:nth-child(14)::before {
+    content: "";
+  }
+  .mobile-cards td:nth-child(14) {
+    justify-content: center;
+    border-bottom: none !important;
+  }
+  .mobile-cards td:nth-child(14) span,
+  .mobile-form td:has(button) {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+  }
+  .mobile-form td:has(button)::before {
+    content: "";
+  }
+
+  /* Inputs grow within their cell */
+  .mobile-cards td input.update-element,
+  .mobile-form td input {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 60%;
+  }
+  .mobile-form td input[type="checkbox"] {
+    flex: 0 0 auto;
+  }
+
+  /* Search form container: stack vertically */
+  #search {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

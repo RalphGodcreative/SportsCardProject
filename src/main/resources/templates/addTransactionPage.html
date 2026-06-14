@@ -12,6 +12,7 @@
       type="text/javascript"
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
+    <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
 
     <script>
       $(document).ready(function () {
@@ -285,6 +286,7 @@
 
     </style>
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
@@ -326,7 +328,7 @@
       </div>
       <div id="add">
         <div class="table-center">
-        <table id="forCards">
+        <table id="forCards" class="mobile-form">
           <tr>
             <th><i>*</i>year</th>
             <th>sports</th>

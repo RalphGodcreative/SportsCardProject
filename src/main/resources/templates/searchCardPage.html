@@ -11,6 +11,7 @@
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
     <script type="text/javascript" th:src="@{/js/util.js}"></script>
+    <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
     <script h:inline="javascript">
       $(document).ready(function () {
 
@@ -289,6 +290,7 @@
 
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
     <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
+    <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
   </head>
   <body>
     <div id="potential-modal">
@@ -305,7 +307,7 @@
     <div class="center-div" id="card">
       <div class="center-div" id="search">
         <div class="table-center">
-        <table id="search-table">
+        <table id="search-table" class="mobile-form">
           <tr>
             <th>id</th>
             <th>year</th>
@@ -341,7 +343,7 @@
     </div>
     <div class="center-div" id="result" style="margin-top: 30px; display: none">
       <div class="table-center">
-      <table id="result-card">
+      <table id="result-card" class="mobile-cards">
         <tr>
           <th>id</th>
           <th>year</th>
