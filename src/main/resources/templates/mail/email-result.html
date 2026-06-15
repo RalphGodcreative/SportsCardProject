@@ -6,54 +6,77 @@
   <title>Product Search Results</title>
 </head>
 
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4;">
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #0a0a0f;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0a0a0f;">
     <tr>
       <td align="center" style="padding: 20px 0;">
         <table width="600" cellpadding="0" cellspacing="0"
-          style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          style="background-color: #12121a; border-radius: 8px; border: 1px solid rgba(56, 201, 250, 0.25); box-shadow: 0 0 30px rgba(56, 201, 250, 0.08);">
+
+          <!-- Header -->
           <tr>
-            <td style="padding: 20px; text-align: center; background-color: #5afefe; border-radius: 8px 8px 0 0;">
-              <h1 style="margin: 0; color: #333333; font-size: 24px;">Search Results</h1>
+            <td style="padding: 24px 20px; text-align: center; background-color: #0f0f1a; border-radius: 8px 8px 0 0; border-bottom: 1px solid rgba(56, 201, 250, 0.25);">
+              <p style="margin: 0 0 4px 0; font-size: 11px; letter-spacing: 3px; color: #38C9FA; text-transform: uppercase; text-shadow: 0 0 8px rgba(56, 201, 250, 0.6);">RG Sports Cards</p>
+              <h1 style="margin: 0; color: #e2e8f0; font-size: 22px; font-weight: bold;">Yahoo Auction Search Results &mdash; <span th:text="${formattedDate}"></span></h1>
             </td>
           </tr>
+
+          <!-- Body -->
           <tr>
             <td style="padding: 20px;">
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr th:each="entry: ${resultList}">
-                  <td style="padding: 10px; border: 1px solid #5afefe; border-radius: 4px; margin-bottom: 20px;">
-                    <h2 style="margin: 0 0 15px 0; color: #333333; font-size: 18px;" th:text="${entry.key.keyword}">
-                    </h2>
+                  <td style="padding-bottom: 24px;">
+
+                    <!-- Keyword heading -->
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 12px;">
+                      <tr>
+                        <td style="padding: 10px 14px; background-color: rgba(124, 58, 237, 0.15); border: 1px solid rgba(202, 71, 245, 0.35); border-radius: 4px;">
+                          <span style="color: #CA47F5; font-size: 15px; font-weight: bold; text-shadow: 0 0 8px rgba(202, 71, 245, 0.5);"
+                            th:text="${entry.key.keyword}"></span>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Product grid -->
                     <table width="100%" cellpadding="0" cellspacing="0">
                       <tr th:each="product, iterStat : ${entry.value}" th:if="${iterStat.index % 2 == 0}">
-                        <td style="padding: 10px; text-align: center; width: 50%;">
+
+                        <!-- Left product -->
+                        <td style="padding: 6px; width: 50%; vertical-align: top;">
                           <a th:href="${entry.value[iterStat.index].link}"
-                            style="color: #333333; text-decoration: none; display: block; border: 1px solid #03415b; border-radius: 2px; ">
-                            <span style="font-weight: bold; display: block; margin-bottom: 10px; color: #32c257;"
+                            style="color: #e2e8f0; text-decoration: none; display: block; background-color: #0f0f1a; border: 1px solid rgba(56, 201, 250, 0.2); border-radius: 6px; padding: 12px; text-align: center; box-shadow: 0 0 12px rgba(56, 201, 250, 0.05);">
+                            <span style="font-weight: bold; display: block; margin-bottom: 8px; font-size: 13px; color: #38C9FA; text-shadow: 0 0 6px rgba(56, 201, 250, 0.5); line-height: 1.5;"
                               th:text="${entry.value[iterStat.index].title}"></span>
                             <img th:src="${entry.value[iterStat.index].image}"
-                              style="max-width: 150px; height: auto; margin: 10px 0;" />
-                            <p style="margin: 5px 0; color: #e14008; font-weight: bold;">$ <span
-                                th:text="${entry.value[iterStat.index].price}"></span></p>
-                            <p th:if="${entry.value[iterStat.index].onAuction}" style="margin: 5px 0; color: #666666;"
+                              style="max-width: 130px; height: auto; margin: 8px 0; border-radius: 4px; border: 1px solid rgba(56, 201, 250, 0.15);" />
+                            <p style="margin: 6px 0 0 0; color: #F76345; font-weight: bold; font-size: 14px; text-shadow: 0 0 6px rgba(247, 99, 69, 0.4);">
+                              $ <span th:text="${entry.value[iterStat.index].price}"></span>
+                            </p>
+                            <p th:if="${entry.value[iterStat.index].onAuction}"
+                              style="margin: 4px 0 0 0; color: #94a3b8; font-size: 11px;"
                               th:text="${entry.value[iterStat.index].timeLeft}"></p>
                           </a>
                         </td>
-                        <td style="padding: 10px; text-align: center; width: 50%;"
+
+                        <!-- Right product -->
+                        <td style="padding: 6px; width: 50%; vertical-align: top;"
                           th:if="${iterStat.index + 1 < entry.value.size()}">
                           <a th:href="${entry.value[iterStat.index + 1].link}"
-                            style="color: #333333; text-decoration: none; display: block; border: 1px solid #03415b; border-radius: 2px; ">
-                            <span style="font-weight: bold; display: block; margin-bottom: 10px; color: #32c257;"
+                            style="color: #e2e8f0; text-decoration: none; display: block; background-color: #0f0f1a; border: 1px solid rgba(56, 201, 250, 0.2); border-radius: 6px; padding: 12px; text-align: center; box-shadow: 0 0 12px rgba(56, 201, 250, 0.05);">
+                            <span style="font-weight: bold; display: block; margin-bottom: 8px; font-size: 13px; color: #38C9FA; text-shadow: 0 0 6px rgba(56, 201, 250, 0.5); line-height: 1.5;"
                               th:text="${entry.value[iterStat.index + 1].title}"></span>
                             <img th:src="${entry.value[iterStat.index + 1].image}"
-                              style="max-width: 150px; height: auto; margin: 10px 0;" />
-                            <p style="margin: 5px 0; color: #e14008; font-weight: bold;">$ <span
-                                th:text="${entry.value[iterStat.index + 1].price}"></span></p>
+                              style="max-width: 130px; height: auto; margin: 8px 0; border-radius: 4px; border: 1px solid rgba(56, 201, 250, 0.15);" />
+                            <p style="margin: 6px 0 0 0; color: #F76345; font-weight: bold; font-size: 14px; text-shadow: 0 0 6px rgba(247, 99, 69, 0.4);">
+                              $ <span th:text="${entry.value[iterStat.index + 1].price}"></span>
+                            </p>
                             <p th:if="${entry.value[iterStat.index + 1].onAuction}"
-                              style="margin: 5px 0; color: #666666;"
+                              style="margin: 4px 0 0 0; color: #94a3b8; font-size: 11px;"
                               th:text="${entry.value[iterStat.index + 1].timeLeft}"></p>
                           </a>
                         </td>
+
                       </tr>
                     </table>
                   </td>
@@ -61,12 +84,14 @@
               </table>
             </td>
           </tr>
+
+          <!-- Footer -->
           <tr>
-            <td style="padding: 20px; text-align: center; background-color: #f8f8f8; border-radius: 0 0 8px 8px;">
-              <p style="margin: 0; color: #666666; font-size: 12px;">This is an automated email. Please do not reply.
-              </p>
+            <td style="padding: 16px 20px; text-align: center; background-color: #0f0f1a; border-radius: 0 0 8px 8px; border-top: 1px solid rgba(56, 201, 250, 0.15);">
+              <p style="margin: 0; color: #475569; font-size: 11px;">This is an automated email. Please do not reply.</p>
             </td>
           </tr>
+
         </table>
       </td>
     </tr>

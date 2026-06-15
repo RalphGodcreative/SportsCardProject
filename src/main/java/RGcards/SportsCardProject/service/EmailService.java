@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -41,12 +42,13 @@ public class EmailService {
      * @throws MessagingException if sending the email fails
      */
     public void sendSearchResultEmail(Map<SearchKeyword, List<SearchProduct>> resultList, String toEmail) throws MessagingException {
-        Map<String, Object> variable = new HashMap<>();
-        variable.put("resultList", resultList);
-        String mail = buildEmailContent("mail/email-result", variable);
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = today.format(formatter);
+        Map<String, Object> variable = new HashMap<>();
+        variable.put("resultList", resultList);
+        variable.put("formattedDate", formattedDate);
+        String mail = buildEmailContent("mail/email-result", variable);
         sendHtmlEmail(toEmail, "Yahoo Auction Search Result " + formattedDate, mail);
     }
 
@@ -92,6 +94,8 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
+            String fromAddress = env.getProperty("spring.mail.username");
+            helper.setFrom(fromAddress, "RG Sports Cards");
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
@@ -101,6 +105,8 @@ public class EmailService {
             mailSender.send(message);
         } catch (MessagingException e) {
             log.error("Encountered error sending email", e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 }
