@@ -42,12 +42,13 @@ public class EmailService {
      * @throws MessagingException if sending the email fails
      */
     public void sendSearchResultEmail(Map<SearchKeyword, List<SearchProduct>> resultList, String toEmail) throws MessagingException {
-        Map<String, Object> variable = new HashMap<>();
-        variable.put("resultList", resultList);
-        String mail = buildEmailContent("mail/email-result", variable);
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = today.format(formatter);
+        Map<String, Object> variable = new HashMap<>();
+        variable.put("resultList", resultList);
+        variable.put("formattedDate", formattedDate);
+        String mail = buildEmailContent("mail/email-result", variable);
         sendHtmlEmail(toEmail, "Yahoo Auction Search Result " + formattedDate, mail);
     }
 
