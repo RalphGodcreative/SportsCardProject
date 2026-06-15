@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -92,6 +93,8 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
+            String fromAddress = env.getProperty("spring.mail.username");
+            helper.setFrom(fromAddress, "RG Sports Cards");
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
@@ -101,6 +104,8 @@ public class EmailService {
             mailSender.send(message);
         } catch (MessagingException e) {
             log.error("Encountered error sending email", e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 }
