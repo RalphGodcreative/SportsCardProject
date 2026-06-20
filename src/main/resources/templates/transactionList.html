@@ -66,7 +66,6 @@
         $.ajax({
           url: "/card/updateCard",
           type: "POST",
-          // contentType: "application/json",
           data: formData,
           success: function (response) {
             alert("card info updated successfully");
@@ -98,6 +97,236 @@
             alert("error : " + error);
           },
         });
+      });
+
+      $(".tran-edit-butt").on("click", function () {
+        var block = $(this).closest(".page-top");
+        block.find("#tran-table .show").hide();
+        block.find("#tran-table .update-element").show();
+        $(this).hide();
+        block.find(".tran-save-butt, .tran-cancel-butt").show();
+        block.find("#card-table-wrap").hide();
+        block.find(".add-cards-section").show();
+      });
+
+      $(".tran-cancel-butt").on("click", function () {
+        var block = $(this).closest(".page-top");
+        block.find("#tran-table .show").show();
+        block.find("#tran-table .update-element").hide();
+        block.find(".tran-edit-butt").show();
+        block.find(".tran-save-butt, .tran-cancel-butt").hide();
+        block.find("#card-table-wrap").show();
+        block.find(".add-cards-section").hide();
+        block.find(".existing-cards-table .card-data").remove();
+      });
+
+      $(".tran-save-butt").on("click", function () {
+        var block = $(this).closest(".page-top");
+        var transactionId = block.find(".delete-butt").data("id");
+
+        var existingCardUpdates = [];
+        var newCards = [];
+        var hasInvalidCard = false;
+        block.find(".existing-cards-table tr").each(function () {
+          var row = $(this);
+          if (row.find("th").length > 0) return;
+
+          if (row.hasClass("card-data")) {
+            var cardData = {
+              year: row.find(".year").val(),
+              sports: row.find(".sports").val(),
+              publisher: row.find(".publisher").val(),
+              set: row.find(".set").val(),
+              player: row.find(".player").val(),
+              auto: row.find(".auto").is(":checked"),
+              insert: row.find(".insert").val(),
+              parallel: row.find(".parallel").val(),
+              numbered: row.find(".numbered").val(),
+              grade: row.find(".grade").val(),
+              value: row.find(".value").val(),
+            };
+            if (!cardData.year || !cardData.set || !cardData.player) {
+              hasInvalidCard = true;
+            }
+            newCards.push(cardData);
+          } else {
+            existingCardUpdates.push({
+              id: row.find(".id").val(),
+              year: row.find(".year").val(),
+              sports: row.find(".sports").val(),
+              publisher: row.find(".publisher").val(),
+              set: row.find(".set").val(),
+              player: row.find(".player").val(),
+              auto: row.find(".auto").is(":checked"),
+              insert: row.find(".insert").val(),
+              parallel: row.find(".parallel").val(),
+              numbered: row.find(".numbered").val(),
+              grade: row.find(".grade").val(),
+              value: row.find(".value").val(),
+            });
+          }
+        });
+
+        if (hasInvalidCard) {
+          alert("please fill in year, set, and player for every new card");
+          return;
+        }
+
+        var payload = {
+          date: block.find(".tran-date").val(),
+          type: block.find(".tran-type").val(),
+          amount: block.find(".tran-amount").val(),
+        };
+
+        $.ajax({
+          url: "/transactions/" + transactionId + "/update",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify(payload),
+          success: function (response) {
+            if (!response) {
+              alert("error updating transaction");
+              return;
+            }
+
+            var updateRequests = existingCardUpdates.map(function (cardData) {
+              return $.ajax({
+                url: "/card/updateCard",
+                type: "POST",
+                data: $.param(cardData),
+              });
+            });
+
+            $.when.apply($, updateRequests).then(function () {
+              if (newCards.length === 0) {
+                alert("transaction updated successfully");
+                window.location.reload();
+                return;
+              }
+              $.ajax({
+                url: "/transactions/" + transactionId + "/addCards",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(newCards),
+                success: function (addCardsResponse) {
+                  if (addCardsResponse) {
+                    alert("transaction updated successfully");
+                    window.location.reload();
+                  } else {
+                    alert("transaction updated, but error adding new cards");
+                  }
+                },
+                error: function (error) {
+                  console.log(error);
+                  alert("transaction updated, but error adding new cards : " + error);
+                },
+              });
+            }, function (error) {
+              console.log(error);
+              alert("transaction updated, but error updating existing cards : " + error);
+            });
+          },
+          error: function (error) {
+            console.log(error);
+            alert("error : " + error);
+          },
+        });
+      });
+
+      $(".card-remove-butt").on("click", function () {
+        if (!confirm("Delete this card from the transaction? This will permanently delete the card.")) return;
+        var block = $(this).closest(".page-top");
+        var transactionId = block.find(".delete-butt").data("id");
+        var cardId = $(this).data("card-id");
+        var row = $(this).closest("tr");
+
+        $.ajax({
+          url: "/transactions/" + transactionId + "/cards/" + cardId,
+          type: "DELETE",
+          success: function (response) {
+            if (response) {
+              row.remove();
+            } else {
+              alert("error removing card");
+            }
+          },
+          error: function (error) {
+            console.log(error);
+            alert("error : " + error);
+          },
+        });
+      });
+
+      var cardClipboard = {};
+
+      function newCardRowHtml() {
+        return `
+        <tr class="card-data">
+          <td><input type="text" class="year" size="4" /></td>
+          <td><input type="text" class="sports" size="6" /></td>
+          <td><input type="text" class="publisher" size="6" /></td>
+          <td><input type="text" class="set" size="10" /></td>
+          <td><input type="text" class="player" /></td>
+          <td><input type="checkbox" class="auto" /></td>
+          <td><input type="text" class="insert" size="6" /></td>
+          <td><input type="text" class="parallel" size="6" /></td>
+          <td><input type="text" class="numbered" size="6" /></td>
+          <td><input type="text" class="grade" size="6" /></td>
+          <td><input type="text" class="value" size="6" /></td>
+          <td>
+            <button class="copy action-butt">copy</button>
+            <button class="paste action-butt">paste</button>
+            <button class="clear action-butt cancel">clear</button>
+            <button class="delete-card action-butt cancel">delete</button>
+          </td>
+        </tr>`;
+      }
+
+      $(".add-card-row").on("click", function () {
+        var table = $(this).closest(".add-cards-section").find(".existing-cards-table");
+        table.append(newCardRowHtml());
+      });
+
+      $(".page-top").on("click", ".delete-card", function () {
+        $(this).closest(".card-data").remove();
+      });
+
+      $(".page-top").on("click", ".clear", function () {
+        var row = $(this).closest("tr");
+        row.find("input[type=text]:not(.id)").val("");
+        row.find("input[type=checkbox]").prop("checked", false);
+      });
+
+      $(".page-top").on("click", ".copy", function () {
+        var row = $(this).closest("tr");
+        cardClipboard = {
+          year: row.find(".year").val(),
+          sports: row.find(".sports").val(),
+          publisher: row.find(".publisher").val(),
+          set: row.find(".set").val(),
+          player: row.find(".player").val(),
+          auto: row.find(".auto").is(":checked"),
+          insert: row.find(".insert").val(),
+          parallel: row.find(".parallel").val(),
+          numbered: row.find(".numbered").val(),
+          grade: row.find(".grade").val(),
+          value: row.find(".value").val(),
+        };
+      });
+
+      $(".page-top").on("click", ".paste", function () {
+        var row = $(this).closest("tr");
+        row.find(".year").val(cardClipboard.year || "");
+        row.find(".sports").val(cardClipboard.sports || "");
+        row.find(".publisher").val(cardClipboard.publisher || "");
+        row.find(".set").val(cardClipboard.set || "");
+        row.find(".player").val(cardClipboard.player || "");
+        row.find(".auto").prop("checked", !!cardClipboard.auto);
+        row.find(".insert").val(cardClipboard.insert || "");
+        row.find(".parallel").val(cardClipboard.parallel || "");
+        row.find(".numbered").val(cardClipboard.numbered || "");
+        row.find(".grade").val(cardClipboard.grade || "");
+        row.find(".value").val(cardClipboard.value || "");
       });
 
     });
@@ -135,7 +364,10 @@
       margin: 5% 0 5% 0;
     }
 
-    .delete-butt {
+    .delete-butt,
+    .tran-edit-butt,
+    .tran-save-butt,
+    .tran-cancel-butt {
       font-size: 20px;
       padding: 6px 16px;
     }
@@ -163,6 +395,37 @@
       text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
     }
 
+    .add-cards-section {
+      margin-top: 5%;
+    }
+
+    .gold-form-wrap table,
+    .gold-form-wrap tr,
+    .gold-form-wrap th,
+    .gold-form-wrap td {
+      border: 1px solid rgba(250, 201, 56, 0.25);
+      border-collapse: collapse;
+      color: #e2e8f0;
+    }
+
+    .gold-form-wrap th {
+      padding-left: 6px;
+      padding-right: 6px;
+      background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
+      text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
+    }
+
+    .gold-form-wrap td {
+      padding-left: 6px;
+      padding-right: 6px;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    .add-cards-section i {
+      color: #f0abfc;
+    }
+
   </style>
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
   <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
@@ -185,13 +448,31 @@
           </tr>
           <tr>
             <td>[[${transactionWithCard.transaction.id}]]</td>
-            <td>[[${transactionWithCard.transaction.date}]]</td>
-            <td>[[${transactionWithCard.transaction.type}]]</td>
-            <td>[[${transactionWithCard.transaction.amount}]]</td>
+            <td>
+              <span class="show">[[${transactionWithCard.transaction.date}]]</span>
+              <input type="date" class="update-element tran-date" th:value="${transactionWithCard.transaction.date}" />
+            </td>
+            <td>
+              <span class="show">[[${transactionWithCard.transaction.type}]]</span>
+              <select class="update-element tran-type">
+                <option value="Break" th:selected="${transactionWithCard.transaction.type == 'Break'}">Break</option>
+                <option value="Buy" th:selected="${transactionWithCard.transaction.type == 'Buy'}">Buy</option>
+                <option value="Trade" th:selected="${transactionWithCard.transaction.type == 'Trade'}">Trade</option>
+                <option value="Giveaway" th:selected="${transactionWithCard.transaction.type == 'Giveaway'}">Giveaway</option>
+                <option value="Sell" th:selected="${transactionWithCard.transaction.type == 'Sell'}">Sell</option>
+              </select>
+            </td>
+            <td>
+              <span class="show">[[${transactionWithCard.transaction.amount}]]</span>
+              <input type="text" class="update-element tran-amount" th:value="${transactionWithCard.transaction.amount}" />
+            </td>
           </tr>
         </table>
         </div>
         <div id="delete-div">
+          <button class="tran-edit-butt action-butt">edit</button>
+          <button class="tran-save-butt confirm-butt update-element">save</button>
+          <button class="tran-cancel-butt destroy-butt update-element">cancel</button>
           <button class="delete-butt destroy-butt" th:attr="data-id=${transactionWithCard.transaction.id}">delete</button>
         </div>
       </div>
@@ -276,6 +557,53 @@
             </td>
           </tr>
         </table>
+        </div>
+      </div>
+      <div class="add-cards-section" style="display:none">
+        <div class="center-div" style="margin-top: 20px; margin-bottom: 10px">
+          <button class="add-card-row confirm-butt">add card</button>
+        </div>
+        <div class="gold-form-wrap">
+          <div class="table-center">
+          <table class="existing-cards-table mobile-form">
+            <tr>
+              <th><i>*</i>year</th>
+              <th>sports</th>
+              <th>publisher</th>
+              <th><i>*</i>set</th>
+              <th><i>*</i>player</th>
+              <th>auto</th>
+              <th>insert</th>
+              <th>parallel</th>
+              <th>numbered</th>
+              <th>grade</th>
+              <th>value</th>
+              <th>action</th>
+            </tr>
+            <tr th:each="card : ${transactionWithCard.cards}">
+              <td>
+                <input type="hidden" class="id" th:value="${card.id}" />
+                <input type="text" class="year" size="4" th:value="${card.year}" />
+              </td>
+              <td><input type="text" class="sports" size="6" th:value="${card.sports}" /></td>
+              <td><input type="text" class="publisher" size="6" th:value="${card.publisher}" /></td>
+              <td><input type="text" class="set" size="10" th:value="${card.set}" /></td>
+              <td><input type="text" class="player" th:value="${card.player}" /></td>
+              <td><input type="checkbox" class="auto" th:checked="${card.auto}" /></td>
+              <td><input type="text" class="insert" size="6" th:value="${card.insert}" /></td>
+              <td><input type="text" class="parallel" size="6" th:value="${card.parallel}" /></td>
+              <td><input type="text" class="numbered" size="6" th:value="${card.numbered}" /></td>
+              <td><input type="text" class="grade" size="6" th:value="${card.grade}" /></td>
+              <td><input type="text" class="value" size="6" th:value="${card.value}" /></td>
+              <td>
+                <button class="copy action-butt">copy</button>
+                <button class="paste action-butt">paste</button>
+                <button class="clear action-butt cancel">clear</button>
+                <button class="card-remove-butt action-butt cancel" th:attr="data-card-id=${card.id}">delete</button>
+              </td>
+            </tr>
+          </table>
+          </div>
         </div>
       </div>
     </div>

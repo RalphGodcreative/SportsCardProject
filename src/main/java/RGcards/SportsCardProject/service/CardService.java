@@ -90,6 +90,14 @@ public class CardService {
         }
     }
 
+    public void addCardsToTransaction(int transactionId, List<Card> cards, Long userId) {
+        for (Card card : cards) {
+            card.setUserId(userId);
+            int cardId = saveCard(card);
+            saveTransactionInfo(new TransactionInfo(transactionId, cardId, MoveType.IN));
+        }
+    }
+
     public void saveSaleWithCard(SaleWithCard saleWithCard, Long userId) {
         Transaction transaction = saleWithCard.getTransaction();
         transaction.setUserId(userId);

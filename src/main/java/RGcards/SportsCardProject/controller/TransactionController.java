@@ -58,4 +58,62 @@ public class TransactionController {
         }
         return true;
     }
+
+    @PostMapping("/{transactionId}/addCards")
+    @ResponseBody
+    public Boolean addCardsToTransaction(@PathVariable int transactionId, @RequestBody List<Card> cards,
+                                         @AuthenticationPrincipal User currentUser) {
+        Transaction transaction = cardService.findTransactionById(transactionId);
+        if (transaction == null || !transaction.getUserId().equals(currentUser.getId())) {
+            return false;
+        }
+        try {
+            cardService.addCardsToTransaction(transactionId, cards, currentUser.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @PostMapping("/{transactionId}/update")
+    @ResponseBody
+    public Boolean updateTransaction(@PathVariable int transactionId, @RequestBody Transaction transactionUpdate,
+                                     @AuthenticationPrincipal User currentUser) {
+        Transaction transaction = cardService.findTransactionById(transactionId);
+        if (transaction == null || !transaction.getUserId().equals(currentUser.getId())) {
+            return false;
+        }
+        try {
+            transaction.setDate(transactionUpdate.getDate());
+            transaction.setType(transactionUpdate.getType());
+            transaction.setAmount(transactionUpdate.getAmount());
+            cardService.saveTransaction(transaction);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @DeleteMapping("/{transactionId}/cards/{cardId}")
+    @ResponseBody
+    public Boolean removeCardFromTransaction(@PathVariable int transactionId, @PathVariable int cardId,
+                                             @AuthenticationPrincipal User currentUser) {
+        Transaction transaction = cardService.findTransactionById(transactionId);
+        if (transaction == null || !transaction.getUserId().equals(currentUser.getId())) {
+            return false;
+        }
+        Card card = cardService.getCardById(cardId, currentUser.getId());
+        if (card == null) {
+            return false;
+        }
+        try {
+            cardService.deleteCard(cardId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 }
