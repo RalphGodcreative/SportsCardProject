@@ -537,3 +537,152 @@ input[type="checkbox"] {
   background: rgba(56, 201, 250, 0.08);
   color: #f0abfc !important;
 }
+
+/* ==========================================================================
+   Landing Page — Hero & Feature Grid
+   ========================================================================== */
+
+body {
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(56, 201, 250, 0.10), transparent),
+    radial-gradient(ellipse 900px 600px at 90% 10%, rgba(202, 71, 245, 0.08), transparent);
+  background-attachment: fixed;
+}
+
+.hero {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 6px 14px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #38C9FA;
+  text-shadow: 0 0 8px rgba(56, 201, 250, 0.6);
+  border: 1px solid rgba(56, 201, 250, 0.3);
+  border-radius: 20px;
+  background: rgba(56, 201, 250, 0.06);
+}
+
+.hero h1 {
+  margin: 0 0 18px;
+  font-size: 44px;
+  line-height: 1.15;
+  color: #CA47F5;
+  text-shadow: 0 0 20px rgba(202, 71, 245, 0.45);
+}
+
+.hero p {
+  margin: 0 auto 34px;
+  max-width: 560px;
+  color: #94a3b8;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-block;
+  padding: 11px 26px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: transparent;
+  border: 1px solid rgba(63, 243, 123, 0.5);
+  color: #3FF37B;
+  box-shadow: 0 0 10px rgba(63, 243, 123, 0.2);
+}
+
+.btn-primary:hover {
+  background: rgba(63, 243, 123, 0.1);
+  box-shadow: 0 0 18px rgba(63, 243, 123, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid rgba(49, 246, 181, 0.35);
+  color: #31F6B5;
+  box-shadow: 0 0 8px rgba(49, 246, 181, 0.12);
+}
+
+.btn-secondary:hover {
+  background: rgba(49, 246, 181, 0.08);
+  box-shadow: 0 0 14px rgba(49, 246, 181, 0.3);
+}
+
+.features {
+  max-width: 810px;
+  margin: 20px auto 100px;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  text-align: center;
+}
+
+.feature-card {
+  background: #12121a;
+  border: 1px solid rgba(202, 71, 245, 0.2);
+  border-radius: 10px;
+  padding: 24px 20px;
+  text-decoration: none;
+  color: #e2e8f0;
+  box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
+  transition: all 0.25s ease;
+  display: block;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(202, 71, 245, 0.5);
+  box-shadow: 0 0 30px rgba(202, 71, 245, 0.22);
+}
+
+.feature-icon {
+  font-size: 26px;
+  margin-bottom: 14px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.feature-card h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: #38C9FA;
+  text-shadow: 0 0 8px rgba(56, 201, 250, 0.4);
+}
+
+.feature-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .features { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 520px) {
+  .features { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 32px; }
+}
