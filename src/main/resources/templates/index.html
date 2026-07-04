@@ -1,93 +1,43 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RG Sports Cards</title>
-    <style>
-      #part table,
-      #part th,
-      #part td {
-        border: 1px solid rgba(202, 71, 245, 0.2);
-        border-collapse: collapse;
-        padding: 8px;
-        color: #e2e8f0;
-      }
-
-      #part th {
-        font-family: Monospace bold;
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
-        text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
-      }
-
-      .pn {
-        font-family: fantasy;
-      }
-      .jw {
-        color: #F76345;
-        text-shadow: 0 0 6px rgba(247, 99, 69, 0.4);
-      }
-      #part {
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
-        padding-left: 15px;
-        padding-right: 15px;
-        text-align: center;
-      }
-      h2 {
-        color: #38C9FA;
-        text-shadow: 0 0 8px rgba(56, 201, 250, 0.5);
-      }
-      h1 {
-        color: #CA47F5;
-        text-shadow: 0 0 10px rgba(202, 71, 245, 0.5);
-      }
-    </style>
-
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top" style="text-align: center; margin: 8px">
-      <h2>卡況如圖，有問題皆可詢問</h2>
-    </div>
-    <div style="text-align: center">
-      <h1>
-        2022 Bowman Chrome Pink Vapor Refractors Jordan Walker /199 紅雀超級新人
-      </h1>
-    </div>
-    <div id="part">
-      <div style="margin: 20px">20歲或以下初登板連續安打場次 :</div>
-      <div class="table-center">
-      <table id="tb">
-        <tr>
-          <th>Player</th>
-          <th>Hitting Streak</th>
-          <th>Year</th>
-        </tr>
-        <tr>
-          <td class="pn"><a class="jw">Jordan Walker</a></td>
-          <td><a class="jw">12</a></td>
-          <td><a class="jw">2023</a></td>
-        </tr>
-        <tr>
-          <td class="pn">Eddie Murphy</td>
-          <td>12</td>
-          <td>1912</td>
-        </tr>
-        <tr>
-          <td class="pn">Ted Williams</td>
-          <td>9</td>
-          <td>1939</td>
-        </tr>
-        <tr>
-          <td class="pn">Fred Hutchison</td>
-          <td>8</td>
-          <td>1939</td>
-        </tr>
-      </table>
-      </div>
+
+    <div class="page-top">
+      <section class="hero">
+        <span class="eyebrow">RG Sports Cards</span>
+        <h1>Record. Track. Never Miss a Card.</h1>
+        <p>紀錄跟追蹤你的球員卡收藏跟交易紀錄，更有效率的球員卡庫存管理<br /><br />還有 Yahoo 拍賣每日關注特定關鍵字，把握入手心儀卡片好機會</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="/login" sec:authorize="isAnonymous()">Login</a>
+          <a class="btn btn-primary" href="/card" sec:authorize="isAuthenticated()">Go to Cards</a>
+          <a class="btn btn-secondary" href="/random">Try the Randomizer →</a>
+        </div>
+      </section>
+
+      <section class="features">
+        <a class="feature-card" href="/card/cards">
+          <span class="feature-icon">🗂️</span>
+          <h3>Card Collection</h3>
+          <p>Track year, set, grade, and value across your entire collection in one place.<br />紀錄卡片年份、系列、鑑定分數與價值，集中管理你的整個收藏。</p>
+        </a>
+        <a class="feature-card" href="/crawler">
+          <span class="feature-icon">🕸️</span>
+          <h3>Yahoo Auction Daily Tracker</h3>
+          <p>Yahoo Auctions Taiwan keyword search with email report every morning, save time to get your favorite cards<br />持續關注臺灣 Yahoo 拍賣，每天早上收到特定關鍵字的搜尋結果Email，減少你手動搜尋的時間。</p>
+        </a>
+        <a class="feature-card" href="/card/cards">
+          <span class="feature-icon">✨</span>
+          <h3>AI Price Potential</h3>
+          <p>Gemini-powered analysis with live search grounding to gauge a card's upside.<br />透過 Gemini 結合即時搜尋，評估卡片未來的增值潛力。</p>
+        </a>
+      </section>
     </div>
   </body>
 </html>
