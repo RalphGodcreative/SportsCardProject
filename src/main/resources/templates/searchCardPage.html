@@ -5,6 +5,8 @@
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <script
       type="text/javascript"
@@ -14,6 +16,14 @@
     <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
     <script h:inline="javascript">
       $(document).ready(function () {
+        $.ajaxSetup({
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader(
+              $('meta[name="_csrf_header"]').attr('content'),
+              $('meta[name="_csrf"]').attr('content')
+            );
+          }
+        });
 
         //search card
         function search(){
