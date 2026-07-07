@@ -159,10 +159,12 @@ server {
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Proto https;
     }
 }
 ```
+
+> **Why hardcode `https` instead of `$scheme`:** with Cloudflare SSL/TLS mode set to **Flexible** (see Part 6), Cloudflare always connects to this VM over plain HTTP, so `$scheme` here is always `http` — even when the visitor's browser used HTTPS. Forwarding `$scheme` as-is tells Spring Boot every request is `http`, which makes it generate `http://` redirect URLs and triggers mixed-content errors in the browser. Hardcoding `https` is safe here because Cloudflare (proxied/orange-cloud) is the only thing that reaches this VM on port 80, and it only proxies requests it received from the visitor over HTTPS as long as Cloudflare's **Always Use HTTPS** setting is enabled.
 
 ### 4.3 Enable the Site
 
@@ -179,6 +181,8 @@ Verify nginx is proxying to the app:
 curl -v http://localhost
 # Should return HTTP 302 redirect to /login
 ```
+
+> Spring Boot must also be told to trust the `X-Forwarded-*` headers nginx sends, otherwise it still builds redirect/absolute URLs using the scheme of the nginx→app connection (`http`) instead of the original visitor scheme. Set `server.forward-headers-strategy=framework` in `application-prod.properties`.
 
 ---
 
