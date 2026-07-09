@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,16 @@ public class RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
 
-    public List<Recommendation> findAll() {
-        return recommendationRepository.findAllByOrderByCreatedAtDesc();
+    public List<Recommendation> findCurrent() {
+        List<Recommendation> current = new ArrayList<>();
+        for (RecommendationAuthor author : RecommendationAuthor.values()) {
+            for (Recommendation recommendation : findCurrentByAuthor(author).values()) {
+                if (recommendation != null) {
+                    current.add(recommendation);
+                }
+            }
+        }
+        return current;
     }
 
     public Recommendation saveManual(Recommendation recommendation) {
