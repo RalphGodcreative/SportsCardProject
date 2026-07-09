@@ -42,6 +42,7 @@ public class SecurityConfig {
                     "/login", "/register",
                     "/assets/**", "/css/**", "/js/**", "/images/**", "/img/**"
                 ).permitAll()
+                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

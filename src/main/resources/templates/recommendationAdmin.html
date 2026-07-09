@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Player Recommendations</title>
+  <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  <style>
+    .reco-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px;
+    }
+    .reco-box {
+      background: #0f0f18;
+      border: 1px solid rgba(56, 201, 250, 0.2);
+      border-radius: 8px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 560px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+      margin-bottom: 2.5rem;
+    }
+    .reco-box h2 {
+      color: #CA47F5;
+      text-shadow: 0 0 10px rgba(202, 71, 245, 0.5);
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-family: fantasy;
+    }
+    .reco-box label {
+      display: block;
+      color: #38C9FA;
+      font-size: 0.82rem;
+      margin-bottom: 0.3rem;
+      font-family: fantasy;
+      text-shadow: 0 0 6px rgba(56, 201, 250, 0.3);
+    }
+    .reco-box input,
+    .reco-box select,
+    .reco-box textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid rgba(56, 201, 250, 0.25);
+      border-radius: 4px;
+      background: #0a0a0f;
+      color: #e2e8f0;
+      font-size: 1rem;
+      margin-bottom: 1.1rem;
+      transition: border-color 0.2s ease;
+      font-family: inherit;
+    }
+    .reco-box textarea {
+      resize: vertical;
+      min-height: 4.5rem;
+    }
+    .reco-box input:focus,
+    .reco-box select:focus,
+    .reco-box textarea:focus {
+      outline: none;
+      border-color: #38C9FA;
+      box-shadow: 0 0 8px rgba(56, 201, 250, 0.2);
+    }
+    .reco-box .hint {
+      color: #555;
+      font-size: 0.75rem;
+      margin-top: -0.9rem;
+      margin-bottom: 1rem;
+    }
+    .reco-box .form-actions {
+      display: flex;
+      gap: 0.6rem;
+    }
+    .reco-box button {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: 4px;
+      font-family: fantasy;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .reco-box button[type=submit] {
+      background: linear-gradient(135deg, rgba(56, 201, 250, 0.15), rgba(202, 71, 245, 0.15));
+      border: 1px solid rgba(56, 201, 250, 0.4);
+      color: #38C9FA;
+    }
+    .reco-box button[type=submit]:hover {
+      background: linear-gradient(135deg, rgba(56, 201, 250, 0.25), rgba(202, 71, 245, 0.25));
+      border-color: #38C9FA;
+      color: #f0abfc;
+    }
+    .reco-panels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1100px;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+    }
+    .reco-panel {
+      flex: 1 1 480px;
+      min-width: 0;
+    }
+    .reco-panel h3 {
+      font-family: fantasy;
+      font-size: 1rem;
+      margin: 0 0 0.6rem;
+    }
+    .reco-panel.admin h3 {
+      color: #38C9FA;
+      text-shadow: 0 0 6px rgba(56, 201, 250, 0.3);
+    }
+    .reco-panel.ai h3 {
+      color: #CA47F5;
+      text-shadow: 0 0 6px rgba(202, 71, 245, 0.3);
+    }
+    .reco-panel .default-table {
+      width: 100%;
+    }
+    .reco-empty {
+      color: #555;
+      font-style: italic;
+    }
+    .edit-btn {
+      padding: 0.35rem 0.7rem;
+      border-radius: 4px;
+      font-family: fantasy;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: none;
+      border: 1px solid rgba(56, 201, 250, 0.35);
+      color: #38C9FA;
+      transition: all 0.2s ease;
+    }
+    .edit-btn:hover {
+      background: rgba(56, 201, 250, 0.1);
+      color: #f0abfc;
+    }
+    .edit-btn.ai-btn {
+      border-color: rgba(202, 71, 245, 0.35);
+      color: #CA47F5;
+    }
+    .edit-btn.ai-btn:hover {
+      background: rgba(202, 71, 245, 0.08);
+      color: #f0abfc;
+    }
+  </style>
+</head>
+<body>
+  <div th:replace="~{banner.html :: header}"></div>
+  <div class="page-top reco-wrap">
+
+    <div class="reco-panels">
+      <div class="reco-panel admin">
+        <h3>Admin Picks</h3>
+        <table class="default-table">
+          <tr>
+            <th>Sport</th>
+            <th>Player</th>
+            <th>Reason</th>
+            <th>Updated</th>
+            <th></th>
+          </tr>
+          <tr th:each="entry : ${adminCurrent}">
+            <td>[[${entry.key}]]</td>
+            <td>
+              <span th:if="${entry.value != null}">[[${entry.value.player}]]</span>
+              <span th:unless="${entry.value != null}" class="reco-empty">No recommendation yet</span>
+            </td>
+            <td>[[${entry.value != null ? entry.value.reason : ''}]]</td>
+            <td>[[${entry.value != null and entry.value.createdAt != null ? #temporals.format(entry.value.createdAt, 'yyyy-MM-dd HH:mm') : ''}]]</td>
+            <td>
+              <button type="button" class="edit-btn admin-edit-btn"
+                th:attr="data-sport=${entry.key},data-player=${entry.value != null ? entry.value.player : ''},data-reason=${entry.value != null ? entry.value.reason : ''}"
+                th:text="${entry.value != null ? 'Edit' : 'Create New'}"></button>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="reco-panel ai">
+        <h3>AI Picks</h3>
+        <table class="default-table" id="ai-picks-table">
+          <tr>
+            <th>Sport</th>
+            <th>Player</th>
+            <th>Reason</th>
+            <th>Updated</th>
+            <th></th>
+          </tr>
+          <tr th:each="entry : ${aiCurrent}" th:attr="data-sport=${entry.key}">
+            <td>[[${entry.key}]]</td>
+            <td>
+              <span th:if="${entry.value != null}">[[${entry.value.player}]]</span>
+              <span th:unless="${entry.value != null}" class="reco-empty">No recommendation yet</span>
+            </td>
+            <td>[[${entry.value != null ? entry.value.reason : ''}]]</td>
+            <td>[[${entry.value != null and entry.value.createdAt != null ? #temporals.format(entry.value.createdAt, 'yyyy-MM-dd HH:mm') : ''}]]</td>
+            <td>
+              <form method="post" th:action="@{/admin/recommendations/generate/{sport}(sport=${entry.key})}" style="margin:0;">
+                <button type="submit" class="edit-btn ai-btn"
+                  th:text="${entry.value != null ? 'Regenerate' : 'Generate New'}"></button>
+              </form>
+            </td>
+          </tr>
+        </table>
+        <form method="post" th:action="@{/admin/recommendations/generate}" style="margin-top:0.8rem;" id="ai-generate-form">
+          <button type="submit" class="edit-btn ai-btn" style="width:100%;">Generate All with AI</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="reco-box">
+      <h2>Add Admin Recommendation</h2>
+      <form id="reco-form" th:action="@{/admin/recommendations}" method="post">
+        <label for="player">Player</label>
+        <input type="text" id="player" name="player" required />
+
+        <label for="sport">Sport</label>
+        <select id="sport" name="sport" required>
+          <option th:each="s : ${sports}" th:value="${s}" th:text="${s}"></option>
+        </select>
+
+        <label for="reason">Reason</label>
+        <textarea id="reason" name="reason" maxlength="120" placeholder="70-90 characters is ideal"></textarea>
+        <p class="hint">Max 120 characters.</p>
+
+        <div class="form-actions">
+          <button type="submit">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function fillForm(sport, player, reason) {
+      document.getElementById('sport').value = sport;
+      document.getElementById('player').value = player || '';
+      document.getElementById('reason').value = reason || '';
+      document.getElementById('reco-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('player').focus();
+    }
+
+    document.querySelectorAll('.admin-edit-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        fillForm(btn.dataset.sport, btn.dataset.player, btn.dataset.reason);
+      });
+    });
+
+    document.getElementById('ai-generate-form').addEventListener('submit', function () {
+      console.log('[AI recommendations] Generate All with AI submitted, waiting for server to regenerate all sports...');
+    });
+
+    document.querySelectorAll('#ai-picks-table tr[data-sport]').forEach(function (row) {
+      var cells = row.querySelectorAll('td');
+      console.log('[AI recommendations] current pick', {
+        sport: row.dataset.sport,
+        player: cells[1].textContent.trim(),
+        reason: cells[2].textContent.trim(),
+        updated: cells[3].textContent.trim()
+      });
+    });
+  </script>
+</body>
+</html>
