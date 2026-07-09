@@ -38,6 +38,81 @@
           <p>AI-powered analysis with live search grounding to gauge a card's upside.<br />透過 AI 結合即時資訊，評估卡片未來的增值潛力。</p>
         </a>
       </section>
+
+      <section class="picks-heading">
+        <h2>推薦入手收藏球員</h2>
+        <p>Recommend Player to Collect Now</p>
+      </section>
+
+      <section class="picks-group">
+        <span class="eyebrow" style="color: #E3F75E">RG's Pick</span>
+        <div class="picks" id="admin-picks"></div>
+      </section>
+
+      <section class="picks-group">
+        <span class="eyebrow" style="color: #E3F75E">AI's Pick</span>
+        <div class="picks" id="ai-picks"></div>
+      </section>
     </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var SPORT_META = {
+          BASEBALL: { icon: '⚾', label: 'Baseball' },
+          BASKETBALL: { icon: '🏀', label: 'Basketball' },
+          FOOTBALL: { icon: '🏈', label: 'Football' }
+        };
+        var SPORT_ORDER = ['BASEBALL', 'BASKETBALL', 'FOOTBALL'];
+
+        function buildCard(sport, recommendation) {
+          var meta = SPORT_META[sport];
+          var card = document.createElement('div');
+          card.className = 'pick-card';
+
+          var icon = document.createElement('span');
+          icon.className = 'pick-icon';
+          icon.textContent = meta.icon;
+          card.appendChild(icon);
+
+          var sportLabel = document.createElement('span');
+          sportLabel.className = 'pick-sport';
+          sportLabel.textContent = meta.label;
+          card.appendChild(sportLabel);
+
+          var h3 = document.createElement('h3');
+          h3.textContent = recommendation ? recommendation.player : 'Coming Soon';
+          card.appendChild(h3);
+
+          var desc = document.createElement('p');
+          desc.className = 'pick-desc';
+          desc.textContent = recommendation ? recommendation.reason : 'No recommendation yet.';
+          card.appendChild(desc);
+
+          return card;
+        }
+
+        function renderPicks(containerId, author, recommendations) {
+          var container = document.getElementById(containerId);
+          if (!container) return;
+
+          SPORT_ORDER.forEach(function (sport) {
+            var recommendation = recommendations.find(function (r) {
+              return r.sport === sport && r.author === author;
+            });
+            container.appendChild(buildCard(sport, recommendation));
+          });
+        }
+
+        fetch('/recommendation')
+          .then(function (res) { return res.json(); })
+          .then(function (recommendations) {
+            renderPicks('admin-picks', 'ADMIN', recommendations);
+            renderPicks('ai-picks', 'AI', recommendations);
+          })
+          .catch(function (err) {
+            console.error('[recommendations] failed to load', err);
+          });
+      });
+    </script>
   </body>
 </html>

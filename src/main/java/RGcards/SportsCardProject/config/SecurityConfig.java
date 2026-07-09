@@ -40,8 +40,10 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/", "/random", "/randomize",
                     "/login", "/register",
+                    "/recommendation",
                     "/assets/**", "/css/**", "/js/**", "/images/**", "/img/**"
                 ).permitAll()
+                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
