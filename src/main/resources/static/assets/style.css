@@ -686,3 +686,122 @@ body {
   .features { grid-template-columns: 1fr; }
   .hero h1 { font-size: 32px; }
 }
+
+.picks-heading {
+  max-width: 810px;
+  margin: 0 auto;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.picks-heading .eyebrow {
+  margin-bottom: 14px;
+}
+
+.picks-heading h2 {
+  margin: 0 0 6px;
+  font-size: 27px;
+  color: #31F6B5;
+  text-shadow: 0 0 16px rgba(49, 246, 181, 0.4);
+}
+
+.picks-heading p {
+  margin: 0 0 30px;
+  color: #94a3b8;
+  font-size: 16px;
+}
+
+.picks {
+  max-width: 810px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  text-align: center;
+}
+
+.pick-card {
+  background: #12121a;
+  border: 1px solid rgba(49, 246, 181, 0.25);
+  border-radius: 10px;
+  padding: 26px 20px;
+  color: #e2e8f0;
+  box-shadow: 0 0 20px rgba(49, 246, 181, 0.06);
+}
+
+.pick-icon {
+  font-size: 26px;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.pick-sport {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 3px 10px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #31F6B5;
+  text-shadow: 0 0 6px rgba(49, 246, 181, 0.4);
+  border: 1px solid rgba(49, 246, 181, 0.35);
+  border-radius: 20px;
+  background: rgba(49, 246, 181, 0.06);
+}
+
+.pick-card h3 {
+  margin: 0 auto 8px;
+  width: 100%;
+  max-width: 190px;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 19px;
+  color: #e2e8f0;
+}
+
+.pick-card .pick-desc {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 190px;
+  min-height: 64px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #94a3b8;
+}
+
+@media (max-width: 900px) {
+  .picks { grid-template-columns: repeat(2, 1fr); }
+
+  .pick-card h3,
+  .pick-card .pick-desc {
+    max-width: 240px;
+  }
+}
+
+@media (max-width: 520px) {
+  .picks { grid-template-columns: 1fr; }
+
+  .pick-card h3,
+  .pick-card .pick-desc {
+    max-width: 280px;
+  }
+}
+
+.picks-group {
+  max-width: 810px;
+  margin: 0 auto 20px;
+  padding: 0 24px;
+}
+
+.picks-group:last-of-type {
+  margin-bottom: 100px;
+}
+
+.picks-group .eyebrow {
+  display: block;
+  width: fit-content;
+  margin: 0 auto 18px;
+}
