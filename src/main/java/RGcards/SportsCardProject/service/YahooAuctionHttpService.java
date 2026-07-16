@@ -75,9 +75,15 @@ public class YahooAuctionHttpService {
             }
 
             String productId = hit.path("ec_productid").asText();
+            boolean isPriorityItem = hit.path("ec_is_priority_item").asBoolean(false);
             if (lastId != null && !productId.isEmpty()
                     && Long.parseLong(productId) <= Long.parseLong(lastId)) {
-                break;
+                if (isPriorityItem) {
+                    log.info("Skipping priority product with ID {} because it is not newer than lastId {}", productId, lastId);
+                    continue;
+                } else {
+                    break;
+                }
             }
 
             boolean onAuction = !hit.path("ec_numbids").asText().isEmpty();
