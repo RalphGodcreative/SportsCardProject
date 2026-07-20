@@ -10,6 +10,7 @@ Each user owns their own data. Ownership is enforced by a `user_id` foreign key 
 | `Card` | Yes | Root entity, has its own listing page (`/card`) |
 | `Transaction` | Yes | Has its own listing page (`/transactions`) |
 | `SearchKeyword` | Yes | Root entity, has its own listing page (`/crawler`) |
+| `Storage` | Yes | Root entity, has its own listing page (`/storage`) — planned, see `impl-storages.md` |
 | `TransactionInfo` | No | Only accessed as a detail of `Transaction` |
 | `SaleWithCard` | No | Only accessed as a detail of `Card` |
 | `SearchProduct` | No | Only accessed as a result of `SearchKeyword` |
