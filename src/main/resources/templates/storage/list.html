@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Storages</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  <script>
+    function getCsrf() {
+      return {
+        token: document.querySelector('meta[name="_csrf"]').getAttribute('content'),
+        header: document.querySelector('meta[name="_csrf_header"]').getAttribute('content')
+      };
+    }
+
+    function addStorage() {
+      var name = $('#new-storage-name').val();
+      if (!name) return;
+      var csrf = getCsrf();
+      fetch('/storage/add?name=' + encodeURIComponent(name), {
+        method: 'PUT',
+        headers: { [csrf.header]: csrf.token }
+      })
+        .then(res => res.json())
+        .then(success => {
+          if (success) location.reload();
+          else alert('Failed to add storage.');
+        });
+    }
+
+    $(document).ready(function () {
+      $('.delete-storage').on('click', function () {
+        if (!confirm('Delete this storage? Cards inside it become unassigned.')) return;
+        var id = $(this).data('id');
+        var csrf = getCsrf();
+        fetch('/storage/delete?storageId=' + id, {
+          method: 'DELETE',
+          headers: { [csrf.header]: csrf.token }
+        })
+          .then(res => res.json())
+          .then(success => {
+            if (success) location.reload();
+            else alert('Something went wrong.');
+          });
+      });
+
+      $('.edit-storage').on('click', function () {
+        var row = $(this).closest('tr');
+        row.find('.storage-name-view').hide();
+        row.find('.storage-name-edit').show().find('input').focus();
+      });
+
+      $('.cancel-edit').on('click', function () {
+        var row = $(this).closest('tr');
+        row.find('.storage-name-edit').hide();
+        row.find('.storage-name-view').show();
+      });
+
+      $('.save-storage').on('click', function () {
+        var row = $(this).closest('tr');
+        var id = row.data('id');
+        var name = row.find('.storage-name-edit input').val();
+        if (!name) return;
+        var csrf = getCsrf();
+        fetch('/storage/rename?storageId=' + id + '&name=' + encodeURIComponent(name), {
+          method: 'PUT',
+          headers: { [csrf.header]: csrf.token }
+        })
+          .then(res => res.json())
+          .then(success => {
+            if (success) location.reload();
+            else alert('Failed to rename storage.');
+          });
+      });
+    });
+  </script>
+</head>
+<body>
+  <div th:replace="~{banner.html :: header}"></div>
+  <div class="page-top" style="flex-direction: column; align-items: center;">
+    <div class="center-div" style="margin-bottom: 3rem; padding-top: 50px;">
+      <input type="text" id="new-storage-name" placeholder="storage name" />
+      <button class="confirm-butt" onclick="addStorage()">add storage</button>
+    </div>
+    <table class="default-table" id="storage-table">
+      <tr>
+        <th>name</th>
+        <th>action</th>
+      </tr>
+      <tr th:each="storage : ${storages}" th:data-id="${storage.id}">
+        <td>
+          <span class="storage-name-view" th:text="${storage.name}"></span>
+          <span class="storage-name-edit" style="display:none;">
+            <input type="text" th:value="${storage.name}" />
+          </span>
+        </td>
+        <td>
+          <span class="storage-name-view">
+            <button class="action-butt view-cards"
+              th:onclick="'window.location.href=\'/storage/' + ${storage.id} + '/cards\''">view cards</button>
+            <button class="edit-storage">edit</button>
+            <button class="delete-storage destroy-butt" th:data-id="${storage.id}">delete</button>
+          </span>
+          <span class="storage-name-edit" style="display:none;">
+            <button class="save-storage">save</button>
+            <button class="cancel-edit">cancel</button>
+          </span>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>

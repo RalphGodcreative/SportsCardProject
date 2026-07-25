@@ -75,7 +75,7 @@ import java.util.Optional;
 
 public interface StorageRepository extends JpaRepository<Storage, Long> {
 
-    List<Storage> findByUserIdOrderByNameAsc(Long userId);
+    List<Storage> findByUserIdOrderByIdAsc(Long userId);
 
     Optional<Storage> findByIdAndUserId(long id, Long userId);
 }
@@ -109,7 +109,7 @@ public class StorageService {
     private final StorageRepository storageRepository;
 
     public List<Storage> findAllForUser(Long userId) {
-        return storageRepository.findByUserIdOrderByNameAsc(userId);
+        return storageRepository.findByUserIdOrderByIdAsc(userId);
     }
 
     public Storage create(String name, Long userId) {
@@ -423,13 +423,15 @@ A `storage` column on the tables that list card data — `allCard.html`, `paging
 Since `Card` only stores a `storageId`, not a name, the templates need a way to resolve id → name for the read-only `show` state, and a set of options for the `<select>`. One `Map<Long, String>` (id → name) covers both — Thymeleaf can iterate a map's entries directly for the `<option>`s, so there's no need for a separate `storages` list on top of it. Add a small helper to `StorageService`:
 
 ```java
-// StorageService.java — also needs `import java.util.Map;` and `import java.util.stream.Collectors;`
-// added to the import list from section 6.
+// StorageService.java — also needs `import java.util.LinkedHashMap;`, `import java.util.Map;`, and
+// `import java.util.stream.Collectors;` added to the import list from section 6.
 public Map<Long, String> findNameMapForUser(Long userId) {
     return findAllForUser(userId).stream()
-            .collect(Collectors.toMap(Storage::getId, Storage::getName));
+            .collect(Collectors.toMap(Storage::getId, Storage::getName, (a, b) -> a, LinkedHashMap::new));
 }
 ```
+
+`findAllForUser` already queries `ORDER BY id ASC`; collecting into a `LinkedHashMap` (instead of the default `HashMap`) preserves that order so every `storageNames`-driven `<option th:each>` dropdown renders storages by id ascending rather than arbitrary hash order.
 
 - Controllers — add `model.addAttribute("storageNames", storageService.findNameMapForUser(currentUser.getId()))` to:
   - `CardController.allCards` (`allCard.html`)

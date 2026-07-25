@@ -13,6 +13,13 @@
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
     <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
+    <script th:inline="javascript">
+      var storages = /*[[${storages}]]*/ [];
+      var storageOptionsHtml = '<option value="">-- none --</option>' +
+        storages.map(function (s) {
+          return '<option value="' + s.id + '">' + s.name + '</option>';
+        }).join('');
+    </script>
 
     <script>
       $(document).ready(function () {
@@ -24,6 +31,8 @@
             );
           }
         });
+
+        $("#forCards .card-data .storage").html(storageOptionsHtml);
 
         //todo
 
@@ -39,6 +48,7 @@
           sports: "",
           grade: "",
           value: "",
+          storage: "",
         };
 
         function getCardList() {
@@ -56,6 +66,7 @@
               sports: $(this).find(".sports").val(),
               grade: $(this).find(".grade").val(),
               value: $(this).find(".value").val(),
+              storageId: $(this).find(".storage").val() || null,
             };
 
             cardList.push(cardData);
@@ -77,7 +88,7 @@
             <td><input type="text" class="numbered" id="numbered" size="6" /></td>
             <td><input type="text" class="grade" id="grade" size="6" /></td>
             <td><input type="text" class="value" id="value" size="6" /></td>
-            
+            <td><select class="storage">` + storageOptionsHtml + `</select></td>
             <td>
               <button class="copy action-butt">copy</button>
               <button class="paste action-butt">paste</button>
@@ -156,6 +167,7 @@
           row.find(".sports").val("");
           row.find(".grade").val("");
           row.find(".value").val("");
+          row.find(".storage").val("");
         });
 
         // copy card row data to clipboard
@@ -172,6 +184,7 @@
           clipboardCard.sports = row.find(".sports").val();
           clipboardCard.grade = row.find(".grade").val();
           clipboardCard.value = row.find(".value").val();
+          clipboardCard.storage = row.find(".storage").val();
         });
 
         // past clipboard card data to card row
@@ -188,6 +201,7 @@
           row.find(".sports").val(clipboardCard.sports);
           row.find(".grade").val(clipboardCard.grade);
           row.find(".value").val(clipboardCard.value);
+          row.find(".storage").val(clipboardCard.storage);
         });
       });
 
@@ -342,6 +356,7 @@
             <th>grade</th>
             <th>value</th>
             <!-- <th>note</th> -->
+            <th>storage</th>
             <th>action</th>
           </tr>
           <tr class="card-data">
@@ -359,6 +374,7 @@
             <!-- <td>
               <img class="add-note" alt="add note" th:src="@{/img/notes.png}" />
             </td> -->
+            <td><select class="storage"><option value="">-- none --</option></select></td>
             <td>
               <button class="copy action-butt">copy</button>
               <button class="paste action-butt">paste</button>

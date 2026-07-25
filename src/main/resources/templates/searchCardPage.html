@@ -14,6 +14,9 @@
     ></script>
     <script type="text/javascript" th:src="@{/js/util.js}"></script>
     <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
+    <script th:inline="javascript">
+      var storageNames = /*[[${storageNames}]]*/ {};
+    </script>
     <script h:inline="javascript">
       $(document).ready(function () {
         $.ajaxSetup({
@@ -43,6 +46,7 @@
             numbered: $("#numbered").val(),
             grade: $("#grade").val(),
             value: $("#value").val(),
+            storageId: $("#storage").val() || null,
           };
 
           $.ajax({
@@ -168,6 +172,15 @@
             </td>
             <td><a class="show show-note">${card.note}</a></td>
             <td>
+              <a class="show show-storage">${card.storageId != null && storageNames[card.storageId] ? storageNames[card.storageId] : ''}</a>
+              <select class="update-element storage">
+                <option value="">-- none --</option>
+                ${Object.entries(storageNames).map(([id, name]) =>
+                  '<option value="' + id + '"' + (String(card.storageId) === id ? ' selected' : '') + '>' + name + '</option>'
+                ).join('')}
+              </select>
+            </td>
+            <td>
               <span style="display: flex">
                 <button class="show action-butt modify">modify</button>
                 <button class="show action-butt comps">comps</button>
@@ -275,6 +288,7 @@
             sports: row.find(".sports").val(),
             grade: row.find(".grade").val(),
             value: row.find(".value").val(),
+            storageId: row.find(".storage").val() || null,
           };
 
           var formData = $.param(cardData);
@@ -331,6 +345,7 @@
             <th>numbered</th>
             <th>grade</th>
             <th>value</th>
+            <th>storage</th>
           </tr>
           <tr>
             <td><input type="text" id="id" size="4" /></td>
@@ -345,6 +360,12 @@
             <td><input type="text" id="numbered" size="6" /></td>
             <td><input type="text" id="grade" size="6" /></td>
             <td><input type="text" id="value" size="6" /></td>
+            <td>
+              <select id="storage">
+                <option value="">-- any --</option>
+                <option th:each="entry : ${storageNames}" th:value="${entry.key}" th:text="${entry.value}"></option>
+              </select>
+            </td>
           </tr>
         </table>
         </div>
@@ -368,6 +389,7 @@
           <th>grade</th>
           <th>value</th>
           <th>note</th>
+          <th>storage</th>
           <th>action</th>
         </tr>
       </table>

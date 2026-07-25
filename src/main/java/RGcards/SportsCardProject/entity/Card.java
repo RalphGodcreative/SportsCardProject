@@ -38,6 +38,9 @@ public class Card {
     @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "storage_id")
+    private Long storageId;
+
 
     public Card(int id, String year, String publisher, String set, String player, Boolean auto, String insert, String parallel, String numbered, String sports, String grade, Double value, String note) {
         this.id = id;
