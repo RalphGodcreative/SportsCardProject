@@ -57,6 +57,7 @@
           sports: row.find(".sports").val(),
           grade: row.find(".grade").val(),
           value: row.find(".value").val(),
+          storageId: row.find(".storage").val() || null,
         };
 
         var formData = $.param(cardData);
@@ -160,6 +161,7 @@
           <th>grade</th>
           <th>value</th>
           <th>note</th>
+          <th>storage</th>
           <th>action</th>
         </tr>
         <tr>
@@ -212,6 +214,14 @@
               th:value="${lastCard.value}" />
           </td>
           <td><a class="show show-note">[[${lastCard.note}]]</a></td>
+          <td>
+            <a class="show show-storage" th:text="${lastCard.storageId != null ? storageNames.get(lastCard.storageId) : ''}"></a>
+            <select class="update-element storage">
+              <option value="">-- none --</option>
+              <option th:each="entry : ${storageNames}" th:value="${entry.key}" th:text="${entry.value}"
+                      th:selected="${lastCard.storageId != null and lastCard.storageId == entry.key}"></option>
+            </select>
+          </td>
           <td>
             <span style="display: flex">
               <button class="show action-butt modify">modify</button>

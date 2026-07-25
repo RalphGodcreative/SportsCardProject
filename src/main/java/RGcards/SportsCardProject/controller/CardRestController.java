@@ -32,9 +32,11 @@ public class CardRestController {
                               @ModelAttribute("parallel") String parallel, @ModelAttribute("numbered") String numbered,
                               @ModelAttribute("sports") String sports, @ModelAttribute("grade") String grade,
                               @RequestParam(name = "value", defaultValue = "") Double value, @ModelAttribute("note") String note,
+                              @RequestParam(name = "storageId", required = false) Long storageId,
                               @AuthenticationPrincipal User currentUser
     ) {
         Card card = new Card(Integer.parseInt(id), year, publisher, set, player, auto, insert, parallel, numbered, sports, grade, value, note);
+        card.setStorageId(storageId);
         List<Card> cards = component.findCardsWithParam(card, currentUser.getId());
         ObjectMapper om = new ObjectMapper();
         try {

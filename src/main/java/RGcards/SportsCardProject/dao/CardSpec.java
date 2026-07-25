@@ -22,7 +22,8 @@ public class CardSpec {
                 .and(equalsParallel(card.getParallel()))
                 .and(equalsGrade(card.getGrade()))
                 .and(likeNumbered(card.getNumbered()))
-                .and(isAuto(card.getAuto()));
+                .and(isAuto(card.getAuto()))
+                .and(equalsStorageId(card.getStorageId()));
     }
 
     private static Specification<Card> hasId(int id) {
@@ -67,6 +68,10 @@ public class CardSpec {
 
     private static Specification<Card> isAuto(Boolean auto) {
         return (auto == null || !auto) ? null : (root, q, cb) -> cb.isTrue(root.get("auto"));
+    }
+
+    private static Specification<Card> equalsStorageId(Long storageId) {
+        return storageId == null ? null : (root, q, cb) -> cb.equal(root.get("storageId"), storageId);
     }
 
     private static boolean isEmpty(String s) {

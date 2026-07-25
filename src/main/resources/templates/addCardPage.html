@@ -100,6 +100,7 @@
             <th>grade</th>
             <th>value</th>
             <th>note</th>
+            <th>storage</th>
           </tr>
           <tr>
             <td><input type="text" name="year" size="4" /></td>
@@ -120,6 +121,12 @@
                 th:src="@{/img/notes.png}"
                 onclick="showNote()"
               />
+            </td>
+            <td>
+              <select name="storageId">
+                <option value="">-- none --</option>
+                <option th:each="s : ${storages}" th:value="${s.id}" th:text="${s.name}"></option>
+              </select>
             </td>
           </tr>
         </table>

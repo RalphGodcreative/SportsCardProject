@@ -3,6 +3,7 @@ package RGcards.SportsCardProject.controller;
 import RGcards.SportsCardProject.dto.TransactionWithCard;
 import RGcards.SportsCardProject.entity.User;
 import RGcards.SportsCardProject.service.CardService;
+import RGcards.SportsCardProject.service.StorageService;
 import RGcards.SportsCardProject.entity.Card;
 import RGcards.SportsCardProject.entity.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class TransactionController {
 
     @Autowired
     private CardService cardService;
+
+    @Autowired
+    private StorageService storageService;
 
     @GetMapping("/")
     public String allTransaction(Model model, @AuthenticationPrincipal User currentUser) {
@@ -40,6 +44,7 @@ public class TransactionController {
         List<TransactionWithCard> transactionWithCards = new ArrayList<>();
         transactionWithCards.add(new TransactionWithCard(transaction, cards));
         model.addAttribute("transactionWithCardList", transactionWithCards);
+        model.addAttribute("storageNames", storageService.findNameMapForUser(currentUser.getId()));
         return "transactionList";
     }
 

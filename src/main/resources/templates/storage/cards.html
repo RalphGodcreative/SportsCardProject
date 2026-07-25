@@ -1,7 +1,7 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
-    <title>All Cards</title>
+    <title>Storage Cards</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,7 +14,7 @@
     ></script>
     <script type="text/javascript" th:src="@{/js/util.js}"></script>
     <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
-    <script h:inline="javascript">
+    <script th:inline="javascript">
       $(document).ready(function () {
         $.ajaxSetup({
           beforeSend: function(xhr) {
@@ -102,7 +102,7 @@
             data: formData,
             success: function (response) {
               alert("card info updated successfully");
-              window.location.href = "/card/allCard";
+              window.location.reload();
             },
             error: function (error) {
               console.log(error);
@@ -128,14 +128,13 @@
     </div>
     <div th:replace="~{banner.html :: header}"></div>
     <div class="page-top" style="justify-content: center">
-      <div class="center-div"><h1>All Cards</h1></div>
+      <div class="center-div"><h1 th:text="'Storage: ' + ${storage.name}"></h1></div>
       <div class="center-div">
-        <a href="/card/cards">see in pages</a>
+        <a href="/storage">back to storages</a>
       </div>
       <div class="center-div" id="all-card">
-        <a>all cards:</a>
         <div style="text-align: left">
-          total cards: <span th:text="${cardCounts}"></span>
+          total cards: <span th:text="${#lists.size(cards)}"></span>
         </div>
         <div class="table-center">
         <table id="card-table" class="mobile-cards">
@@ -295,4 +294,3 @@
     </div>
   </body>
 </html>
-

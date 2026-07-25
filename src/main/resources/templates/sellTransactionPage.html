@@ -13,6 +13,9 @@
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
     <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
+    <script th:inline="javascript">
+      var storageNames = /*[[${storageNames}]]*/ {};
+    </script>
 
     <script>
       $(document).ready(function () {
@@ -119,6 +122,7 @@
             sports: row.find(".sports").text(),
             grade: row.find(".grade").text(),
             value: row.find(".value").text(),
+            storage: row.find(".storage").text(),
           };
 
           if (cardIds.includes(cardData.id)) {
@@ -177,6 +181,7 @@
             numbered: $("#numbered").val(),
             grade: $("#grade").val(),
             value: $("#value").val(),
+            storageId: $("#storage").val() || null,
           };
 
           $.ajax({
@@ -230,6 +235,7 @@
               <a class=" value">${card.value}</a>
             </td>
             <td><a class=" note">${card.note}</a></td>
+            <td><a class=" storage">${card.storageId != null && storageNames[card.storageId] ? storageNames[card.storageId] : ''}</a></td>
             <td>
               <span style="display: flex">
                 <button class="action-butt add-card">add</button>
@@ -291,6 +297,10 @@
           }
           if (cardData.grade) {
             info += cardData.grade;
+            info += " ";
+          }
+          if (cardData.storage != "") {
+            info += "[" + cardData.storage + "]";
             info += " ";
           }
           return info;
@@ -546,6 +556,7 @@
             <th>numbered</th>
             <th>grade</th>
             <th>value</th>
+            <th>storage</th>
           </tr>
           <tr>
             <td><input type="text" id="id" size="4" /></td>
@@ -560,6 +571,12 @@
             <td><input type="text" id="numbered" size="6" /></td>
             <td><input type="text" id="grade" size="6" /></td>
             <td><input type="text" id="value" size="6" /></td>
+            <td>
+              <select id="storage">
+                <option value="">-- any --</option>
+                <option th:each="entry : ${storageNames}" th:value="${entry.key}" th:text="${entry.value}"></option>
+              </select>
+            </td>
           </tr>
         </table>
         </div>
@@ -583,6 +600,7 @@
           <th>grade</th>
           <th>value</th>
           <th>note</th>
+          <th>storage</th>
           <th>action</th>
         </tr>
       </table>

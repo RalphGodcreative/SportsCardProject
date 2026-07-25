@@ -59,6 +59,7 @@
           sports: row.find(".sports").val(),
           grade: row.find(".grade").val(),
           value: row.find(".value").val(),
+          storageId: row.find(".storage").val() || null,
         };
 
         var formData = $.param(cardData);
@@ -163,6 +164,7 @@
               numbered: row.find(".numbered").val(),
               grade: row.find(".grade").val(),
               value: row.find(".value").val(),
+              storageId: row.find(".storage-id").val() || null,
             });
           }
         });
@@ -493,6 +495,7 @@
             <th>grade</th>
             <th>value</th>
             <th>note</th>
+            <th>storage</th>
             <th>action</th>
           </tr>
           <tr th:each="card : ${transactionWithCard.cards}">
@@ -546,6 +549,14 @@
             </td>
             <td><a class="show show-note">[[${card.note}]]</a></td>
             <td>
+              <a class="show show-storage" th:text="${card.storageId != null ? storageNames.get(card.storageId) : ''}"></a>
+              <select class="update-element storage">
+                <option value="">-- none --</option>
+                <option th:each="entry : ${storageNames}" th:value="${entry.key}" th:text="${entry.value}"
+                        th:selected="${card.storageId != null and card.storageId == entry.key}"></option>
+              </select>
+            </td>
+            <td>
               <span style="display: flex">
                 <button class="show action-butt modify">modify</button>
                 <button class="show action-butt comps">comps</button>
@@ -583,6 +594,7 @@
             <tr th:each="card : ${transactionWithCard.cards}">
               <td>
                 <input type="hidden" class="id" th:value="${card.id}" />
+                <input type="hidden" class="storage-id" th:value="${card.storageId}" />
                 <input type="text" class="year" size="4" th:value="${card.year}" />
               </td>
               <td><input type="text" class="sports" size="6" th:value="${card.sports}" /></td>

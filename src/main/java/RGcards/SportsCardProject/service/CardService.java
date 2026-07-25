@@ -62,6 +62,10 @@ public class CardService {
         return cardRepo.findFirstByUserIdOrderByIdDesc(userId);
     }
 
+    public List<Card> getCardsByStorage(Long storageId, Long userId) {
+        return cardRepo.findByStorageIdAndUserId(storageId, userId);
+    }
+
     public Card getCardById(int id, Long userId) {
         return cardRepo.findByIdAndUserId(id, userId).orElse(null);
     }
