@@ -66,6 +66,10 @@ public class CardService {
         return cardRepo.findByStorageIdAndUserId(storageId, userId);
     }
 
+    public long countCardsInStorage(Long storageId, Long userId) {
+        return cardRepo.countByStorageIdAndUserId(storageId, userId);
+    }
+
     public Card getCardById(int id, Long userId) {
         return cardRepo.findByIdAndUserId(id, userId).orElse(null);
     }

@@ -74,15 +74,16 @@
   }
 
   /* ---- Collapsed view (lists only) ------------------------------------- */
-  /* All .mobile-cards tables share the same 14-column order, so the key /
-     detail split can be addressed by position. */
+  /* All .mobile-cards tables share the same 15-column order (note + storage
+     were added after this was first written), so the key / detail split can
+     be addressed by position. */
   .mobile-cards td:nth-child(2)  { order: 0; } /* year     */
   .mobile-cards td:nth-child(5)  { order: 1; } /* set      */
   .mobile-cards td:nth-child(6)  { order: 2; } /* player   */
   .mobile-cards td:nth-child(7)  { order: 3; } /* auto     */
   .mobile-cards td:nth-child(9)  { order: 4; } /* parallel */
   .mobile-cards td:nth-child(10) { order: 5; } /* numbered */
-  .mobile-cards td:nth-child(14) { order: 7; } /* action   */
+  .mobile-cards td:nth-child(15) { order: 7; } /* action   */
 
   /* Detail fields: hidden until the card is expanded */
   .mobile-cards td:nth-child(1),
@@ -91,7 +92,8 @@
   .mobile-cards td:nth-child(8),
   .mobile-cards td:nth-child(11),
   .mobile-cards td:nth-child(12),
-  .mobile-cards td:nth-child(13) {
+  .mobile-cards td:nth-child(13),
+  .mobile-cards td:nth-child(14) {
     order: 6;
     display: none;
   }
@@ -127,14 +129,14 @@
   }
 
   /* Action column: no label, centre and wrap the buttons */
-  .mobile-cards td:nth-child(14)::before {
+  .mobile-cards td:nth-child(15)::before {
     content: "";
   }
-  .mobile-cards td:nth-child(14) {
+  .mobile-cards td:nth-child(15) {
     justify-content: center;
     border-bottom: none !important;
   }
-  .mobile-cards td:nth-child(14) span,
+  .mobile-cards td:nth-child(15) span,
   .mobile-form td:has(button) {
     flex-wrap: wrap;
     justify-content: center;

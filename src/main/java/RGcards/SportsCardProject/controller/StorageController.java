@@ -11,7 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/storage")
@@ -24,7 +26,16 @@ public class StorageController {
     @GetMapping
     public String storageHome(Model model, @AuthenticationPrincipal User currentUser) {
         List<Storage> storages = storageService.findAllForUser(currentUser.getId());
+        Map<Long, Long> cardCounts = new LinkedHashMap<>();
+        long totalCards = 0;
+        for (Storage storage : storages) {
+            long count = cardService.countCardsInStorage(storage.getId(), currentUser.getId());
+            cardCounts.put(storage.getId(), count);
+            totalCards += count;
+        }
         model.addAttribute("storages", storages);
+        model.addAttribute("cardCounts", cardCounts);
+        model.addAttribute("totalCards", totalCards);
         return "storage/list";
     }
 
