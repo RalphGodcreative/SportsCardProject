@@ -1,0 +1,384 @@
+/* ==========================================================================
+   Page shell — the common frame every content page sits in.
+   --------------------------------------------------------------------------
+   Extracted from storage-pages.css so the card and transaction pages can
+   share the same header / stat / toolbar / empty-state vocabulary instead of
+   each re-inventing it. The .storage-* selectors are kept as aliases so the
+   storage pages render identically without touching their markup.
+
+   Colour tokens come from style.css:
+     #38C9FA navbar   #CA47F5 tables   #31F6B5 buttons   #FAC938 forms
+     #F64CBD modals   #42BDFA paging   #3FF37B confirm   #F76345 destroy
+   ========================================================================== */
+
+.page-shell,
+.storage-page {
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 20px 60px;
+  box-sizing: border-box;
+}
+
+/* Card/transaction lists are far wider than the storage grid. */
+.page-shell.page-shell-wide {
+  max-width: 1500px;
+}
+
+/* ---- Header: eyebrow + title + live stats -------------------------------- */
+
+.page-header,
+.storage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(202, 71, 245, 0.15);
+}
+
+.page-header-text,
+.storage-header-text {
+  text-align: left;
+}
+
+.page-header-text h1,
+.storage-header-text h1 {
+  margin: 0 0 6px;
+  font-size: 30px;
+  color: #CA47F5;
+  text-shadow: 0 0 18px rgba(202, 71, 245, 0.4);
+}
+
+.page-header-text p,
+.storage-header-text p {
+  margin: 0;
+  max-width: 480px;
+  color: #94a3b8;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Transaction pages lead with the navbar cyan so the two areas read apart. */
+.page-header-cyan {
+  border-bottom-color: rgba(56, 201, 250, 0.15);
+}
+
+.page-header-cyan .page-header-text h1 {
+  color: #38C9FA;
+  text-shadow: 0 0 18px rgba(56, 201, 250, 0.4);
+}
+
+/* Data-entry pages lead with the form gold. */
+.page-header-gold {
+  border-bottom-color: rgba(250, 201, 56, 0.18);
+}
+
+.page-header-gold .page-header-text h1 {
+  color: #FAC938;
+  text-shadow: 0 0 18px rgba(250, 201, 56, 0.35);
+}
+
+/* ---- Breadcrumb ---------------------------------------------------------- */
+
+.page-breadcrumb,
+.storage-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  color: #42BDFA !important;
+  font-size: 13px;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+.page-breadcrumb:hover,
+.storage-breadcrumb:hover {
+  text-shadow: 0 0 8px rgba(66, 189, 250, 0.5);
+  color: #f0abfc !important;
+}
+
+.page-breadcrumb svg,
+.storage-breadcrumb svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ---- Stat pills ---------------------------------------------------------- */
+
+.page-stats,
+.storage-stats {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 96px;
+  padding: 10px 18px;
+  background: #12121a;
+  border: 1px solid rgba(56, 201, 250, 0.25);
+  border-radius: 10px;
+  box-shadow: 0 0 16px rgba(56, 201, 250, 0.06);
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #38C9FA;
+  text-shadow: 0 0 10px rgba(56, 201, 250, 0.45);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+/* Accent variants — money reads green, outflow reads red. */
+.stat-pill-money {
+  border-color: rgba(63, 243, 123, 0.25);
+  box-shadow: 0 0 16px rgba(63, 243, 123, 0.06);
+}
+
+.stat-pill-money .stat-value {
+  color: #3FF37B;
+  text-shadow: 0 0 10px rgba(63, 243, 123, 0.4);
+}
+
+.stat-pill-accent {
+  border-color: rgba(202, 71, 245, 0.25);
+  box-shadow: 0 0 16px rgba(202, 71, 245, 0.06);
+}
+
+.stat-pill-accent .stat-value {
+  color: #CA47F5;
+  text-shadow: 0 0 10px rgba(202, 71, 245, 0.45);
+}
+
+/* ---- Toolbar: secondary links left, primary action right ----------------- */
+
+.page-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* A quiet link-style button for "see in pages" / "show all" style switches. */
+.toolbar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 6px;
+  background: transparent;
+  color: #94a3b8 !important;
+  font-size: 13px;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolbar-link:hover {
+  border-color: rgba(66, 189, 250, 0.5);
+  color: #42BDFA !important;
+  box-shadow: 0 0 10px rgba(66, 189, 250, 0.18);
+}
+
+.toolbar-link svg {
+  width: 14px;
+  height: 14px;
+}
+
+.toolbar-count {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.toolbar-count strong {
+  color: #e2e8f0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Icon buttons -------------------------------------------------------- */
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-btn svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+
+.icon-btn:hover {
+  border-color: #42BDFA;
+  color: #42BDFA;
+  box-shadow: 0 0 10px rgba(66, 189, 250, 0.25);
+}
+
+.icon-btn:focus-visible {
+  outline: 2px solid #42BDFA;
+  outline-offset: 2px;
+}
+
+.icon-btn.icon-btn-destroy:hover {
+  border-color: #F76345;
+  color: #F76345;
+  box-shadow: 0 0 10px rgba(247, 99, 69, 0.25);
+}
+
+/* ---- Empty state --------------------------------------------------------- */
+
+.empty-state,
+.storage-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 50px 20px;
+  text-align: center;
+  color: #94a3b8;
+  border: 1px dashed rgba(148, 163, 184, 0.25);
+  border-radius: 12px;
+}
+
+.empty-state svg,
+.storage-empty svg {
+  width: 40px;
+  height: 40px;
+  color: #4a5568;
+  margin-bottom: 6px;
+}
+
+.empty-state h3,
+.storage-empty h3 {
+  margin: 0;
+  color: #e2e8f0;
+  font-size: 17px;
+}
+
+.empty-state p,
+.storage-empty p {
+  margin: 0;
+  max-width: 340px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.empty-state-actions {
+  margin-top: 8px;
+}
+
+/* ---- Reusable confirm modal ---------------------------------------------- */
+
+#confirm-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+#confirm-modal.show {
+  display: flex;
+}
+
+#confirm-modal-box {
+  background: #1e1e2e;
+  border: 1px solid rgba(247, 99, 69, 0.3);
+  box-shadow: 0 0 40px rgba(247, 99, 69, 0.1);
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 380px;
+  width: 90%;
+  color: #e2e8f0;
+  text-align: center;
+}
+
+#confirm-modal-box h3 {
+  margin: 0 0 10px;
+  color: #F76345;
+  text-shadow: 0 0 10px rgba(247, 99, 69, 0.4);
+  font-size: 18px;
+}
+
+#confirm-modal-box p {
+  margin: 0 0 20px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+#confirm-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ---- Small screens ------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  .page-header,
+  .storage-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-header-text h1,
+  .storage-header-text h1 {
+    font-size: 24px;
+  }
+
+  .page-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-toolbar .toolbar-group {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toolbar-link,
+  .icon-btn,
+  .page-breadcrumb,
+  .storage-breadcrumb {
+    transition: none;
+  }
+}

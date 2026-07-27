@@ -115,6 +115,7 @@
     </script>
 
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <link rel="stylesheet" th:href="@{/assets/page-shell.css}" />
     <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
     <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
   </head>
@@ -127,18 +128,56 @@
       </div>
     </div>
     <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top" style="justify-content: center">
-      <div class="center-div"><h1>All Cards</h1></div>
-      <div class="center-div">
-        <a href="/card/cards">see in pages</a>
-      </div>
-      <div class="center-div" id="all-card">
-        <a>all cards:</a>
-        <div style="text-align: left">
-          total cards: <span th:text="${cardCounts}"></span>
+    <div class="page-top">
+      <div class="page-shell page-shell-wide"
+           th:with="autoCount=${#lists.size(cards.?[auto == true])}">
+        <div class="page-header">
+          <div class="page-header-text">
+            <span class="eyebrow">Collection</span>
+            <h1>All Cards</h1>
+            <p>Every card you own, on one page. Click a column value to edit it in place.</p>
+          </div>
+          <div class="page-stats">
+            <div class="stat-pill stat-pill-accent">
+              <span class="stat-value" th:text="${cardCounts}">0</span>
+              <span class="stat-label">cards</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-value" th:text="${autoCount}">0</span>
+              <span class="stat-label">autos</span>
+            </div>
+          </div>
         </div>
-        <div class="table-center">
-        <table id="card-table" class="mobile-cards">
+
+        <div class="page-toolbar">
+          <div class="toolbar-group">
+            <a class="toolbar-link" href="/card/cards">
+              <svg th:replace="~{fragments/icons :: pages}"></svg>
+              See in pages
+            </a>
+            <a class="toolbar-link" href="/card/searchCard">
+              <svg th:replace="~{fragments/icons :: search}"></svg>
+              Search
+            </a>
+          </div>
+          <div class="toolbar-group">
+            <button class="confirm-butt" onclick="window.location.href='/card/addNewCard'">
+              + Add card
+            </button>
+          </div>
+        </div>
+
+        <div class="empty-state" th:if="${#lists.isEmpty(cards)}">
+          <svg th:replace="~{fragments/icons :: cards-empty}"></svg>
+          <h3>No cards yet</h3>
+          <p>Add your first card and it will show up here with its set, parallel, grade and value.</p>
+          <div class="empty-state-actions">
+            <button class="confirm-butt" onclick="window.location.href='/card/addNewCard'">Add your first card</button>
+          </div>
+        </div>
+
+        <div class="table-center" th:unless="${#lists.isEmpty(cards)}">
+        <table id="card-table" class="data-table mobile-cards">
           <tr>
             <th>id</th>
             <th>year</th>
@@ -212,7 +251,9 @@
               />
             </td>
             <td>
-              <a class="show show-auto">[[${card.auto}]]</a
+              <a class="show show-auto" th:data-auto="${card.auto}"
+                ><span th:if="${card.auto}" class="badge badge-auto">auto</span
+                ><span th:unless="${card.auto}" class="dim">&mdash;</span></a
               ><input
                 type="checkbox"
                 class="update-element auto"
@@ -266,7 +307,7 @@
             </td>
             <td><a class="show show-note">[[${card.note}]]</a></td>
             <td>
-              <a class="show show-storage" th:text="${card.storageId != null ? storageNames.get(card.storageId) : ''}"></a>
+              <a class="show show-storage storage-tag" th:text="${card.storageId != null ? storageNames.get(card.storageId) : ''}"></a>
               <select class="update-element storage">
                 <option value="">-- none --</option>
                 <option th:each="entry : ${storageNames}" th:value="${entry.key}" th:text="${entry.value}"
@@ -274,14 +315,27 @@
               </select>
             </td>
             <td>
-              <span style="display: flex">
-                <button class="show action-butt modify">modify</button>
-                <button class="show action-butt comps">comps</button>
-                <button class="show action-butt get-tran"
-                th:onclick="'window.location.href=\'/card/cardTransaction/' + ${card.id} + '\''">
-                transaction
+              <span class="row-actions">
+                <button class="show action-butt action-icon modify" title="Edit this card" aria-label="Edit this card">
+                  <svg th:replace="~{fragments/icons :: pencil}"></svg>
+                  <span class="btn-label">modify</span>
                 </button>
-                <button class="show action-butt potential-btn" th:data-id="${card.id}">potential</button>
+                <button class="show action-butt action-icon comps" title="Look up sold comps on eBay" aria-label="Look up sold comps on eBay">
+                  <svg th:replace="~{fragments/icons :: external}"></svg>
+                  <span class="btn-label">comps</span>
+                </button>
+                <button class="show action-butt action-icon get-tran"
+                  title="See this card's transaction" aria-label="See this card's transaction"
+                  th:onclick="'window.location.href=\'/card/cardTransaction/' + ${card.id} + '\''">
+                  <svg th:replace="~{fragments/icons :: money}"></svg>
+                  <span class="btn-label">transaction</span>
+                </button>
+                <button class="show action-butt action-icon potential-btn"
+                  title="AI price rise potential" aria-label="AI price rise potential"
+                  th:data-id="${card.id}">
+                  <svg th:replace="~{fragments/icons :: sparkles}"></svg>
+                  <span class="btn-label">potential</span>
+                </button>
                 <button class="update-element action-butt save">save</button>
                 <button class="update-element action-butt cancel">
                   cancel
@@ -290,7 +344,7 @@
             </td>
           </tr>
         </table>
-      </div>
+        </div>
       </div>
     </div>
   </body>

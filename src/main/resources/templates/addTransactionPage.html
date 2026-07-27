@@ -13,6 +13,7 @@
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
     <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
+    <script type="text/javascript" th:src="@{/js/icons.js}"></script>
     <script th:inline="javascript">
       var storages = /*[[${storages}]]*/ [];
       var storageOptionsHtml = '<option value="">-- none --</option>' +
@@ -90,10 +91,12 @@
             <td><input type="text" class="value" id="value" size="6" /></td>
             <td><select class="storage">` + storageOptionsHtml + `</select></td>
             <td>
-              <button class="copy action-butt">copy</button>
-              <button class="paste action-butt">paste</button>
-              <button class="clear action-butt cancel">clear</button>
-              <button class="delete-card action-butt cancel">delete</button>
+              <span class="row-actions">
+                ${iconBtn("copy action-butt action-icon", "copy", "copy")}
+                ${iconBtn("paste action-butt action-icon", "paste", "paste")}
+                ${iconBtn("clear action-butt action-icon cancel", "eraser", "clear")}
+                ${iconBtn("delete-card action-butt action-icon cancel", "trash", "delete")}
+              </span>
             </td>
           </tr>`;
           $("#forCards").append(newCard);
@@ -104,7 +107,8 @@
             date: $("#date").val(),
             type: $("#type").val(),
             amount: $("#amount").val(),
-            note: $("#note").val(),
+            // #note is the popover wrapper; the text lives in #note-text.
+            note: $("#note-text").val(),
           };
 
           if (
@@ -213,192 +217,125 @@
       }
     </script>
 
-    <style>
-      #add {
-        display: flex;
-        justify-content: center;
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      #add table,
-      #add tr,
-      #add th,
-      #add td {
-        border: 1px solid rgba(250, 201, 56, 0.25);
-        border-collapse: collapse;
-        color: #e2e8f0;
-      }
-      #add th {
-        padding-left: 6px;
-        padding-right: 6px;
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
-        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
-      }
-      #add td {
-        padding-left: 6px;
-        padding-right: 6px;
-        padding-top: 4px;
-        padding-bottom: 4px;
-      }
-      i {
-        color: #f0abfc;
-      }
-
-      .add-note {
-        height: 20px;
-        width: 20px;
-        margin-left: 5px;
-        margin-right: 5px;
-        cursor: pointer;
-        filter: invert(1) brightness(1.2);
-      }
-
-      #date::-webkit-calendar-picker-indicator {
-        filter: invert(1);
-        cursor: pointer;
-      }
-
-      #note {
-        display: none;
-        position: fixed;
-        top: 15%;
-        right: 15%;
-        background: #1e1e2e;
-        border: 1px solid rgba(246, 76, 189, 0.3);
-        box-shadow: 0 0 40px rgba(246, 76, 189, 0.1);
-        border-radius: 2px;
-      }
-
-      #add-tran {
-        display: flex;
-        justify-content: center;
-        text-align: center;
-        margin-bottom: 20px;
-        margin-top: 20px;
-      }
-
-      #add-tran table,
-      #add-tran tr,
-      #add-tran th,
-      #add-tran td {
-        border: 1px solid rgba(250, 201, 56, 0.25);
-        border-collapse: collapse;
-        color: #e2e8f0;
-      }
-      #add-tran th {
-        padding-left: 6px;
-        padding-right: 6px;
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
-        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
-      }
-      #add-tran td {
-        padding-left: 6px;
-        padding-right: 6px;
-        padding-top: 4px;
-        padding-bottom: 4px;
-      }
-
-    </style>
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <link rel="stylesheet" th:href="@{/assets/page-shell.css}" />
+    <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
     <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top" style="justify-content: center; text-align: center">
-      <div>
-      <h1>Add New Transaction</h1>
-      <div id="add-tran">
-        <table id="for-transaction">
-          <tr>
-            <th><i>*</i>date</th>
-            <th><i>*</i>type</th>
-            <th><i>*</i>amount</th>
-            <th>note</th>
-          </tr>
-          <tr>
-            <td><input type="date" id="date" size="10" /></td>
-            <td>
+    <div class="page-top">
+      <div class="page-shell page-shell-wide">
+        <div class="page-header page-header-gold">
+          <div class="page-header-text">
+            <span class="eyebrow">Ledger</span>
+            <h1>Add New Transaction</h1>
+            <p>Record a break, buy, trade or giveaway, then list the cards that came out of it.</p>
+          </div>
+        </div>
+
+        <div class="filter-panel">
+          <div class="filter-grid">
+            <div class="filter-field">
+              <label for="date"><i class="req">*</i> date</label>
+              <input type="date" id="date" />
+            </div>
+            <div class="filter-field">
+              <label for="type"><i class="req">*</i> type</label>
               <select id="type">
                 <option value="Break">Break</option>
                 <option value="Buy">Buy</option>
                 <option value="Trade">Trade</option>
                 <option value="Giveaway">Giveaway</option>
               </select>
-            </td>
-            <td><input type="text" id="amount" size="6" /></td>
-            <td>
-              <img
-                class="add-note"
-                alt="add note"
-                th:src="@{/img/notes.png}"
-                onclick="showNote()"
-              />
-            </td>
-          </tr>
-        </table>
-      </div>
-      <div class="center-div" style="margin-top: 20px; margin-bottom: 20px">
-        <button id="add-card" class="confirm-butt">add card</button>
-      </div>
-      <div id="add">
-        <div class="table-center">
-        <table id="forCards" class="mobile-form">
-          <tr>
-            <th><i>*</i>year</th>
-            <th>sports</th>
-            <th>publisher</th>
-            <th><i>*</i>set</th>
-            <th><i>*</i>player</th>
-            <th>auto</th>
-            <th>insert</th>
-            <th>parallel</th>
-            <th>numbered</th>
-            <th>grade</th>
-            <th>value</th>
-            <!-- <th>note</th> -->
-            <th>storage</th>
-            <th>action</th>
-          </tr>
-          <tr class="card-data">
-            <td><input type="text" class="year" id="year" size="4" /></td>
-            <td><input type="text" class="sports" id="sports" size="6" /></td>
-            <td><input type="text" class="publisher" id="publisher" size="6" /></td>
-            <td><input type="text" class="set" id="set" size="10" /></td>
-            <td><input type="text" class="player" id="player" /></td>
-            <td><input type="checkbox" class="auto" /></td>
-            <td><input type="text" class="insert" id="insert" size="6" /></td>
-            <td><input type="text" class="parallel" id="parallel" size="6" /></td>
-            <td><input type="text" class="numbered" id="numbered" size="6" /></td>
-            <td><input type="text" class="grade" id="grade" size="6" /></td>
-            <td><input type="text" class="value" id="value" size="6" /></td>
-            <!-- <td>
-              <img class="add-note" alt="add note" th:src="@{/img/notes.png}" />
-            </td> -->
-            <td><select class="storage"><option value="">-- none --</option></select></td>
-            <td>
-              <button class="copy action-butt">copy</button>
-              <button class="paste action-butt">paste</button>
-              <button class="clear action-butt cancel">clear</button>
-              <button class="delete-card action-butt cancel">delete</button>
-            </td>
-          </tr>
-        </table>
+            </div>
+            <div class="filter-field">
+              <label for="amount"><i class="req">*</i> amount</label>
+              <input type="text" id="amount" inputmode="decimal" />
+            </div>
+            <div class="filter-field filter-field-check">
+              <button type="button" class="note-trigger" onclick="showNote()" title="Add a note" aria-label="Add a note">
+                <svg th:replace="~{fragments/icons :: note}"></svg>
+              </button>
+              <label>note</label>
+            </div>
+          </div>
         </div>
 
-        <div id="note">
-          <div style="text-align: end">
-            <a style="cursor: pointer; padding-right: 5%" onclick="hideNote()"
-              >x</a
-            >
+        <div class="tran-section-title">Cards in this transaction</div>
+
+        <div class="page-toolbar">
+          <span class="toolbar-count">Fields marked <i class="req">*</i> are required on every card row.</span>
+          <button id="add-card" class="neon-butt">+ Add card row</button>
+        </div>
+
+        <div id="add">
+          <div class="table-center">
+          <table id="forCards" class="entry-table mobile-form">
+            <tr>
+              <th><i class="req">*</i>year</th>
+              <th>sports</th>
+              <th>publisher</th>
+              <th><i class="req">*</i>set</th>
+              <th><i class="req">*</i>player</th>
+              <th>auto</th>
+              <th>insert</th>
+              <th>parallel</th>
+              <th>numbered</th>
+              <th>grade</th>
+              <th>value</th>
+              <th>storage</th>
+              <th>action</th>
+            </tr>
+            <tr class="card-data">
+              <td><input type="text" class="year" id="year" size="4" /></td>
+              <td><input type="text" class="sports" id="sports" size="6" /></td>
+              <td><input type="text" class="publisher" id="publisher" size="6" /></td>
+              <td><input type="text" class="set" id="set" size="10" /></td>
+              <td><input type="text" class="player" id="player" /></td>
+              <td><input type="checkbox" class="auto" /></td>
+              <td><input type="text" class="insert" id="insert" size="6" /></td>
+              <td><input type="text" class="parallel" id="parallel" size="6" /></td>
+              <td><input type="text" class="numbered" id="numbered" size="6" /></td>
+              <td><input type="text" class="grade" id="grade" size="6" /></td>
+              <td><input type="text" class="value" id="value" size="6" /></td>
+              <td><select class="storage"><option value="">-- none --</option></select></td>
+              <td>
+                <span class="row-actions">
+                  <button class="copy action-butt action-icon" title="Copy this row" aria-label="Copy this row">
+                    <svg th:replace="~{fragments/icons :: copy}"></svg>
+                    <span class="btn-label">copy</span>
+                  </button>
+                  <button class="paste action-butt action-icon" title="Paste into this row" aria-label="Paste into this row">
+                    <svg th:replace="~{fragments/icons :: paste}"></svg>
+                    <span class="btn-label">paste</span>
+                  </button>
+                  <button class="clear action-butt action-icon cancel" title="Clear this row" aria-label="Clear this row">
+                    <svg th:replace="~{fragments/icons :: eraser}"></svg>
+                    <span class="btn-label">clear</span>
+                  </button>
+                  <button class="delete-card action-butt action-icon cancel" title="Remove this row" aria-label="Remove this row">
+                    <svg th:replace="~{fragments/icons :: trash}"></svg>
+                    <span class="btn-label">delete</span>
+                  </button>
+                </span>
+              </td>
+            </tr>
+          </table>
           </div>
-          <div>
-            <textarea id="note-text" name="note" cols="30" rows="3"></textarea>
+
+          <div id="note" class="note-pop">
+            <div class="note-pop-head">
+              <span>Transaction note</span>
+              <button type="button" class="icon-btn icon-btn-destroy" onclick="hideNote()" title="Close note" aria-label="Close note">&times;</button>
+            </div>
+            <textarea id="note-text" name="note" rows="4"></textarea>
           </div>
         </div>
-      </div>
-      <div class="center-div">
-        <button id="add-transaction" class="confirm-butt">Add Transaction</button>
-      </div>
+
+        <div class="filter-actions">
+          <button id="add-transaction" class="confirm-butt">Add Transaction</button>
+        </div>
       </div>
     </div>
   </body>

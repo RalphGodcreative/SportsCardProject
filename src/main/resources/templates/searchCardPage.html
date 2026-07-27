@@ -17,6 +17,7 @@
     <script th:inline="javascript">
       var storageNames = /*[[${storageNames}]]*/ {};
     </script>
+    <script type="text/javascript" th:src="@{/js/icons.js}"></script>
     <script h:inline="javascript">
       $(document).ready(function () {
         $.ajaxSetup({
@@ -31,6 +32,7 @@
         //search card
         function search(){
           $("#result").hide();
+          $("#no-result").hide();
           $("#result-card .card-row").remove();
 
           var formData = {
@@ -56,11 +58,11 @@
             dataType: "json",
             success: function (response) {
               if (response.length == 0) {
-                alert("found no card with the criteria");
+                $("#no-result").show();
                 return;
               }
               var resultCards = "";
-              alert("found card : " + response.length);
+              $("#result-count").text(response.length);
               response.forEach((card) => {
                 resultCards += `<tr class="card-row">
             <td>
@@ -118,11 +120,13 @@
               />
             </td>
             <td>
-              <a class="show show-auto">${card.auto}</a
+              <a class="show show-auto" data-auto="${card.auto}">${card.auto
+                ? '<span class="badge badge-auto">auto</span>'
+                : '<span class="dim">&mdash;</span>'}</a
               ><input
                 type="checkbox"
                 class="update-element auto"
-                checked="${card.auto}"
+                ${card.auto ? "checked" : ""}
               />
             </td>
             <td>
@@ -172,7 +176,7 @@
             </td>
             <td><a class="show show-note">${card.note}</a></td>
             <td>
-              <a class="show show-storage">${card.storageId != null && storageNames[card.storageId] ? storageNames[card.storageId] : ''}</a>
+              <a class="show show-storage storage-tag">${card.storageId != null && storageNames[card.storageId] ? storageNames[card.storageId] : ''}</a>
               <select class="update-element storage">
                 <option value="">-- none --</option>
                 ${Object.entries(storageNames).map(([id, name]) =>
@@ -181,13 +185,13 @@
               </select>
             </td>
             <td>
-              <span style="display: flex">
-                <button class="show action-butt modify">modify</button>
-                <button class="show action-butt comps">comps</button>
-                <button class="show action-butt get-tran" onclick="window.location.href='/card/cardTransaction/${card.id}'">
-                  transaction
-                </button>
-                <button class="show action-butt potential-btn" data-id="${card.id}">potential</button>
+              <span class="row-actions">
+                ${iconBtn("show action-butt action-icon modify", "pencil", "modify")}
+                ${iconBtn("show action-butt action-icon comps", "external", "comps")}
+                ${iconBtn("show action-butt action-icon get-tran", "money", "transaction",
+                          ` onclick="window.location.href='/card/cardTransaction/${card.id}'"`)}
+                ${iconBtn("show action-butt action-icon potential-btn", "sparkles", "potential",
+                          ` data-id="${card.id}"`)}
                 <button class="update-element action-butt save">save</button>
                 <button class="update-element action-butt cancel">
                   cancel
@@ -219,6 +223,8 @@
 
         $("#hide-butt").on("click", function () {
           $("#result").hide();
+          $("#no-result").hide();
+          $("#result-card .card-row").remove();
         });
 
         //modify card data
@@ -313,6 +319,7 @@
     </script>
 
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <link rel="stylesheet" th:href="@{/assets/page-shell.css}" />
     <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
     <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
   </head>
@@ -325,76 +332,114 @@
       </div>
     </div>
     <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top" style="justify-content: center">
-      <div class="center-div"><h1>Search Card</h1></div>
-    </div>
-    <div class="center-div" id="card">
-      <div class="center-div" id="search">
-        <div class="table-center">
-        <table id="search-table" class="mobile-form">
-          <tr>
-            <th>id</th>
-            <th>year</th>
-            <th>sports</th>
-            <th>publisher</th>
-            <th>set</th>
-            <th>player</th>
-            <th>auto</th>
-            <th>insert</th>
-            <th>parallel</th>
-            <th>numbered</th>
-            <th>grade</th>
-            <th>value</th>
-            <th>storage</th>
-          </tr>
-          <tr>
-            <td><input type="text" id="id" size="4" /></td>
-            <td><input type="text" id="year" size="4" /></td>
-            <td><input type="text" id="sports" size="6" /></td>
-            <td><input type="text" id="publisher" size="6" /></td>
-            <td><input type="text" id="set" size="10" /></td>
-            <td><input type="text" id="player" /></td>
-            <td><input type="checkbox" id="auto" /></td>
-            <td><input type="text" id="insert" size="6" /></td>
-            <td><input type="text" id="parallel" size="6" /></td>
-            <td><input type="text" id="numbered" size="6" /></td>
-            <td><input type="text" id="grade" size="6" /></td>
-            <td><input type="text" id="value" size="6" /></td>
-            <td>
+    <div class="page-top">
+      <div class="page-shell page-shell-wide">
+        <div class="page-header page-header-gold">
+          <div class="page-header-text">
+            <span class="eyebrow">Collection</span>
+            <h1>Search Cards</h1>
+            <p>Fill in any combination of fields — blank fields are ignored. Press Enter to search.</p>
+          </div>
+        </div>
+
+        <div class="filter-panel">
+          <div class="filter-grid">
+            <div class="filter-field">
+              <label for="id">id</label>
+              <input type="text" id="id" inputmode="numeric" />
+            </div>
+            <div class="filter-field">
+              <label for="year">year</label>
+              <input type="text" id="year" inputmode="numeric" />
+            </div>
+            <div class="filter-field">
+              <label for="sports">sports</label>
+              <input type="text" id="sports" />
+            </div>
+            <div class="filter-field">
+              <label for="publisher">publisher</label>
+              <input type="text" id="publisher" />
+            </div>
+            <div class="filter-field">
+              <label for="set">set</label>
+              <input type="text" id="set" />
+            </div>
+            <div class="filter-field">
+              <label for="player">player</label>
+              <input type="text" id="player" />
+            </div>
+            <div class="filter-field">
+              <label for="insert">insert</label>
+              <input type="text" id="insert" />
+            </div>
+            <div class="filter-field">
+              <label for="parallel">parallel</label>
+              <input type="text" id="parallel" />
+            </div>
+            <div class="filter-field">
+              <label for="numbered">numbered</label>
+              <input type="text" id="numbered" />
+            </div>
+            <div class="filter-field">
+              <label for="grade">grade</label>
+              <input type="text" id="grade" />
+            </div>
+            <div class="filter-field">
+              <label for="value">value</label>
+              <input type="text" id="value" inputmode="decimal" />
+            </div>
+            <div class="filter-field">
+              <label for="storage">storage</label>
               <select id="storage">
                 <option value="">-- any --</option>
                 <option th:each="entry : ${storageNames}" th:value="${entry.key}" th:text="${entry.value}"></option>
               </select>
-            </td>
-          </tr>
-        </table>
+            </div>
+            <div class="filter-field filter-field-check">
+              <input type="checkbox" id="auto" />
+              <label for="auto">autos only</label>
+            </div>
+          </div>
+          <div class="filter-actions">
+            <button id="search-butt" class="confirm-butt">Search</button>
+            <button id="hide-butt" class="destroy-butt">Clear results</button>
+            <span class="filter-hint">Leave a field empty to match anything.</span>
+          </div>
+        </div>
+
+        <div class="empty-state" id="no-result" style="display: none">
+          <svg th:replace="~{fragments/icons :: search}"></svg>
+          <h3>No cards matched</h3>
+          <p>No card in your collection matches every field you filled in. Try clearing a field or two.</p>
+        </div>
+
+        <div id="result" style="display: none">
+          <div class="page-toolbar">
+            <span class="toolbar-count"><strong id="result-count">0</strong> matching cards</span>
+          </div>
+          <div class="table-center">
+            <table id="result-card" class="data-table mobile-cards">
+              <tr>
+                <th>id</th>
+                <th>year</th>
+                <th>sports</th>
+                <th>publisher</th>
+                <th>set</th>
+                <th>player</th>
+                <th>auto</th>
+                <th>insert</th>
+                <th>parallel</th>
+                <th>numbered</th>
+                <th>grade</th>
+                <th>value</th>
+                <th>note</th>
+                <th>storage</th>
+                <th>action</th>
+              </tr>
+            </table>
+          </div>
         </div>
       </div>
-      <button id="search-butt" class="confirm-butt">search</button>
-    </div>
-    <div class="center-div" id="result" style="margin-top: 30px; display: none">
-      <div class="table-center">
-      <table id="result-card" class="mobile-cards">
-        <tr>
-          <th>id</th>
-          <th>year</th>
-          <th>sports</th>
-          <th>publisher</th>
-          <th>set</th>
-          <th>player</th>
-          <th>auto</th>
-          <th>insert</th>
-          <th>parallel</th>
-          <th>numbered</th>
-          <th>grade</th>
-          <th>value</th>
-          <th>note</th>
-          <th>storage</th>
-          <th>action</th>
-        </tr>
-      </table>
-    </div>
-      <button id="hide-butt" class="destroy-butt">clear</button>
     </div>
   </body>
 </html>

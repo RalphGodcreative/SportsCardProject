@@ -1,100 +1,10 @@
 /* ==========================================================================
    Storage pages: storage/list, storage/cards
-   Built on the site's existing neon-dark tokens (see style.css header).
+   --------------------------------------------------------------------------
+   Only the storage-specific grid lives here. The page frame (header, stat
+   pills, breadcrumb, icon buttons, empty state, confirm modal, toolbar) moved
+   to page-shell.css, which both storage pages must also link.
    ========================================================================== */
-
-.storage-page {
-  width: 100%;
-  max-width: 1200px;
-  padding: 0 20px 60px;
-  box-sizing: border-box;
-}
-
-/* ---- Header: title + live stats ----------------------------------------- */
-
-.storage-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  flex-wrap: wrap;
-  gap: 24px;
-  margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgba(202, 71, 245, 0.15);
-}
-
-.storage-header-text {
-  text-align: left;
-}
-
-.storage-header-text h1 {
-  margin: 0 0 6px;
-  font-size: 30px;
-  color: #CA47F5;
-  text-shadow: 0 0 18px rgba(202, 71, 245, 0.4);
-}
-
-.storage-header-text p {
-  margin: 0;
-  max-width: 480px;
-  color: #94a3b8;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.storage-breadcrumb {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 12px;
-  color: #42BDFA !important;
-  font-size: 13px;
-  text-decoration: none !important;
-  transition: all 0.2s ease;
-}
-
-.storage-breadcrumb:hover {
-  text-shadow: 0 0 8px rgba(66, 189, 250, 0.5);
-  color: #f0abfc !important;
-}
-
-.storage-breadcrumb svg {
-  width: 14px;
-  height: 14px;
-}
-
-.storage-stats {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.stat-pill {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 96px;
-  padding: 10px 18px;
-  background: #12121a;
-  border: 1px solid rgba(56, 201, 250, 0.25);
-  border-radius: 10px;
-  box-shadow: 0 0 16px rgba(56, 201, 250, 0.06);
-}
-
-.stat-value {
-  font-size: 22px;
-  font-weight: 700;
-  color: #38C9FA;
-  text-shadow: 0 0 10px rgba(56, 201, 250, 0.45);
-  line-height: 1.2;
-}
-
-.stat-label {
-  font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #94a3b8;
-}
 
 /* ---- Storage grid --------------------------------------------------------- */
 
@@ -180,38 +90,6 @@
   text-align: center;
 }
 
-.icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  background: transparent;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  border-radius: 4px;
-  color: #94a3b8;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.icon-btn svg {
-  width: 15px;
-  height: 15px;
-}
-
-.icon-btn:hover {
-  border-color: #42BDFA;
-  color: #42BDFA;
-  box-shadow: 0 0 10px rgba(66, 189, 250, 0.25);
-}
-
-.icon-btn.icon-btn-destroy:hover {
-  border-color: #F76345;
-  color: #F76345;
-  box-shadow: 0 0 10px rgba(247, 99, 69, 0.25);
-}
-
 /* ---- Add-storage card ------------------------------------------------------ */
 
 .add-storage-card {
@@ -242,102 +120,12 @@
   box-sizing: border-box;
 }
 
-/* ---- Empty state ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .storage-card {
+    transition: none;
+  }
 
-.storage-empty {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 50px 20px;
-  text-align: center;
-  color: #94a3b8;
-  border: 1px dashed rgba(148, 163, 184, 0.25);
-  border-radius: 12px;
-}
-
-.storage-empty svg {
-  width: 40px;
-  height: 40px;
-  color: #4a5568;
-  margin-bottom: 6px;
-}
-
-.storage-empty h3 {
-  margin: 0;
-  color: #e2e8f0;
-  font-size: 17px;
-}
-
-.storage-empty p {
-  margin: 0;
-  max-width: 340px;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-/* ---- Reusable confirm modal -------------------------------------------------- */
-
-#confirm-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-
-#confirm-modal.show {
-  display: flex;
-}
-
-#confirm-modal-box {
-  background: #1e1e2e;
-  border: 1px solid rgba(247, 99, 69, 0.3);
-  box-shadow: 0 0 40px rgba(247, 99, 69, 0.1);
-  border-radius: 8px;
-  padding: 24px;
-  max-width: 380px;
-  width: 90%;
-  color: #e2e8f0;
-  text-align: center;
-}
-
-#confirm-modal-box h3 {
-  margin: 0 0 10px;
-  color: #F76345;
-  text-shadow: 0 0 10px rgba(247, 99, 69, 0.4);
-  font-size: 18px;
-}
-
-#confirm-modal-box p {
-  margin: 0 0 20px;
-  color: #94a3b8;
-  font-size: 14px;
-}
-
-#confirm-modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-/* ---- Cards page toolbar ------------------------------------------------------ */
-
-.storage-cards-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 18px;
-}
-
-@media (max-width: 640px) {
-  .storage-header {
-    flex-direction: column;
-    align-items: flex-start;
+  .storage-card:hover {
+    transform: none;
   }
 }

@@ -14,6 +14,7 @@
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{/js/util.js}"></script>
   <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
+  <script type="text/javascript" th:src="@{/js/icons.js}"></script>
   <script>
     $(document).ready(function () {
       $.ajaxSetup({
@@ -276,10 +277,12 @@
           <td><input type="text" class="grade" size="6" /></td>
           <td><input type="text" class="value" size="6" /></td>
           <td>
-            <button class="copy action-butt">copy</button>
-            <button class="paste action-butt">paste</button>
-            <button class="clear action-butt cancel">clear</button>
-            <button class="delete-card action-butt cancel">delete</button>
+            <span class="row-actions">
+              ${iconBtn("copy action-butt action-icon", "copy", "copy")}
+              ${iconBtn("paste action-butt action-icon", "paste", "paste")}
+              ${iconBtn("clear action-butt action-icon cancel", "eraser", "clear")}
+              ${iconBtn("delete-card action-butt action-icon cancel", "trash", "delete")}
+            </span>
           </td>
         </tr>`;
       }
@@ -334,102 +337,8 @@
     });
   </script>
 
-  <style>
-    .update-element {
-      display: none;
-    }
-
-    #tran-table table,
-    tr,
-    th,
-    td {
-      padding: 10px;
-      border: 1px solid rgba(202, 71, 245, 0.2);
-      border-collapse: collapse;
-      color: #e2e8f0;
-    }
-
-    #tran-table {
-      border-radius: 3px;
-      overflow-x: auto;
-      background-color: #12121a;
-      box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
-    }
-
-    #tran-table th {
-      background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
-      text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
-    }
-
-    #delete-div {
-      text-align: end;
-      margin: 5% 0 5% 0;
-    }
-
-    .delete-butt,
-    .tran-edit-butt,
-    .tran-save-butt,
-    .tran-cancel-butt {
-      font-size: 20px;
-      padding: 6px 16px;
-    }
-
-    #card-table-wrap {
-      border-radius: 3px;
-      background-color: #12121a;
-      box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
-    }
-
-    #card-table {
-      border-collapse: collapse;
-    }
-
-    #card-table tr,
-    #card-table th,
-    #card-table td {
-      padding: 10px;
-      border: 1px solid rgba(202, 71, 245, 0.2);
-      color: #e2e8f0;
-    }
-
-    #card-table th {
-      background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
-      text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
-    }
-
-    .add-cards-section {
-      margin-top: 5%;
-    }
-
-    .gold-form-wrap table,
-    .gold-form-wrap tr,
-    .gold-form-wrap th,
-    .gold-form-wrap td {
-      border: 1px solid rgba(250, 201, 56, 0.25);
-      border-collapse: collapse;
-      color: #e2e8f0;
-    }
-
-    .gold-form-wrap th {
-      padding-left: 6px;
-      padding-right: 6px;
-      background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
-      text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
-    }
-
-    .gold-form-wrap td {
-      padding-left: 6px;
-      padding-right: 6px;
-      padding-top: 4px;
-      padding-bottom: 4px;
-    }
-
-    .add-cards-section i {
-      color: #f0abfc;
-    }
-
-  </style>
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  <link rel="stylesheet" th:href="@{/assets/page-shell.css}" />
   <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
   <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
 
@@ -439,48 +348,83 @@
   <div th:replace="~{banner.html :: header}"></div>
   <div th:each="transactionWithCard : ${transactionWithCardList}">
     <div class="page-top">
-      <div id="tran-table">
-        <div class="table-center">
-        <table>
-          <tr>
-            <th>id</th>
-            <th>date</th>
-            <th>type</th>
-            <th>amount</th>
-          </tr>
-          <tr>
-            <td>[[${transactionWithCard.transaction.id}]]</td>
-            <td>
-              <span class="show">[[${transactionWithCard.transaction.date}]]</span>
-              <input type="date" class="update-element tran-date" th:value="${transactionWithCard.transaction.date}" />
-            </td>
-            <td>
-              <span class="show">[[${transactionWithCard.transaction.type}]]</span>
-              <select class="update-element tran-type">
-                <option value="Break" th:selected="${transactionWithCard.transaction.type == 'Break'}">Break</option>
-                <option value="Buy" th:selected="${transactionWithCard.transaction.type == 'Buy'}">Buy</option>
-                <option value="Trade" th:selected="${transactionWithCard.transaction.type == 'Trade'}">Trade</option>
-                <option value="Giveaway" th:selected="${transactionWithCard.transaction.type == 'Giveaway'}">Giveaway</option>
-                <option value="Sell" th:selected="${transactionWithCard.transaction.type == 'Sell'}">Sell</option>
-              </select>
-            </td>
-            <td>
-              <span class="show">[[${transactionWithCard.transaction.amount}]]</span>
-              <input type="text" class="update-element tran-amount" th:value="${transactionWithCard.transaction.amount}" />
-            </td>
-          </tr>
-        </table>
+      <div class="page-shell page-shell-wide">
+        <a class="page-breadcrumb" href="/transactions/">
+          <svg th:replace="~{fragments/icons :: back}"></svg>
+          Back to transactions
+        </a>
+        <div class="page-header page-header-cyan">
+          <div class="page-header-text">
+            <span class="eyebrow">Transaction</span>
+            <h1 th:text="'Transaction #' + ${transactionWithCard.transaction.id}">Transaction</h1>
+            <p>The cards attached to this transaction. Use edit to change the transaction or add more cards.</p>
+          </div>
+          <div class="page-stats">
+            <div class="stat-pill stat-pill-accent">
+              <span class="stat-value" th:text="${#lists.size(transactionWithCard.cards)}">0</span>
+              <span class="stat-label" th:text="${#lists.size(transactionWithCard.cards) == 1 ? 'card' : 'cards'}">cards</span>
+            </div>
+          </div>
         </div>
-        <div id="delete-div">
-          <button class="tran-edit-butt action-butt">edit</button>
-          <button class="tran-save-butt confirm-butt update-element">save</button>
-          <button class="tran-cancel-butt destroy-butt update-element">cancel</button>
-          <button class="delete-butt destroy-butt" th:attr="data-id=${transactionWithCard.transaction.id}">delete</button>
+
+      <div id="tran-table">
+        <div class="tran-summary">
+          <div class="tran-summary-fields">
+            <div class="tran-field">
+              <span class="tran-field-label">id</span>
+              <span class="tran-field-value tran-field-id">[[${transactionWithCard.transaction.id}]]</span>
+            </div>
+            <div class="tran-field">
+              <span class="tran-field-label">date</span>
+              <span class="tran-field-value">
+                <span class="show">[[${transactionWithCard.transaction.date}]]</span>
+                <input type="date" class="update-element tran-date" th:value="${transactionWithCard.transaction.date}" />
+              </span>
+            </div>
+            <div class="tran-field">
+              <span class="tran-field-label">type</span>
+              <span class="tran-field-value">
+                <span class="show badge tran-badge"
+                      th:classappend="${'tran-badge-' + #strings.toLowerCase(transactionWithCard.transaction.type)}"
+                      th:text="${transactionWithCard.transaction.type}"></span>
+                <select class="update-element tran-type">
+                  <option value="Break" th:selected="${transactionWithCard.transaction.type == 'Break'}">Break</option>
+                  <option value="Buy" th:selected="${transactionWithCard.transaction.type == 'Buy'}">Buy</option>
+                  <option value="Trade" th:selected="${transactionWithCard.transaction.type == 'Trade'}">Trade</option>
+                  <option value="Giveaway" th:selected="${transactionWithCard.transaction.type == 'Giveaway'}">Giveaway</option>
+                  <option value="Sell" th:selected="${transactionWithCard.transaction.type == 'Sell'}">Sell</option>
+                </select>
+              </span>
+            </div>
+            <div class="tran-field">
+              <span class="tran-field-label">amount</span>
+              <span class="tran-field-value tran-field-amount">
+                <span class="show"
+                      th:text="${transactionWithCard.transaction.amount == null ? '—' : '$' + #numbers.formatDecimal(transactionWithCard.transaction.amount, 1, 'COMMA', 2, 'POINT')}"></span>
+                <input type="text" class="update-element tran-amount" th:value="${transactionWithCard.transaction.amount}" />
+              </span>
+            </div>
+          </div>
+          <div class="tran-summary-actions" id="delete-div">
+            <button class="tran-edit-butt neon-butt">Edit</button>
+            <button class="tran-save-butt confirm-butt update-element">Save</button>
+            <button class="tran-cancel-butt destroy-butt update-element">Cancel</button>
+            <button class="delete-butt destroy-butt" th:attr="data-id=${transactionWithCard.transaction.id}">Delete</button>
+          </div>
         </div>
       </div>
-      <div id="card-table-wrap">
+
+      <div class="tran-section-title">Cards in this transaction</div>
+
+      <div class="empty-state" th:if="${#lists.isEmpty(transactionWithCard.cards)}">
+        <svg th:replace="~{fragments/icons :: cards-empty}"></svg>
+        <h3>No cards on this transaction</h3>
+        <p>Hit edit above to attach cards to it.</p>
+      </div>
+
+      <div id="card-table-wrap" th:unless="${#lists.isEmpty(transactionWithCard.cards)}">
         <div class="table-center">
-        <table id="card-table" class="mobile-cards">
+        <table id="card-table" class="data-table mobile-cards">
           <tr>
             <th>id</th>
             <th>year</th>
@@ -524,7 +468,10 @@
                 th:value="${card.player}" />
             </td>
             <td>
-              <a class="show show-auto">[[${card.auto}]]</a><input type="checkbox" class="update-element auto"
+              <a class="show show-auto" th:data-auto="${card.auto}"
+                ><span th:if="${card.auto}" class="badge badge-auto">auto</span
+                ><span th:unless="${card.auto}" class="dim">&mdash;</span></a
+              ><input type="checkbox" class="update-element auto"
                 th:checked="${card.auto}" />
             </td>
             <td>
@@ -549,7 +496,7 @@
             </td>
             <td><a class="show show-note">[[${card.note}]]</a></td>
             <td>
-              <a class="show show-storage" th:text="${card.storageId != null ? storageNames.get(card.storageId) : ''}"></a>
+              <a class="show show-storage storage-tag" th:text="${card.storageId != null ? storageNames.get(card.storageId) : ''}"></a>
               <select class="update-element storage">
                 <option value="">-- none --</option>
                 <option th:each="entry : ${storageNames}" th:value="${entry.key}" th:text="${entry.value}"
@@ -557,9 +504,15 @@
               </select>
             </td>
             <td>
-              <span style="display: flex">
-                <button class="show action-butt modify">modify</button>
-                <button class="show action-butt comps">comps</button>
+              <span class="row-actions">
+                <button class="show action-butt action-icon modify" title="Edit this card" aria-label="Edit this card">
+                  <svg th:replace="~{fragments/icons :: pencil}"></svg>
+                  <span class="btn-label">modify</span>
+                </button>
+                <button class="show action-butt action-icon comps" title="Look up sold comps on eBay" aria-label="Look up sold comps on eBay">
+                  <svg th:replace="~{fragments/icons :: external}"></svg>
+                  <span class="btn-label">comps</span>
+                </button>
                 <button class="update-element action-butt save">save</button>
                 <button class="update-element action-butt cancel">
                   cancel
@@ -571,18 +524,19 @@
         </div>
       </div>
       <div class="add-cards-section" style="display:none">
-        <div class="center-div" style="margin-top: 20px; margin-bottom: 10px">
-          <button class="add-card-row confirm-butt">add card</button>
+        <div class="page-toolbar">
+          <span class="toolbar-count">Edit the cards on this transaction, or add new ones.</span>
+          <button class="add-card-row confirm-butt">+ Add card row</button>
         </div>
-        <div class="gold-form-wrap">
+        <div>
           <div class="table-center">
-          <table class="existing-cards-table mobile-form">
+          <table class="existing-cards-table entry-table mobile-form">
             <tr>
-              <th><i>*</i>year</th>
+              <th><i class="req">*</i>year</th>
               <th>sports</th>
               <th>publisher</th>
-              <th><i>*</i>set</th>
-              <th><i>*</i>player</th>
+              <th><i class="req">*</i>set</th>
+              <th><i class="req">*</i>player</th>
               <th>auto</th>
               <th>insert</th>
               <th>parallel</th>
@@ -608,15 +562,32 @@
               <td><input type="text" class="grade" size="6" th:value="${card.grade}" /></td>
               <td><input type="text" class="value" size="6" th:value="${card.value}" /></td>
               <td>
-                <button class="copy action-butt">copy</button>
-                <button class="paste action-butt">paste</button>
-                <button class="clear action-butt cancel">clear</button>
-                <button class="card-remove-butt action-butt cancel" th:attr="data-card-id=${card.id}">delete</button>
+                <span class="row-actions">
+                  <button class="copy action-butt action-icon" title="Copy this row" aria-label="Copy this row">
+                    <svg th:replace="~{fragments/icons :: copy}"></svg>
+                    <span class="btn-label">copy</span>
+                  </button>
+                  <button class="paste action-butt action-icon" title="Paste into this row" aria-label="Paste into this row">
+                    <svg th:replace="~{fragments/icons :: paste}"></svg>
+                    <span class="btn-label">paste</span>
+                  </button>
+                  <button class="clear action-butt action-icon cancel" title="Clear this row" aria-label="Clear this row">
+                    <svg th:replace="~{fragments/icons :: eraser}"></svg>
+                    <span class="btn-label">clear</span>
+                  </button>
+                  <button class="card-remove-butt action-butt action-icon cancel"
+                    title="Delete this card permanently" aria-label="Delete this card permanently"
+                    th:attr="data-card-id=${card.id}">
+                    <svg th:replace="~{fragments/icons :: trash}"></svg>
+                    <span class="btn-label">delete</span>
+                  </button>
+                </span>
               </td>
             </tr>
           </table>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </div>

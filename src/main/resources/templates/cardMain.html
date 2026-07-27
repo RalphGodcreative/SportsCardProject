@@ -81,72 +81,70 @@
     });
   </script>
 
-  <style>
-    #last-card table,
-    #last-card tr,
-    #last-card th,
-    #last-card td {
-      border: 1px solid rgba(202, 71, 245, 0.2);
-      border-collapse: collapse;
-      padding: 8px;
-      color: #e2e8f0;
-    }
-
-    #last-card {
-      margin-left: 25%;
-      margin-right: 25%;
-      margin-top: 30px;
-      margin-bottom: 30px;
-      background-color: #12121a;
-      box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
-    }
-
-    th {
-      background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
-      text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
-    }
-
-    .action-butt {
-      margin-left: 5px;
-      margin-right: 5px;
-    }
-
-    .update-element {
-      display: none;
-    }
-
-  </style>
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  <link rel="stylesheet" th:href="@{/assets/page-shell.css}" />
   <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
   <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
 </head>
 
 <body>
   <div th:replace="~{banner.html :: header}"></div>
-  <div class="page-top" style="justify-content: center">
-    <div>
-    <div class="center-div">
-      <h1>Card Management</h1>
-    </div>
-    <div class="center-div">
-      <button class="link-butt" onclick="window.location.href='/card/addNewCard'">add new card</button>
-      <button class="link-butt" onclick="window.location.href='/card/cards'">see cards</button>
-      <button class="link-butt" onclick="window.location.href='/card/allCard'">see all cards</button>
-      <button class="link-butt" onclick="window.location.href='card/searchCard'">search card</button>
-      <button class="link-butt" onclick="window.location.href='/card/addTransaction'">add transaction</button>
-      <button class="link-butt" onclick="window.location.href='/card/sellTransaction'">add sales</button>
-    </div>
-    <div class="center-div" style="margin-top: 30px;">
-      <a>the latest card :</a>
-    </div>
+  <div class="page-top">
+    <div class="page-shell page-shell-wide">
+      <div class="page-header">
+        <div class="page-header-text">
+          <span class="eyebrow">Collection</span>
+          <h1>Card Management</h1>
+          <p>Add cards, log what you bought and sold, and search everything you own.</p>
+        </div>
+      </div>
 
-    <div th:if="${lastCard == null}" class="center-div" style="margin-top: 20px; color: #aaa;">
-      No cards yet. Add your first card above!
-    </div>
+      <div class="hub-grid">
+        <a class="hub-card hub-card-primary" href="/card/addNewCard">
+          <span class="hub-card-icon"><svg th:replace="~{fragments/icons :: plus}"></svg></span>
+          <h3>Add new card</h3>
+          <p>Log a single card straight into your collection.</p>
+        </a>
+        <a class="hub-card" href="/card/cards">
+          <span class="hub-card-icon"><svg th:replace="~{fragments/icons :: pages}"></svg></span>
+          <h3>See cards</h3>
+          <p>Browse your collection ten at a time.</p>
+        </a>
+        <a class="hub-card" href="/card/allCard">
+          <span class="hub-card-icon"><svg th:replace="~{fragments/icons :: list}"></svg></span>
+          <h3>See all cards</h3>
+          <p>Everything on one scrollable page.</p>
+        </a>
+        <a class="hub-card" href="/card/searchCard">
+          <span class="hub-card-icon"><svg th:replace="~{fragments/icons :: search}"></svg></span>
+          <h3>Search cards</h3>
+          <p>Filter by player, set, parallel, grade or storage.</p>
+        </a>
+        <a class="hub-card" href="/card/addTransaction">
+          <span class="hub-card-icon"><svg th:replace="~{fragments/icons :: money}"></svg></span>
+          <h3>Add transaction</h3>
+          <p>Record a break, buy, trade or giveaway with its cards.</p>
+        </a>
+        <a class="hub-card" href="/card/sellTransaction">
+          <span class="hub-card-icon"><svg th:replace="~{fragments/icons :: external}"></svg></span>
+          <h3>Add sale</h3>
+          <p>Sell or trade away cards already in your collection.</p>
+        </a>
+      </div>
 
-    <div th:if="${lastCard != null}" class="center-div" id="last-card" style="display: flex;">
+      <div class="tran-section-title">Most recent card</div>
 
-      <table class="mobile-cards">
+      <div class="empty-state" th:if="${lastCard == null}">
+        <svg th:replace="~{fragments/icons :: cards-empty}"></svg>
+        <h3>No cards yet</h3>
+        <p>Once you add your first card it'll appear here so you can check it at a glance.</p>
+        <div class="empty-state-actions">
+          <button class="confirm-butt" onclick="window.location.href='/card/addNewCard'">Add your first card</button>
+        </div>
+      </div>
+
+      <div th:if="${lastCard != null}" class="table-center">
+      <table class="data-table mobile-cards">
         <tr>
           <th>id</th>
           <th>year</th>
@@ -190,7 +188,10 @@
               th:value="${lastCard.player}" />
           </td>
           <td>
-            <a class="show show-auto">[[${lastCard.auto}]]</a><input type="checkbox" class="update-element auto"
+            <a class="show show-auto" th:data-auto="${lastCard.auto}"
+              ><span th:if="${lastCard.auto}" class="badge badge-auto">auto</span
+              ><span th:unless="${lastCard.auto}" class="dim">&mdash;</span></a
+            ><input type="checkbox" class="update-element auto"
               th:checked="${lastCard.auto}" />
           </td>
           <td>
@@ -215,7 +216,7 @@
           </td>
           <td><a class="show show-note">[[${lastCard.note}]]</a></td>
           <td>
-            <a class="show show-storage" th:text="${lastCard.storageId != null ? storageNames.get(lastCard.storageId) : ''}"></a>
+            <a class="show show-storage storage-tag" th:text="${lastCard.storageId != null ? storageNames.get(lastCard.storageId) : ''}"></a>
             <select class="update-element storage">
               <option value="">-- none --</option>
               <option th:each="entry : ${storageNames}" th:value="${entry.key}" th:text="${entry.value}"
@@ -223,12 +224,20 @@
             </select>
           </td>
           <td>
-            <span style="display: flex">
-              <button class="show action-butt modify">modify</button>
-              <button class="show action-butt comps">comps</button>
-              <button class="show action-butt get-tran"
+            <span class="row-actions">
+              <button class="show action-butt action-icon modify" title="Edit this card" aria-label="Edit this card">
+                <svg th:replace="~{fragments/icons :: pencil}"></svg>
+                <span class="btn-label">modify</span>
+              </button>
+              <button class="show action-butt action-icon comps" title="Look up sold comps on eBay" aria-label="Look up sold comps on eBay">
+                <svg th:replace="~{fragments/icons :: external}"></svg>
+                <span class="btn-label">comps</span>
+              </button>
+              <button class="show action-butt action-icon get-tran"
+                title="See this card's transaction" aria-label="See this card's transaction"
                 th:onclick="'window.location.href=\'/card/cardTransaction/' + ${lastCard.id} + '\''">
-                transaction
+                <svg th:replace="~{fragments/icons :: money}"></svg>
+                <span class="btn-label">transaction</span>
               </button>
               <button class="update-element action-butt save">save</button>
               <button class="update-element action-butt cancel">
@@ -238,9 +247,9 @@
           </td>
         </tr>
       </table>
+      </div>
     </div>
   </div>
-</div>
 </body>
 
 

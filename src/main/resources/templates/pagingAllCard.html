@@ -152,6 +152,7 @@
   </script>
 
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  <link rel="stylesheet" th:href="@{/assets/page-shell.css}" />
   <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
   <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
 </head>
@@ -165,28 +166,56 @@
     </div>
   </div>
   <div th:replace="~{banner.html :: header}"></div>
-  <div class="page-top" style="justify-content: center">
-    <div class="center-div">
-      <h1>Cards</h1>
-    </div>
-    <div class="center-div">
-      <a href="/card/allCard">show all in one page</a>
-    </div>
-    <div class="center-div" id="all-card">
-      <a>all cards:</a>
-      <div class="center-div" id="page-control">
-        <button class="page-butt" id="first-page">&lt;&lt;</button>
-        <button class="page-butt" id="prev-page">&lt;</button>
-        <span id="page-index"></span>
-        <button class="page-butt" id="next-page">&gt;</button>
-        <button class="page-butt" id="last-page">&gt;&gt;</button>
+  <div class="page-top">
+    <div class="page-shell page-shell-wide">
+      <div class="page-header">
+        <div class="page-header-text">
+          <span class="eyebrow">Collection</span>
+          <h1>Cards</h1>
+          <p>Your collection, ten at a time. Click a column value to edit it in place.</p>
+        </div>
+        <div class="page-stats">
+          <div class="stat-pill stat-pill-accent">
+            <span class="stat-value" th:text="${cardCounts}">0</span>
+            <span class="stat-label">cards</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-value" th:text="${page}">1</span>
+            <span class="stat-label">page</span>
+          </div>
+        </div>
       </div>
-      <div ></div>
-      <div style="text-align: left">
-        total cards: <span th:text="${cardCounts}"></span>
+
+      <div class="page-toolbar">
+        <div class="toolbar-group">
+          <a class="toolbar-link" href="/card/allCard">
+            <svg th:replace="~{fragments/icons :: list}"></svg>
+            Show all on one page
+          </a>
+          <a class="toolbar-link" href="/card/searchCard">
+            <svg th:replace="~{fragments/icons :: search}"></svg>
+            Search
+          </a>
+        </div>
+        <div class="toolbar-group">
+          <button class="confirm-butt" onclick="window.location.href='/card/addNewCard'">
+            + Add card
+          </button>
+        </div>
       </div>
+
+      <div class="empty-state" th:if="${#lists.isEmpty(cards)}">
+        <svg th:replace="~{fragments/icons :: cards-empty}"></svg>
+        <h3>Nothing on this page</h3>
+        <p>Either you haven't added any cards yet, or you've paged past the end of the list.</p>
+        <div class="empty-state-actions">
+          <button class="confirm-butt" onclick="window.location.href='/card/addNewCard'">Add a card</button>
+        </div>
+      </div>
+
+      <div th:unless="${#lists.isEmpty(cards)}">
       <div class="table-center">
-        <table id="card-table" class="mobile-cards">
+        <table id="card-table" class="data-table mobile-cards">
           <tr>
             <th>id</th>
             <th>year</th>
@@ -230,7 +259,10 @@
                 th:value="${card.player}" />
             </td>
             <td>
-              <a class="show show-auto">[[${card.auto}]]</a><input type="checkbox" class="update-element auto"
+              <a class="show show-auto" th:data-auto="${card.auto}"
+                ><span th:if="${card.auto}" class="badge badge-auto">auto</span
+                ><span th:unless="${card.auto}" class="dim">&mdash;</span></a
+              ><input type="checkbox" class="update-element auto"
                 th:checked="${card.auto}" />
             </td>
             <td>
@@ -255,7 +287,7 @@
             </td>
             <td><a class="show show-note">[[${card.note}]]</a></td>
             <td>
-              <a class="show show-storage" th:text="${card.storageId != null ? storageNames.get(card.storageId) : ''}"></a>
+              <a class="show show-storage storage-tag" th:text="${card.storageId != null ? storageNames.get(card.storageId) : ''}"></a>
               <select class="update-element storage">
                 <option value="">-- none --</option>
                 <option th:each="entry : ${storageNames}" th:value="${entry.key}" th:text="${entry.value}"
@@ -263,14 +295,27 @@
               </select>
             </td>
             <td>
-              <span style="display: flex">
-                <button class="show action-butt modify">modify</button>
-                <button class="show action-butt comps">comps</button>
-                <button class="show action-butt get-tran"
-                th:onclick="'window.location.href=\'/card/cardTransaction/' + ${card.id} + '\''">
-                transaction
+              <span class="row-actions">
+                <button class="show action-butt action-icon modify" title="Edit this card" aria-label="Edit this card">
+                  <svg th:replace="~{fragments/icons :: pencil}"></svg>
+                  <span class="btn-label">modify</span>
                 </button>
-                <button class="show action-butt potential-btn" th:data-id="${card.id}">potential</button>
+                <button class="show action-butt action-icon comps" title="Look up sold comps on eBay" aria-label="Look up sold comps on eBay">
+                  <svg th:replace="~{fragments/icons :: external}"></svg>
+                  <span class="btn-label">comps</span>
+                </button>
+                <button class="show action-butt action-icon get-tran"
+                  title="See this card's transaction" aria-label="See this card's transaction"
+                  th:onclick="'window.location.href=\'/card/cardTransaction/' + ${card.id} + '\''">
+                  <svg th:replace="~{fragments/icons :: money}"></svg>
+                  <span class="btn-label">transaction</span>
+                </button>
+                <button class="show action-butt action-icon potential-btn"
+                  title="AI price rise potential" aria-label="AI price rise potential"
+                  th:data-id="${card.id}">
+                  <svg th:replace="~{fragments/icons :: sparkles}"></svg>
+                  <span class="btn-label">potential</span>
+                </button>
                 <button class="update-element action-butt save">save</button>
                 <button class="update-element action-butt cancel">
                   cancel
@@ -279,6 +324,15 @@
             </td>
           </tr>
         </table>
+      </div>
+
+      <nav class="paging" id="page-control" aria-label="Card pages">
+        <button class="page-butt" id="first-page" title="First page" aria-label="First page">&laquo;</button>
+        <button class="page-butt" id="prev-page" title="Previous page" aria-label="Previous page">&lsaquo;</button>
+        <span id="page-index"></span>
+        <button class="page-butt" id="next-page" title="Next page" aria-label="Next page">&rsaquo;</button>
+        <button class="page-butt" id="last-page" title="Last page" aria-label="Last page">&raquo;</button>
+      </nav>
       </div>
 
       <input type="hidden" id="card-counts" th:value="${cardCounts}" />

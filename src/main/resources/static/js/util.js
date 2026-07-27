@@ -36,7 +36,12 @@ function getCompLink(row) {
     link += parallel;
     link += "+";
   }
-  var auto = row.find(".show-auto").text();
+  /* The auto cell renders a badge rather than the raw boolean, so read the
+     value off data-auto when it's there and fall back to the cell text. */
+  var autoCell = row.find(".show-auto");
+  var auto = autoCell.data("auto") !== undefined
+    ? String(autoCell.data("auto"))
+    : autoCell.text();
   if (auto == "true") {
     link += "auto";
     link += "+";

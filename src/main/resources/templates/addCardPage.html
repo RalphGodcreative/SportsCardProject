@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <title>Add New card</title>
@@ -10,141 +10,95 @@
       type="text/javascript"
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
-    <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
-    <script>
-      function showNote() {
-        $("#note").show();
-      }
-      function hideNote() {
-        $("#note").hide();
-      }
-    </script>
 
-    <style>
-      #add {
-        display: flex;
-        justify-content: center;
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      #add table,
-      #add tr,
-      #add th,
-      #add td {
-        border: 1px solid rgba(250, 201, 56, 0.25);
-        border-collapse: collapse;
-        color: #e2e8f0;
-      }
-      #add th {
-        padding-left: 6px;
-        padding-right: 6px;
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
-        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
-      }
-      #add td {
-        padding-left: 6px;
-        padding-right: 6px;
-        padding-top: 4px;
-        padding-bottom: 4px;
-      }
-      i {
-        color: #f0abfc;
-      }
-
-      .add-note {
-        height: 20px;
-        width: 20px;
-        margin-left: 5px;
-        margin-right: 5px;
-        cursor: pointer;
-        filter: invert(1) brightness(1.2);
-      }
-
-      #note {
-        display: none;
-        position: fixed;
-        top: 50%;
-        right: 50%;
-        background: #1e1e2e;
-        border: 1px solid rgba(246, 76, 189, 0.3);
-        box-shadow: 0 0 40px rgba(246, 76, 189, 0.1);
-        border-radius: 2px;
-      }
-    </style>
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <link rel="stylesheet" th:href="@{/assets/page-shell.css}" />
+    <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
     <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
-    <div
-      class="page-top"
-      style="display: flex; justify-content: center; margin-bottom: 20px"
-    >
-      <h1>Add new Card</h1>
+    <div class="page-top">
+      <div class="page-shell">
+        <a class="page-breadcrumb" href="/card">
+          <svg th:replace="~{fragments/icons :: back}"></svg>
+          Back to card management
+        </a>
+        <div class="page-header page-header-gold">
+          <div class="page-header-text">
+            <span class="eyebrow">Collection</span>
+            <h1>Add New Card</h1>
+            <p>Only year, set and player are required &mdash; fill in the rest whenever you know it.</p>
+          </div>
+        </div>
+
+        <form method="get" th:action="@{/card/saveCard}">
+          <div class="filter-panel">
+            <div class="filter-grid">
+              <div class="filter-field">
+                <label for="year"><i class="req">*</i> year</label>
+                <input type="text" id="year" name="year" inputmode="numeric" required />
+              </div>
+              <div class="filter-field">
+                <label for="sports">sports</label>
+                <input type="text" id="sports" name="sports" />
+              </div>
+              <div class="filter-field">
+                <label for="publisher">publisher</label>
+                <input type="text" id="publisher" name="publisher" />
+              </div>
+              <div class="filter-field">
+                <label for="set"><i class="req">*</i> set</label>
+                <input type="text" id="set" name="set" required />
+              </div>
+              <div class="filter-field">
+                <label for="player"><i class="req">*</i> player</label>
+                <input type="text" id="player" name="player" required />
+              </div>
+              <div class="filter-field">
+                <label for="insert">insert</label>
+                <input type="text" id="insert" name="insert" />
+              </div>
+              <div class="filter-field">
+                <label for="parallel">parallel</label>
+                <input type="text" id="parallel" name="parallel" />
+              </div>
+              <div class="filter-field">
+                <label for="numbered">numbered</label>
+                <input type="text" id="numbered" name="numbered" placeholder="e.g. 12/99" />
+              </div>
+              <div class="filter-field">
+                <label for="grade">grade</label>
+                <input type="text" id="grade" name="grade" placeholder="e.g. PSA 10" />
+              </div>
+              <div class="filter-field">
+                <label for="value">value</label>
+                <input type="text" id="value" name="value" inputmode="decimal" />
+              </div>
+              <div class="filter-field">
+                <label for="storageId">storage</label>
+                <select id="storageId" name="storageId">
+                  <option value="">-- none --</option>
+                  <option th:each="s : ${storages}" th:value="${s.id}" th:text="${s.name}"></option>
+                </select>
+              </div>
+              <div class="filter-field filter-field-check">
+                <input type="checkbox" id="auto" name="auto" />
+                <label for="auto">autographed</label>
+              </div>
+              <div class="filter-field filter-field-wide">
+                <label for="note">note</label>
+                <textarea id="note" name="note" rows="3"
+                  placeholder="Anything worth remembering about this card — condition, where you got it, who it's promised to."></textarea>
+              </div>
+            </div>
+            <div class="filter-actions">
+              <button type="submit" class="confirm-butt">Add This Card</button>
+              <button type="reset" class="neon-butt">Reset</button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
-
-    <form method="get" th:action="@{/card/saveCard}">
-      <div id="add">
-        <div class="table-center">
-        <table class="mobile-form">
-          <tr>
-            <th><i>*</i>year</th>
-            <th>publisher</th>
-            <th><i>*</i>set</th>
-            <th><i>*</i>player</th>
-            <th>auto</th>
-            <th>insert</th>
-            <th>parallel</th>
-            <th>numbered</th>
-            <th>sports</th>
-            <th>grade</th>
-            <th>value</th>
-            <th>note</th>
-            <th>storage</th>
-          </tr>
-          <tr>
-            <td><input type="text" name="year" size="4" /></td>
-            <td><input type="text" name="publisher" size="6" /></td>
-            <td><input type="text" name="set" size="10" /></td>
-            <td><input type="text" name="player" /></td>
-            <td><input type="checkbox" name="auto" /></td>
-            <td><input type="text" name="insert" size="6" /></td>
-            <td><input type="text" name="parallel" size="6" /></td>
-            <td><input type="text" name="numbered" size="6" /></td>
-            <td><input type="text" name="sports" size="6" /></td>
-            <td><input type="text" name="grade" size="6" /></td>
-            <td><input type="text" name="value" size="6" /></td>
-            <td>
-              <img
-                class="add-note"
-                alt="add note"
-                th:src="@{/img/notes.png}"
-                onclick="showNote()"
-              />
-            </td>
-            <td>
-              <select name="storageId">
-                <option value="">-- none --</option>
-                <option th:each="s : ${storages}" th:value="${s.id}" th:text="${s.name}"></option>
-              </select>
-            </td>
-          </tr>
-        </table>
-        </div>
-
-        <div id="note">
-          <div style="align-items: end">
-            <a style="cursor: pointer;" onclick="hideNote()">x</a>
-          </div>
-          <div>
-            <textarea id="note-text" name="note" cols="30" rows="3"></textarea>
-          </div>
-        </div>
-      </div>
-      <div class="center-div">
-        <button type="submit" class="confirm-butt">Add This Card</button>
-      </div>
-    </form>
   </body>
 </html>
-

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <title>All Transactions</title>
@@ -10,62 +10,90 @@
       type="text/javascript"
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
-    <script></script>
 
-    <style>
-      #contain-table table,
-      tr,
-      td,
-      th {
-        border-collapse: collapse;
-        border: 1px solid rgba(202, 71, 245, 0.2);
-        color: #e2e8f0;
-      }
-      #contain-table {
-        background-color: #12121a;
-        box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
-      }
-      #contain-table th {
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
-        text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
-      }
-      #contain-table td{
-        padding-left: 5px;
-        padding-right: 5px;
-      }
-
-      .transaction-row{
-        cursor: pointer;
-      }
-      .transaction-row:hover{
-        background-color: rgba(202, 71, 245, 0.08);
-      }
-
-    </style>
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <link rel="stylesheet" th:href="@{/assets/page-shell.css}" />
+    <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
+    <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
     <div class="page-top">
-      <div class="center-div" id="contain-table">
-        <div class="table-center">
-        <table>
-          <tr>
-            <th>id</th>
-            <th>date</th>
-            <th>type</th>
-            <th>amount</th>
-          </tr>
-          <tr th:each="tran : ${transactions}" class="transaction-row" th:onclick="'location.href=\'/transactions/' + ${tran.id} + '\''">
-            <td>[[${tran.id}]]</td>
-            <td>[[${tran.date}]]</td>
-            <td>[[${tran.type}]]</td>
-            <td>[[${tran.amount}]]</td>
-          </tr>
-        </table>
+      <div class="page-shell"
+           th:with="spent=${#aggregates.sum(transactions.?[amount != null and (type == 'Buy' or type == 'Break')].![amount])},
+                    made=${#aggregates.sum(transactions.?[amount != null and type == 'Sell'].![amount])}">
+        <div class="page-header page-header-cyan">
+          <div class="page-header-text">
+            <span class="eyebrow">Ledger</span>
+            <h1>Transactions</h1>
+            <p>Every break, buy, trade, giveaway and sale you've logged. Click a row to open it.</p>
+          </div>
+          <div class="page-stats">
+            <div class="stat-pill">
+              <span class="stat-value" th:text="${#lists.size(transactions)}">0</span>
+              <span class="stat-label">logged</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-value"
+                    th:text="'$' + ${spent == null ? '0' : #numbers.formatInteger(spent, 1, 'COMMA')}">$0</span>
+              <span class="stat-label">spent</span>
+            </div>
+            <div class="stat-pill stat-pill-money">
+              <span class="stat-value"
+                    th:text="'$' + ${made == null ? '0' : #numbers.formatInteger(made, 1, 'COMMA')}">$0</span>
+              <span class="stat-label">made</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-toolbar">
+          <div class="toolbar-group">
+            <span class="toolbar-count">
+              <strong th:text="${#lists.size(transactions)}">0</strong> transactions
+            </span>
+          </div>
+          <div class="toolbar-group">
+            <button class="neon-butt" onclick="window.location.href='/card/addTransaction'">
+              + Add transaction
+            </button>
+            <button class="confirm-butt" onclick="window.location.href='/card/sellTransaction'">
+              + Add sale
+            </button>
+          </div>
+        </div>
+
+        <div class="empty-state" th:if="${#lists.isEmpty(transactions)}">
+          <svg th:replace="~{fragments/icons :: receipt-empty}"></svg>
+          <h3>No transactions yet</h3>
+          <p>Log a break, buy or sale and it'll show up here with the cards attached to it.</p>
+          <div class="empty-state-actions">
+            <button class="confirm-butt" onclick="window.location.href='/card/addTransaction'">Log your first transaction</button>
+          </div>
+        </div>
+
+        <div class="table-center" th:unless="${#lists.isEmpty(transactions)}">
+          <table class="data-table transaction-table">
+            <tr>
+              <th>id</th>
+              <th>date</th>
+              <th>type</th>
+              <th>amount</th>
+            </tr>
+            <tr th:each="tran : ${transactions}" class="transaction-row"
+                th:onclick="'location.href=\'/transactions/' + ${tran.id} + '\''">
+              <td class="show-id num">[[${tran.id}]]</td>
+              <td class="num">[[${tran.date}]]</td>
+              <td>
+                <span class="badge tran-badge"
+                      th:classappend="${'tran-badge-' + #strings.toLowerCase(tran.type)}"
+                      th:text="${tran.type}"></span>
+              </td>
+              <td class="amount-cell"
+                  th:text="${tran.amount == null ? '—' : '$' + #numbers.formatDecimal(tran.amount, 1, 'COMMA', 2, 'POINT')}"></td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
   </body>
 </html>
-
