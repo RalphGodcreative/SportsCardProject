@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
   <title>Cards</title>
@@ -131,7 +131,7 @@
     <div class="center-div">
       <button class="link-butt" onclick="window.location.href='/card/addNewCard'">add new card</button>
       <button class="link-butt" onclick="window.location.href='/card/cards'">see cards</button>
-      <button class="link-butt" onclick="window.location.href='/card/allCard'">see all cards</button>
+      <button class="link-butt" sec:authorize="hasAuthority('ROLE_ADMIN')" onclick="window.location.href='/card/allCard'">see all cards</button>
       <button class="link-butt" onclick="window.location.href='card/searchCard'">search card</button>
       <button class="link-butt" onclick="window.location.href='/card/addTransaction'">add transaction</button>
       <button class="link-butt" onclick="window.location.href='/card/sellTransaction'">add sales</button>

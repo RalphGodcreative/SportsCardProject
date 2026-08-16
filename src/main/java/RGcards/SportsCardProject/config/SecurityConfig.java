@@ -43,7 +43,7 @@ public class SecurityConfig {
                     "/recommendation",
                     "/assets/**", "/css/**", "/js/**", "/images/**", "/img/**"
                 ).permitAll()
-                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/admin/**", "/card/allCard").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

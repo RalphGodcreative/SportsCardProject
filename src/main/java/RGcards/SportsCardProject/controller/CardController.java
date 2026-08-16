@@ -53,7 +53,7 @@ public class CardController {
         card.setUserId(currentUser.getId());
         card.setStorageId(storageId);
         cardService.saveCard(card);
-        return "redirect:/card/allCard";
+        return "redirect:/card/cards";
     }
 
     @PostMapping("/updateCard")
@@ -70,21 +70,21 @@ public class CardController {
         card.setUserId(currentUser.getId());
         card.setStorageId(storageId);
         cardService.saveCard(card);
-        return "redirect:/card/allCard";
+        return "redirect:/card/cards";
     }
 
     @PostMapping("/saveTransaction")
     public String saveTransaction(@RequestBody TransactionWithCard transactionWithCard,
                                   @AuthenticationPrincipal User currentUser) {
         cardService.saveTransactionWithCard(transactionWithCard, currentUser.getId());
-        return "redirect:/card/allCard";
+        return "redirect:/card/cards";
     }
 
     @PostMapping("/saveSale")
     public String saveSale(@RequestBody SaleWithCard saleWithCard,
                            @AuthenticationPrincipal User currentUser) {
         cardService.saveSaleWithCard(saleWithCard, currentUser.getId());
-        return "redirect:/card/allCard";
+        return "redirect:/card/cards";
     }
 
     @GetMapping("/allCard")

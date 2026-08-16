@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
   <title>Cards</title>
@@ -169,7 +169,7 @@
     <div class="center-div">
       <h1>Cards</h1>
     </div>
-    <div class="center-div">
+    <div class="center-div" sec:authorize="hasAuthority('ROLE_ADMIN')">
       <a href="/card/allCard">show all in one page</a>
     </div>
     <div class="center-div" id="all-card">
