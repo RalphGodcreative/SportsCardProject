@@ -142,8 +142,13 @@ public class CardService {
         return deleteCount;
     }
 
-    public List<Transaction> findAllTransactionsSortByDate(Long userId) {
-        return tranRepo.getTransactionsSortByDate(userId);
+    public List<Transaction> findTransactionsByPage(int page, Long userId) {
+        PageRequest pageRequest = PageRequest.of(page - 1, 10);
+        return tranRepo.getTransactionsSortByDate(userId, pageRequest);
+    }
+
+    public int findTransactionsCount(Long userId) {
+        return (int) tranRepo.countByUserId(userId);
     }
 
     public List<Transaction> findTransactionsInDateRange(LocalDate startDate, LocalDate endDate, Long userId) {

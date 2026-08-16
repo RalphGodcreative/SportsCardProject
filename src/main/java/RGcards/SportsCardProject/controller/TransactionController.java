@@ -26,9 +26,13 @@ public class TransactionController {
     private StorageService storageService;
 
     @GetMapping("/")
-    public String allTransaction(Model model, @AuthenticationPrincipal User currentUser) {
-        List<Transaction> transactions = cardService.findAllTransactionsSortByDate(currentUser.getId());
+    public String allTransaction(Model model, @RequestParam(defaultValue = "1") int page,
+                                 @AuthenticationPrincipal User currentUser) {
+        List<Transaction> transactions = cardService.findTransactionsByPage(page, currentUser.getId());
+        int transactionCounts = cardService.findTransactionsCount(currentUser.getId());
         model.addAttribute("transactions", transactions);
+        model.addAttribute("transactionCounts", transactionCounts);
+        model.addAttribute("page", page);
         return "allTransaction";
     }
 

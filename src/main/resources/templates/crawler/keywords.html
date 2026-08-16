@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 
@@ -113,7 +113,7 @@
       <button id="add-keyword" class="confirm-butt" onclick="addNewKeyword()">add keyword</button>
       <button id="reset-all" onclick="resetAll()" class="reset-all destroy-butt">reset all</button>
       <!-- <button id="search-all" onclick="location.href='/crawler/search-all'" class="search-all confirm-butt">search all</button> -->
-      <button id="search-all-async" onclick="searchAllAsync()" class="search-all confirm-butt">search all in background</button>
+      <button id="search-all-async" sec:authorize="hasAuthority('ROLE_ADMIN')" onclick="searchAllAsync()" class="search-all confirm-butt">search all in background</button>
     </div>
     <table class="default-table" id="keyword-table">
       <tr>

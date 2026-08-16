@@ -10,7 +10,39 @@
       type="text/javascript"
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
-    <script></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        var transactionCounts = $("#transaction-counts").val();
+        var currentPage = $("#current-page").val();
+        var totalPages = Math.floor(transactionCounts / 10);
+        if (transactionCounts % 10 > 0) {
+          totalPages++;
+        }
+
+        for (let i = 1; i <= totalPages; i++) {
+          let index;
+          if (i == currentPage) {
+            index = `<a class="index current-index" href="/transactions/?page=${i}">${i}</a>`;
+          } else {
+            index = `<a class="index" href="/transactions/?page=${i}">${i}</a>`;
+          }
+          $("#page-index").append(index);
+        }
+
+        $("#first-page").on("click", function () {
+          if (currentPage != 1) window.location.href = "/transactions/?page=1";
+        });
+        $("#last-page").on("click", function () {
+          if (currentPage != totalPages) window.location.href = "/transactions/?page=" + totalPages;
+        });
+        $("#prev-page").on("click", function () {
+          if (currentPage != 1) window.location.href = "/transactions/?page=" + (parseInt(currentPage) - 1);
+        });
+        $("#next-page").on("click", function () {
+          if (currentPage != totalPages) window.location.href = "/transactions/?page=" + (parseInt(currentPage) + 1);
+        });
+      });
+    </script>
 
     <style>
       #contain-table table,
@@ -43,11 +75,19 @@
 
     </style>
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
     <div class="page-top">
       <div class="center-div" id="contain-table">
+        <div class="center-div" id="page-control">
+          <button class="page-butt" id="first-page">&lt;&lt;</button>
+          <button class="page-butt" id="prev-page">&lt;</button>
+          <span id="page-index"></span>
+          <button class="page-butt" id="next-page">&gt;</button>
+          <button class="page-butt" id="last-page">&gt;&gt;</button>
+        </div>
         <div class="table-center">
         <table>
           <tr>
@@ -64,6 +104,8 @@
           </tr>
         </table>
         </div>
+        <input type="hidden" id="transaction-counts" th:value="${transactionCounts}" />
+        <input type="hidden" id="current-page" th:value="${page}" />
       </div>
     </div>
   </body>
