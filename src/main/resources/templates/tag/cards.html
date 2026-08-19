@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
-    <title>Storage Cards</title>
+    <title>Tag Cards</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -90,10 +90,10 @@
             sports: row.find(".sports").val(),
             grade: row.find(".grade").val(),
             value: row.find(".value").val(),
-            storageId: row.find(".storage").val() || null,
+            tagIds: TagPicker.get(row.find(".tag-picker")),
           };
 
-          var formData = $.param(cardData);
+          var formData = $.param(cardData, true); // traditional: tagIds=1&tagIds=2
 
           $.ajax({
             url: "/card/updateCard",
@@ -117,7 +117,8 @@
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
     <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
     <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
-    <link rel="stylesheet" th:href="@{/assets/storage-pages.css}" />
+    <link rel="stylesheet" th:href="@{/assets/tag-pages.css}" />
+    <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
   </head>
   <body>
     <div id="potential-modal">
@@ -129,20 +130,20 @@
     </div>
     <div th:replace="~{banner.html :: header}"></div>
     <div class="page-top">
-      <div class="storage-page">
-        <a class="storage-breadcrumb" href="/storage">
+      <div class="tag-page">
+        <a class="tag-breadcrumb" href="/tag">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
-          Back to storages
+          Back to tags
         </a>
-        <div class="storage-header">
-          <div class="storage-header-text">
-            <span class="eyebrow">Storage</span>
-            <h1 th:text="${storage.name}"></h1>
-            <p>Everything currently assigned to this storage.</p>
+        <div class="tag-header">
+          <div class="tag-header-text">
+            <span class="eyebrow">Tag</span>
+            <h1 th:text="${tag.name}"></h1>
+            <p>Every card carrying this tag.</p>
           </div>
-          <div class="storage-stats">
+          <div class="tag-stats">
             <div class="stat-pill">
               <span class="stat-value" th:text="${#lists.size(cards)}">0</span>
               <span class="stat-label" th:text="${#lists.size(cards) == 1 ? 'card' : 'cards'}">cards</span>
@@ -151,12 +152,12 @@
         </div>
 
         <div id="all-card">
-        <div class="storage-empty" th:if="${#lists.isEmpty(cards)}">
+        <div class="tag-empty" th:if="${#lists.isEmpty(cards)}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3zM6 6h.008v.008H6V6z" />
           </svg>
           <h3>No cards here yet</h3>
-          <p>Assign cards to this storage from the cards list or search page and they'll show up here.</p>
+          <p>Add this tag to cards from the cards list or search page and they'll show up here.</p>
         </div>
         <div class="table-center" th:unless="${#lists.isEmpty(cards)}">
         <table id="card-table" class="mobile-cards">
@@ -174,7 +175,7 @@
             <th>grade</th>
             <th>value</th>
             <th>note</th>
-            <th>storage</th>
+            <th>tags</th>
             <th>action</th>
           </tr>
           <tr th:each="card : ${cards}">
@@ -286,14 +287,7 @@
               />
             </td>
             <td><a class="show show-note">[[${card.note}]]</a></td>
-            <td>
-              <a class="show show-storage" th:text="${card.storageId != null ? storageNames.get(card.storageId) : ''}"></a>
-              <select class="update-element storage">
-                <option value="">-- none --</option>
-                <option th:each="entry : ${storageNames}" th:value="${entry.key}" th:text="${entry.value}"
-                        th:selected="${card.storageId != null and card.storageId == entry.key}"></option>
-              </select>
-            </td>
+            <td th:replace="~{fragments/tagCell :: cell(${card})}"></td>
             <td>
               <span style="display: flex">
                 <button class="show action-butt modify">modify</button>

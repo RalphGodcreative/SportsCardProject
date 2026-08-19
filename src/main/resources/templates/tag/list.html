@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Storages</title>
+  <title>Tags</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="_csrf" th:content="${_csrf.token}"/>
@@ -9,7 +9,7 @@
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
   <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
-  <link rel="stylesheet" th:href="@{/assets/storage-pages.css}" />
+  <link rel="stylesheet" th:href="@{/assets/tag-pages.css}" />
   <script>
     function getCsrf() {
       return {
@@ -18,19 +18,19 @@
       };
     }
 
-    function addStorage() {
-      var input = $('#new-storage-name');
+    function addTag() {
+      var input = $('#new-tag-name');
       var name = input.val().trim();
       if (!name) { input.trigger('focus'); return; }
       var csrf = getCsrf();
-      fetch('/storage/add?name=' + encodeURIComponent(name), {
+      fetch('/tag/add?name=' + encodeURIComponent(name), {
         method: 'PUT',
         headers: { [csrf.header]: csrf.token }
       })
         .then(res => res.json())
         .then(success => {
           if (success) location.reload();
-          else alert('Failed to add storage.');
+          else alert('Failed to add tag.');
         });
     }
 
@@ -47,11 +47,11 @@
     }
 
     $(document).ready(function () {
-      $('#new-storage-name').on('keydown', function (e) {
-        if (e.key === 'Enter') addStorage();
+      $('#new-tag-name').on('keydown', function (e) {
+        if (e.key === 'Enter') addTag();
       });
 
-      $('.delete-storage').on('click', function () {
+      $('.delete-tag').on('click', function () {
         openConfirmModal($(this).data('id'));
       });
 
@@ -63,7 +63,7 @@
       $('#confirm-modal-delete').on('click', function () {
         if (pendingDeleteId == null) return;
         var csrf = getCsrf();
-        fetch('/storage/delete?storageId=' + pendingDeleteId, {
+        fetch('/tag/delete?tagId=' + pendingDeleteId, {
           method: 'DELETE',
           headers: { [csrf.header]: csrf.token }
         })
@@ -74,36 +74,36 @@
           });
       });
 
-      $('.edit-storage').on('click', function () {
-        var card = $(this).closest('.storage-card');
+      $('.edit-tag').on('click', function () {
+        var card = $(this).closest('.tag-card');
         card.find('.view-mode').hide();
         card.find('.edit-mode').show();
-        card.find('.storage-name-view').hide();
-        card.find('.storage-name-edit').show().find('input').trigger('focus').trigger('select');
+        card.find('.tag-name-view').hide();
+        card.find('.tag-name-edit').show().find('input').trigger('focus').trigger('select');
       });
 
       $('.cancel-edit').on('click', function () {
-        var card = $(this).closest('.storage-card');
+        var card = $(this).closest('.tag-card');
         card.find('.edit-mode').hide();
         card.find('.view-mode').show();
-        card.find('.storage-name-edit').hide();
-        card.find('.storage-name-view').show();
+        card.find('.tag-name-edit').hide();
+        card.find('.tag-name-view').show();
       });
 
-      $('.save-storage').on('click', function () {
-        var card = $(this).closest('.storage-card');
+      $('.save-tag').on('click', function () {
+        var card = $(this).closest('.tag-card');
         var id = card.data('id');
-        var name = card.find('.storage-name-edit input').val().trim();
+        var name = card.find('.tag-name-edit input').val().trim();
         if (!name) return;
         var csrf = getCsrf();
-        fetch('/storage/rename?storageId=' + id + '&name=' + encodeURIComponent(name), {
+        fetch('/tag/rename?tagId=' + id + '&name=' + encodeURIComponent(name), {
           method: 'PUT',
           headers: { [csrf.header]: csrf.token }
         })
           .then(res => res.json())
           .then(success => {
             if (success) location.reload();
-            else alert('Failed to rename storage.');
+            else alert('Failed to rename tag.');
           });
       });
     });
@@ -114,8 +114,8 @@
 
   <div id="confirm-modal">
     <div id="confirm-modal-box">
-      <h3>Delete this storage?</h3>
-      <p>Cards inside it won't be deleted &mdash; they'll just become unassigned.</p>
+      <h3>Delete this tag?</h3>
+      <p>Cards carrying it won't be deleted &mdash; they'll just lose this tag.</p>
       <div id="confirm-modal-actions">
         <button id="confirm-modal-cancel" class="neon-butt">Cancel</button>
         <button id="confirm-modal-delete" class="destroy-butt">Delete</button>
@@ -124,81 +124,81 @@
   </div>
 
   <div class="page-top">
-    <div class="storage-page">
-      <div class="storage-header">
-        <div class="storage-header-text">
+    <div class="tag-page">
+      <div class="tag-header">
+        <div class="tag-header-text">
           <span class="eyebrow">Collection</span>
-          <h1>Storage Locations</h1>
-          <p>Group your cards into boxes, binders, or safes so you always know where they live.</p>
+          <h1>Tags</h1>
+          <p>Label cards however you like &mdash; a box, a binder, a player, a grade. A card can carry as many tags as you want.</p>
         </div>
-        <div class="storage-stats">
+        <div class="tag-stats">
           <div class="stat-pill">
-            <span class="stat-value" th:text="${#lists.size(storages)}">0</span>
-            <span class="stat-label">storages</span>
+            <span class="stat-value" th:text="${#lists.size(tags)}">0</span>
+            <span class="stat-label">tags</span>
           </div>
           <div class="stat-pill">
-            <span class="stat-value" th:text="${totalCards}">0</span>
-            <span class="stat-label">cards stored</span>
+            <span class="stat-value" th:text="${totalTagged}">0</span>
+            <span class="stat-label">cards tagged</span>
           </div>
         </div>
       </div>
 
-      <div class="storage-grid">
-        <div class="storage-card add-storage-card">
-          <div class="storage-card-icon">
+      <div class="tag-grid">
+        <div class="tag-card add-tag-card">
+          <div class="tag-card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" />
             </svg>
           </div>
-          <div class="add-storage-form">
-            <input type="text" id="new-storage-name" placeholder="New storage name" maxlength="100" />
-            <button class="confirm-butt" onclick="addStorage()">Add storage</button>
+          <div class="add-tag-form">
+            <input type="text" id="new-tag-name" placeholder="New tag name" maxlength="100" />
+            <button class="confirm-butt" onclick="addTag()">Add tag</button>
           </div>
         </div>
 
-        <div class="storage-card" th:each="storage : ${storages}" th:data-id="${storage.id}">
-          <div class="storage-card-icon">
+        <div class="tag-card" th:each="tag : ${tags}" th:data-id="${tag.id}">
+          <div class="tag-card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3zM6 6h.008v.008H6V6z" />
             </svg>
           </div>
-          <div class="storage-card-body">
-            <span class="storage-name-view storage-card-name" th:text="${storage.name}"></span>
-            <span class="storage-name-edit" style="display:none;">
-              <input type="text" th:value="${storage.name}" maxlength="100" />
+          <div class="tag-card-body">
+            <span class="tag-name-view tag-card-name" th:text="${tag.name}"></span>
+            <span class="tag-name-edit" style="display:none;">
+              <input type="text" th:value="${tag.name}" maxlength="100" />
             </span>
-            <span class="storage-card-count">
-              <strong th:text="${cardCounts.get(storage.id)}">0</strong>
-              <span th:text="${cardCounts.get(storage.id) == 1 ? ' card' : ' cards'}"> cards</span>
+            <span class="tag-card-count">
+              <strong th:text="${cardCounts.get(tag.id)}">0</strong>
+              <span th:text="${cardCounts.get(tag.id) == 1 ? ' card' : ' cards'}"> cards</span>
             </span>
           </div>
-          <div class="storage-card-actions view-mode">
+          <div class="tag-card-actions view-mode">
             <button class="action-butt view-cards"
-              th:onclick="'window.location.href=\'/storage/' + ${storage.id} + '/cards\''">View cards</button>
-            <button class="icon-btn edit-storage" aria-label="Rename storage" title="Rename">
+              th:onclick="'window.location.href=\'/tag/' + ${tag.id} + '/cards\''">View cards</button>
+            <button class="icon-btn edit-tag" aria-label="Rename tag" title="Rename">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 7.125L16.862 4.487" />
               </svg>
             </button>
-            <button class="icon-btn icon-btn-destroy delete-storage" th:data-id="${storage.id}" aria-label="Delete storage" title="Delete">
+            <button class="icon-btn icon-btn-destroy delete-tag" th:data-id="${tag.id}" aria-label="Delete tag" title="Delete">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
               </svg>
             </button>
           </div>
-          <div class="storage-card-actions edit-mode" style="display:none;">
-            <button class="confirm-butt save-storage">Save</button>
+          <div class="tag-card-actions edit-mode" style="display:none;">
+            <button class="confirm-butt save-tag">Save</button>
             <button class="neon-butt cancel-edit">Cancel</button>
           </div>
         </div>
 
-        <div class="storage-empty" th:if="${#lists.isEmpty(storages)}">
+        <div class="tag-empty" th:if="${#lists.isEmpty(tags)}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3zM6 6h.008v.008H6V6z" />
           </svg>
-          <h3>No storages yet</h3>
-          <p>Create your first storage above to start organizing cards into boxes, binders, or safes.</p>
+          <h3>No tags yet</h3>
+          <p>Create your first tag above to start organizing your collection.</p>
         </div>
       </div>
     </div>

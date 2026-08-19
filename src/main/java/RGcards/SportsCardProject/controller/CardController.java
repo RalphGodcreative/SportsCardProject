@@ -2,7 +2,7 @@ package RGcards.SportsCardProject.controller;
 
 import RGcards.SportsCardProject.entity.User;
 import RGcards.SportsCardProject.service.CardService;
-import RGcards.SportsCardProject.service.StorageService;
+import RGcards.SportsCardProject.service.TagService;
 import RGcards.SportsCardProject.entity.Card;
 import RGcards.SportsCardProject.entity.SaleWithCard;
 import RGcards.SportsCardProject.entity.Transaction;
@@ -24,18 +24,18 @@ public class CardController {
     private CardService cardService;
 
     @Autowired
-    private StorageService storageService;
+    private TagService tagService;
 
     @GetMapping("")
     public String main(Model model, @AuthenticationPrincipal User currentUser) {
         model.addAttribute("lastCard", cardService.getLastCard(currentUser.getId()));
-        model.addAttribute("storageNames", storageService.findNameMapForUser(currentUser.getId()));
+        model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
         return "cardMain";
     }
 
     @GetMapping("/addNewCard")
     public String addNewCard(Model model, @AuthenticationPrincipal User currentUser) {
-        model.addAttribute("storages", storageService.findAllForUser(currentUser.getId()));
+        model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
         return "addCardPage";
     }
 
@@ -46,12 +46,12 @@ public class CardController {
                            @ModelAttribute("parallel") String parallel, @ModelAttribute("numbered") String numbered,
                            @ModelAttribute("sports") String sports, @ModelAttribute("grade") String grade,
                            @RequestParam(name = "value", defaultValue = "") Double value, @ModelAttribute("note") String note,
-                           @RequestParam(name = "storageId", required = false) Long storageId,
+                           @RequestParam(name = "tagIds", required = false) List<Long> tagIds,
                            @AuthenticationPrincipal User currentUser
     ) {
         Card card = new Card(year, publisher, set, player, auto, insert, parallel, numbered, sports, grade, value, note);
         card.setUserId(currentUser.getId());
-        card.setStorageId(storageId);
+        card.setTags(tagService.resolveOwnedTags(tagIds, currentUser.getId()));
         cardService.saveCard(card);
         return "redirect:/card/cards";
     }
@@ -63,12 +63,12 @@ public class CardController {
                              @ModelAttribute("parallel") String parallel, @ModelAttribute("numbered") String numbered,
                              @ModelAttribute("sports") String sports, @ModelAttribute("grade") String grade,
                              @RequestParam(name = "value", defaultValue = "") Double value, @ModelAttribute("note") String note,
-                             @RequestParam(name = "storageId", required = false) Long storageId,
+                             @RequestParam(name = "tagIds", required = false) List<Long> tagIds,
                              @AuthenticationPrincipal User currentUser
     ) {
         Card card = new Card(Integer.parseInt(id), year, publisher, set, player, auto, insert, parallel, numbered, sports, grade, value, note);
         card.setUserId(currentUser.getId());
-        card.setStorageId(storageId);
+        card.setTags(tagService.resolveOwnedTags(tagIds, currentUser.getId()));
         cardService.saveCard(card);
         return "redirect:/card/cards";
     }
@@ -76,6 +76,10 @@ public class CardController {
     @PostMapping("/saveTransaction")
     public String saveTransaction(@RequestBody TransactionWithCard transactionWithCard,
                                   @AuthenticationPrincipal User currentUser) {
+        // Posted tag ids are untrusted — resolve them to owned tags before saving.
+        for (Card card : transactionWithCard.getCards()) {
+            card.setTags(tagService.resolveOwnedTags(card.getTagIds(), currentUser.getId()));
+        }
         cardService.saveTransactionWithCard(transactionWithCard, currentUser.getId());
         return "redirect:/card/cards";
     }
@@ -93,7 +97,7 @@ public class CardController {
         int cardCounts = cardService.findCardsCount(currentUser.getId());
         model.addAttribute("cards", cards);
         model.addAttribute("cardCounts", cardCounts);
-        model.addAttribute("storageNames", storageService.findNameMapForUser(currentUser.getId()));
+        model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
         return "allCard";
     }
 
@@ -105,7 +109,7 @@ public class CardController {
         model.addAttribute("cards", cards);
         model.addAttribute("cardCounts", cardCounts);
         model.addAttribute("page", page);
-        model.addAttribute("storageNames", storageService.findNameMapForUser(currentUser.getId()));
+        model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
         return "pagingAllCard";
     }
 
@@ -119,25 +123,25 @@ public class CardController {
             transactionWithCards.add(new TransactionWithCard(transaction, cards));
         }
         model.addAttribute("transactionWithCardList", transactionWithCards);
-        model.addAttribute("storageNames", storageService.findNameMapForUser(currentUser.getId()));
+        model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
         return "transactionList";
     }
 
     @GetMapping("/addTransaction")
     public String addTransaction(Model model, @AuthenticationPrincipal User currentUser) {
-        model.addAttribute("storages", storageService.findAllForUser(currentUser.getId()));
+        model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
         return "addTransactionPage";
     }
 
     @GetMapping("/searchCard")
     public String searchCard(Model model, @AuthenticationPrincipal User currentUser) {
-        model.addAttribute("storageNames", storageService.findNameMapForUser(currentUser.getId()));
+        model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
         return "searchCardPage";
     }
 
     @GetMapping("/sellTransaction")
     public String sellTransaction(Model model, @AuthenticationPrincipal User currentUser) {
-        model.addAttribute("storageNames", storageService.findNameMapForUser(currentUser.getId()));
+        model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
         return "sellTransactionPage";
     }
 }

@@ -73,6 +73,7 @@
     </style>
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
     <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
+    <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
@@ -100,7 +101,7 @@
             <th>grade</th>
             <th>value</th>
             <th>note</th>
-            <th>storage</th>
+            <th>tags</th>
           </tr>
           <tr>
             <td><input type="text" name="year" size="4" /></td>
@@ -123,10 +124,9 @@
               />
             </td>
             <td>
-              <select name="storageId">
-                <option value="">-- none --</option>
-                <option th:each="s : ${storages}" th:value="${s.id}" th:text="${s.name}"></option>
-              </select>
+              <!-- data-name makes the picker mirror its selection into hidden
+                   inputs, so this plain GET form submits tagIds=1&tagIds=2 -->
+              <div class="tag-picker" data-name="tagIds"></div>
             </td>
           </tr>
         </table>

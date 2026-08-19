@@ -74,7 +74,7 @@
   }
 
   /* ---- Collapsed view (lists only) ------------------------------------- */
-  /* All .mobile-cards tables share the same 15-column order (note + storage
+  /* All .mobile-cards tables share the same 15-column order (note + tags
      were added after this was first written), so the key / detail split can
      be addressed by position. */
   .mobile-cards td:nth-child(2)  { order: 0; } /* year     */

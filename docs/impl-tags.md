@@ -497,3 +497,93 @@ Each step compiles and runs on its own.
 | Posted tag ids referencing another user's tags | `resolveOwnedTags` → `findByIdInAndUserId` filters in SQL (§2.3), applied on the JSON path too (§2.9). |
 | `@AllArgsConstructor` arity changes when `tags` is added to `Card` | Grep for positional `new Card(` calls with the full field list before compiling. |
 | `V8` fails if `storages` was never applied somewhere | It follows `V7` in the same Flyway chain, so ordering is guaranteed. No `IF EXISTS` guards needed. |
+
+---
+
+## 7. As built — where the implementation diverged from this plan
+
+Implemented 2026-08-19 on branch `docs/impl-tags`. The schema, the `@ManyToMany`
+decision, the AND-semantics filter, and the fixed-position menu all landed as written
+above. Seven things ended up different or more specific:
+
+1. **`Card.tagIds` exists after all** — but only as an inbound field:
+
+   ```java
+   @Transient
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+   private List<Long> tagIds;
+   ```
+
+   The two JSON write paths (`/card/saveTransaction`, `/transactions/{id}/addCards`) post
+   bare tag ids, and this is where Jackson puts them. `WRITE_ONLY` keeps it out of
+   outbound JSON, so responses still expose `tags` only. Both controllers resolve it
+   through `resolveOwnedTags` before saving — posted ids are never trusted.
+
+2. **A shared Thymeleaf fragment, not per-template markup.**
+   `templates/fragments/tagCell.html` defines two fragments:
+   - `cell(card)` — the whole `<td>` (chips + picker), used by `pagingAllCard`,
+     `allCard`, `cardMain`, `transactionList`, `tag/cards`.
+   - `assets` — sets `window.ALL_TAGS` from `${tags}` and pulls in `tag-picker.js` +
+     `tag-picker.css`. Included once per page inside `<head>`.
+
+   This replaced five near-identical copies of the same markup.
+
+3. **The picker seeds from hidden `<input>` children, not a SpEL projection.** The plan
+   proposed `th:data-selected="${#strings.listJoin(card.tags.![id], ',')}"`. Projection
+   over a `Set` is exactly the kind of thing that works or doesn't depending on the
+   Thymeleaf/SpEL version, so the fragment renders
+
+   ```html
+   <div class="update-element tag-picker">
+     <input type="hidden" th:each="t : ${card.tags}" th:value="${t.id}" />
+   </div>
+   ```
+
+   and `tag-picker.js` reads those values (plus any `data-selected`) before replacing the
+   markup with its own. Plain `th:each`, no projection.
+
+4. **`data-name` drives the plain-form case.** A picker marked
+   `<div class="tag-picker" data-name="tagIds">` keeps hidden inputs in sync with its
+   selection on every change, so `addCardPage`'s plain GET form submits
+   `tagIds=1&tagIds=2` with no submit hook. AJAX pages omit `data-name` and call
+   `TagPicker.get()` instead.
+
+5. **`traditional: true` was needed in more places than §3.3 said.** Not just
+   `$.param(cardData, true)` on the row saves — the two search pages pass the criteria to
+   `$.ajax({ data: formData })` directly, which needs `traditional: true` in the ajax
+   options for `tagIds` to bind. That is `searchCardPage.html` and
+   `sellTransactionPage.html`. `transactionList.html` also has a *second* `$.param`
+   call (the bulk existing-card update inside the transaction editor) that needed it.
+
+6. **`transactionList.html`'s hidden carry-through was the real trap.** That page kept
+   `<input class="storage-id" th:value="${card.storageId}">` purely so a transaction edit
+   wouldn't wipe the card's storage — precisely the hazard called out in §2.8. It is now
+
+   ```html
+   <span class="tag-ids" style="display: none">
+     <input type="hidden" th:each="t : ${card.tags}" th:value="${t.id}" />
+   </span>
+   ```
+
+   read back into `tagIds` on submit. The "add new card" rows in that same table never
+   had a storage column and still have no tag column — unchanged behaviour, not a
+   regression.
+
+7. **Small naming details.** `TagController` exposes `totalTagged` (not `totalCards`) for
+   the header stat, and the sale-description `[storage]` fragment in
+   `sellTransactionPage.html` was dropped entirely, as §3.2 recommended.
+
+### Not yet verified
+
+`mvn compile` passes and no `storage` reference survives in `src/`. The application was
+**not booted**, because this checkout has no local `application.properties` (only
+`application.properties.example` and `application-prod.properties`), so there is no
+datasource to run Flyway against. Still to confirm on a machine with the dev DB:
+
+- `V8` applies, and `SELECT count(*) FROM card_tags` matches the old count of non-null
+  `cards.storage_id`.
+- `ddl-auto=validate` accepts the `@JoinTable` mapping at boot.
+- The two derived queries `findByTags_IdAndUserIdOrderByIdDesc` /
+  `countByTags_IdAndUserId` resolve — these are checked at context startup, not compile
+  time, so a bad property path fails on boot rather than in the build.
+- The picker menu clears `.table-center`'s `overflow-x: auto` in a real browser.

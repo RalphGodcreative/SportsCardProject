@@ -3,7 +3,7 @@ package RGcards.SportsCardProject.controller;
 import RGcards.SportsCardProject.dto.TransactionWithCard;
 import RGcards.SportsCardProject.entity.User;
 import RGcards.SportsCardProject.service.CardService;
-import RGcards.SportsCardProject.service.StorageService;
+import RGcards.SportsCardProject.service.TagService;
 import RGcards.SportsCardProject.entity.Card;
 import RGcards.SportsCardProject.entity.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class TransactionController {
     private CardService cardService;
 
     @Autowired
-    private StorageService storageService;
+    private TagService tagService;
 
     @GetMapping("/")
     public String allTransaction(Model model, @RequestParam(defaultValue = "1") int page,
@@ -48,7 +48,7 @@ public class TransactionController {
         List<TransactionWithCard> transactionWithCards = new ArrayList<>();
         transactionWithCards.add(new TransactionWithCard(transaction, cards));
         model.addAttribute("transactionWithCardList", transactionWithCards);
-        model.addAttribute("storageNames", storageService.findNameMapForUser(currentUser.getId()));
+        model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
         return "transactionList";
     }
 
@@ -77,6 +77,10 @@ public class TransactionController {
             return false;
         }
         try {
+            // Posted tag ids are untrusted — resolve them to owned tags before saving.
+            for (Card card : cards) {
+                card.setTags(tagService.resolveOwnedTags(card.getTagIds(), currentUser.getId()));
+            }
             cardService.addCardsToTransaction(transactionId, cards, currentUser.getId());
         } catch (Exception e) {
             e.printStackTrace();

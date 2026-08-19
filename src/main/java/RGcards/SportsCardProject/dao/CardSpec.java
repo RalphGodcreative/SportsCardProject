@@ -1,7 +1,12 @@
 package RGcards.SportsCardProject.dao;
 
 import RGcards.SportsCardProject.entity.Card;
+import RGcards.SportsCardProject.entity.Tag;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.util.List;
 
 public class CardSpec {
 
@@ -9,7 +14,7 @@ public class CardSpec {
         return (root, q, cb) -> cb.equal(root.get("userId"), userId);
     }
 
-    public static Specification<Card> build(Card card, Long userId) {
+    public static Specification<Card> build(Card card, List<Long> tagIds, Long userId) {
         return Specification
                 .where(forUser(userId))
                 .and(hasId(card.getId()))
@@ -23,7 +28,7 @@ public class CardSpec {
                 .and(equalsGrade(card.getGrade()))
                 .and(likeNumbered(card.getNumbered()))
                 .and(isAuto(card.getAuto()))
-                .and(equalsStorageId(card.getStorageId()));
+                .and(hasAllTags(tagIds));
     }
 
     private static Specification<Card> hasId(int id) {
@@ -70,8 +75,27 @@ public class CardSpec {
         return (auto == null || !auto) ? null : (root, q, cb) -> cb.isTrue(root.get("auto"));
     }
 
-    private static Specification<Card> equalsStorageId(Long storageId) {
-        return storageId == null ? null : (root, q, cb) -> cb.equal(root.get("storageId"), storageId);
+    /**
+     * AND semantics — a card matches only if it carries every selected tag.
+     * Each {@link #hasTag} issues its own join, so AND-ing three of them produces three
+     * independent joins. Every join is pinned to one tag id, so a matching card yields
+     * exactly one row and no distinct is needed.
+     */
+    private static Specification<Card> hasAllTags(List<Long> tagIds) {
+        if (tagIds == null || tagIds.isEmpty()) return null;
+        Specification<Card> spec = null;
+        for (Long tagId : tagIds) {
+            if (tagId == null) continue;
+            spec = spec == null ? hasTag(tagId) : spec.and(hasTag(tagId));
+        }
+        return spec;
+    }
+
+    private static Specification<Card> hasTag(Long tagId) {
+        return (root, q, cb) -> {
+            Join<Card, Tag> tag = root.join("tags", JoinType.INNER);
+            return cb.equal(tag.get("id"), tagId);
+        };
     }
 
     private static boolean isEmpty(String s) {

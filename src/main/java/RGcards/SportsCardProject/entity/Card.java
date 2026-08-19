@@ -2,10 +2,18 @@ package RGcards.SportsCardProject.entity;
 
 import RGcards.SportsCardProject.enums.CardType;
 import RGcards.SportsCardProject.util.DataProcessUtil;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
+
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -38,8 +46,26 @@ public class Card {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "storage_id")
-    private Long storageId;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "card_tags",
+            joinColumns = @JoinColumn(name = "card_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    @OrderBy("name")
+    @BatchSize(size = 50)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Tag> tags = new LinkedHashSet<>();
+
+    /**
+     * Inbound only. JSON card payloads carry bare tag ids; controllers resolve them
+     * through TagService (which drops ids the user doesn't own) into {@link #tags}.
+     * Never serialized — outbound JSON exposes {@code tags} instead.
+     */
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<Long> tagIds;
 
 
     public Card(int id, String year, String publisher, String set, String player, Boolean auto, String insert, String parallel, String numbered, String sports, String grade, Double value, String note) {

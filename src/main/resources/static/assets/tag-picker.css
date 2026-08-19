@@ -1,0 +1,138 @@
+/* ==========================================================================
+   Tag picker — checkbox dropdown replacing the old single-select storage box.
+   Loaded by every page that shows or edits a card's tags.
+   ========================================================================== */
+
+/* ---- Read-only chips ----------------------------------------------------- */
+
+.tag-chip {
+  display: inline-block;
+  margin: 1px 3px 1px 0;
+  padding: 1px 8px;
+  border: 1px solid rgba(202, 71, 245, 0.35);
+  border-radius: 10px;
+  background: rgba(202, 71, 245, 0.1);
+  color: #f0abfc;
+  font-size: 0.82em;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* ---- The control --------------------------------------------------------- */
+
+.tag-picker {
+  position: relative;
+}
+
+.tag-picker-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 90px;
+  max-width: 220px;
+  padding: 3px 8px;
+  border: 1px solid rgba(202, 71, 245, 0.3);
+  border-radius: 4px;
+  background: rgba(10, 10, 15, 0.6);
+  color: #e2e8f0;
+  font: inherit;
+  font-size: 0.9em;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tag-picker-toggle:hover,
+.tag-picker.is-open .tag-picker-toggle {
+  border-color: rgba(202, 71, 245, 0.6);
+  box-shadow: 0 0 12px rgba(202, 71, 245, 0.25);
+}
+
+.tag-picker-toggle.is-empty .tag-picker-label {
+  color: #64748b;
+}
+
+.tag-picker-label {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tag-picker-caret {
+  flex: 0 0 auto;
+  color: #CA47F5;
+  font-size: 0.8em;
+}
+
+/* ---- The menu ------------------------------------------------------------
+   Rendered at body level with position:fixed, NOT inside .tag-picker — the
+   .table-center scroll container (overflow-x:auto) would otherwise clip it.
+   -------------------------------------------------------------------------- */
+
+.tag-picker-menu {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  max-height: 260px;
+  max-width: 320px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid rgba(202, 71, 245, 0.35);
+  border-radius: 6px;
+  background: #12121a;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6), 0 0 18px rgba(202, 71, 245, 0.15);
+}
+
+.tag-picker-menu.show {
+  display: block;
+}
+
+.tag-picker-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  color: #e2e8f0;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tag-picker-option:hover {
+  background: rgba(202, 71, 245, 0.12);
+}
+
+.tag-picker-option input {
+  accent-color: #CA47F5;
+  cursor: pointer;
+  margin: 0;
+}
+
+.tag-picker-empty {
+  padding: 10px 12px;
+  color: #94a3b8;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+/* ---- Mobile -------------------------------------------------------------- */
+
+@media screen and (max-width: 700px) {
+  .tag-picker-menu {
+    max-width: none;
+    max-height: 50vh;
+  }
+
+  .tag-picker-toggle {
+    max-width: none;
+    width: 100%;
+  }
+
+  .tag-picker-option {
+    padding: 9px 10px;
+    font-size: 14px;
+  }
+}
