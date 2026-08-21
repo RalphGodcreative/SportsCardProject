@@ -21,9 +21,9 @@ public interface CardRepository extends JpaRepository<Card, Integer>, JpaSpecifi
 
     long countByUserId(Long userId);
 
-    List<Card> findByStorageIdAndUserId(Long storageId, Long userId);
+    List<Card> findByTags_IdAndUserIdOrderByIdDesc(Long tagId, Long userId);
 
-    long countByStorageIdAndUserId(Long storageId, Long userId);
+    long countByTags_IdAndUserId(Long tagId, Long userId);
 
     @Query("SELECT c FROM Card c WHERE c.userId = :userId AND c.year LIKE %:year%")
     List<Card> findCardsByYearAndUserId(@Param("userId") Long userId, @Param("year") String year);

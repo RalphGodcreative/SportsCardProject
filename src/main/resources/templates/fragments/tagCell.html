@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- The tags column of a card table row.
+     Read-only chips while viewing; a checkbox-dropdown picker while editing.
+     The picker seeds its selection from the hidden inputs below, which
+     tag-picker.js reads and then replaces with its own markup. -->
+<td th:fragment="cell(card)">
+  <span class="show show-tags">
+    <span class="tag-chip" th:each="t : ${card.tags}" th:text="${t.name}"></span>
+  </span>
+  <div class="update-element tag-picker">
+    <input type="hidden" th:each="t : ${card.tags}" th:value="${t.id}" />
+  </div>
+</td>
+
+<!-- Page-level tag list + assets. Include once per page, inside <head>. -->
+<th:block th:fragment="assets">
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    window.ALL_TAGS = /*[[${tags}]]*/ [];
+    /*]]>*/
+  </script>
+  <script type="text/javascript" th:src="@{/js/tag-picker.js}"></script>
+  <link rel="stylesheet" th:href="@{/assets/tag-picker.css}" />
+</th:block>
+
+</body>
+</html>

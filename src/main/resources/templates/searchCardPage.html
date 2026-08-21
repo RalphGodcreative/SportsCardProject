@@ -14,9 +14,6 @@
     ></script>
     <script type="text/javascript" th:src="@{/js/util.js}"></script>
     <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
-    <script th:inline="javascript">
-      var storageNames = /*[[${storageNames}]]*/ {};
-    </script>
     <script h:inline="javascript">
       $(document).ready(function () {
         $.ajaxSetup({
@@ -46,13 +43,14 @@
             numbered: $("#numbered").val(),
             grade: $("#grade").val(),
             value: $("#value").val(),
-            storageId: $("#storage").val() || null,
+            tagIds: TagPicker.get($("#tag-filter")),
           };
 
           $.ajax({
             url: "/cardRest/searchCard",
             type: "GET",
             data: formData,
+            traditional: true, // tagIds=1&tagIds=2, not tagIds[]=1
             dataType: "json",
             success: function (response) {
               if (response.length == 0) {
@@ -172,13 +170,8 @@
             </td>
             <td><a class="show show-note">${card.note}</a></td>
             <td>
-              <a class="show show-storage">${card.storageId != null && storageNames[card.storageId] ? storageNames[card.storageId] : ''}</a>
-              <select class="update-element storage">
-                <option value="">-- none --</option>
-                ${Object.entries(storageNames).map(([id, name]) =>
-                  '<option value="' + id + '"' + (String(card.storageId) === id ? ' selected' : '') + '>' + name + '</option>'
-                ).join('')}
-              </select>
+              <span class="show show-tags">${TagPicker.chipsHtml(card.tags)}</span>
+              <div class="update-element tag-picker" data-selected="${(card.tags || []).map(t => t.id).join(',')}"></div>
             </td>
             <td>
               <span style="display: flex">
@@ -197,6 +190,7 @@
           </tr>`;
               });
               $("#result-card").append(resultCards);
+              TagPicker.initAll($("#result-card")[0]);
               $("#result").show();
             },
             error: function (xhr, status, error) {
@@ -288,10 +282,10 @@
             sports: row.find(".sports").val(),
             grade: row.find(".grade").val(),
             value: row.find(".value").val(),
-            storageId: row.find(".storage").val() || null,
+            tagIds: TagPicker.get(row.find(".tag-picker")),
           };
 
-          var formData = $.param(cardData);
+          var formData = $.param(cardData, true); // traditional: tagIds=1&tagIds=2
 
           $.ajax({
             url: "/card/updateCard",
@@ -315,6 +309,7 @@
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
     <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
     <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
+    <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
   </head>
   <body>
     <div id="potential-modal">
@@ -345,7 +340,7 @@
             <th>numbered</th>
             <th>grade</th>
             <th>value</th>
-            <th>storage</th>
+            <th>tags</th>
           </tr>
           <tr>
             <td><input type="text" id="id" size="4" /></td>
@@ -361,10 +356,7 @@
             <td><input type="text" id="grade" size="6" /></td>
             <td><input type="text" id="value" size="6" /></td>
             <td>
-              <select id="storage">
-                <option value="">-- any --</option>
-                <option th:each="entry : ${storageNames}" th:value="${entry.key}" th:text="${entry.value}"></option>
-              </select>
+              <div class="tag-picker" id="tag-filter"></div>
             </td>
           </tr>
         </table>
@@ -389,7 +381,7 @@
           <th>grade</th>
           <th>value</th>
           <th>note</th>
-          <th>storage</th>
+          <th>tags</th>
           <th>action</th>
         </tr>
       </table>

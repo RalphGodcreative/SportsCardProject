@@ -90,10 +90,10 @@
             sports: row.find(".sports").val(),
             grade: row.find(".grade").val(),
             value: row.find(".value").val(),
-            storageId: row.find(".storage").val() || null,
+            tagIds: TagPicker.get(row.find(".tag-picker")),
           };
 
-          var formData = $.param(cardData);
+          var formData = $.param(cardData, true); // traditional: tagIds=1&tagIds=2
 
           $.ajax({
             url: "/card/updateCard",
@@ -117,6 +117,7 @@
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
     <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
     <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
+    <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
   </head>
   <body>
     <div id="potential-modal">
@@ -153,7 +154,7 @@
             <th>grade</th>
             <th>value</th>
             <th>note</th>
-            <th>storage</th>
+            <th>tags</th>
             <th>action</th>
           </tr>
           <tr th:each="card : ${cards}">
@@ -265,14 +266,7 @@
               />
             </td>
             <td><a class="show show-note">[[${card.note}]]</a></td>
-            <td>
-              <a class="show show-storage" th:text="${card.storageId != null ? storageNames.get(card.storageId) : ''}"></a>
-              <select class="update-element storage">
-                <option value="">-- none --</option>
-                <option th:each="entry : ${storageNames}" th:value="${entry.key}" th:text="${entry.value}"
-                        th:selected="${card.storageId != null and card.storageId == entry.key}"></option>
-              </select>
-            </td>
+            <td th:replace="~{fragments/tagCell :: cell(${card})}"></td>
             <td>
               <span style="display: flex">
                 <button class="show action-butt modify">modify</button>

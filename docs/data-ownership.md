@@ -10,7 +10,8 @@ Each user owns their own data. Ownership is enforced by a `user_id` foreign key 
 | `Card` | Yes | Root entity, has its own listing page (`/card`) |
 | `Transaction` | Yes | Has its own listing page (`/transactions`) |
 | `SearchKeyword` | Yes | Root entity, has its own listing page (`/crawler`) |
-| `Storage` | Yes | Root entity, has its own listing page (`/storage`) — planned, see `impl-storages.md` |
+| `Tag` | Yes | Root entity, has its own listing page (`/tag`) |
+| `card_tags` (join table) | No | No entity of its own — a `@ManyToMany` on `Card`. Has no `user_id`, so ownership is enforced by resolving posted tag ids through `TagRepository.findByIdInAndUserId` before they are ever written. See `impl-tags.md` |
 | `TransactionInfo` | No | Only accessed as a detail of `Transaction` |
 | `SaleWithCard` | No | Only accessed as a detail of `Card` |
 | `SearchProduct` | No | Only accessed as a result of `SearchKeyword` |

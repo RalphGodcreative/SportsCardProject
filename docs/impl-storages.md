@@ -1,3 +1,6 @@
+> **Superseded by [`impl-tags.md`](impl-tags.md).** Storages shipped as a one-to-many
+> feature and were then remodelled into many-to-many tags. Kept for history only.
+
 # Implementation Plan: Storage Table
 
 ## Summary

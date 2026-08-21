@@ -1,9 +1,9 @@
 /* ==========================================================================
-   Storage pages: storage/list, storage/cards
+   Tag pages: tag/list, tag/cards
    Built on the site's existing neon-dark tokens (see style.css header).
    ========================================================================== */
 
-.storage-page {
+.tag-page {
   width: 100%;
   max-width: 1200px;
   padding: 0 20px 60px;
@@ -12,7 +12,7 @@
 
 /* ---- Header: title + live stats ----------------------------------------- */
 
-.storage-header {
+.tag-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -23,18 +23,18 @@
   border-bottom: 1px solid rgba(202, 71, 245, 0.15);
 }
 
-.storage-header-text {
+.tag-header-text {
   text-align: left;
 }
 
-.storage-header-text h1 {
+.tag-header-text h1 {
   margin: 0 0 6px;
   font-size: 30px;
   color: #CA47F5;
   text-shadow: 0 0 18px rgba(202, 71, 245, 0.4);
 }
 
-.storage-header-text p {
+.tag-header-text p {
   margin: 0;
   max-width: 480px;
   color: #94a3b8;
@@ -42,7 +42,7 @@
   line-height: 1.5;
 }
 
-.storage-breadcrumb {
+.tag-breadcrumb {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -53,17 +53,17 @@
   transition: all 0.2s ease;
 }
 
-.storage-breadcrumb:hover {
+.tag-breadcrumb:hover {
   text-shadow: 0 0 8px rgba(66, 189, 250, 0.5);
   color: #f0abfc !important;
 }
 
-.storage-breadcrumb svg {
+.tag-breadcrumb svg {
   width: 14px;
   height: 14px;
 }
 
-.storage-stats {
+.tag-stats {
   display: flex;
   gap: 14px;
   flex-wrap: wrap;
@@ -96,15 +96,15 @@
   color: #94a3b8;
 }
 
-/* ---- Storage grid --------------------------------------------------------- */
+/* ---- Tag grid --------------------------------------------------------- */
 
-.storage-grid {
+.tag-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 18px;
 }
 
-.storage-card {
+.tag-card {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -117,13 +117,13 @@
   transition: all 0.25s ease;
 }
 
-.storage-card:hover {
+.tag-card:hover {
   transform: translateY(-3px);
   border-color: rgba(202, 71, 245, 0.5);
   box-shadow: 0 0 26px rgba(202, 71, 245, 0.18);
 }
 
-.storage-card-icon {
+.tag-card-icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -134,48 +134,48 @@
   color: #CA47F5;
 }
 
-.storage-card-icon svg {
+.tag-card-icon svg {
   width: 22px;
   height: 22px;
 }
 
-.storage-card-body {
+.tag-card-body {
   display: flex;
   flex-direction: column;
   gap: 4px;
   flex: 1;
 }
 
-.storage-card-name {
+.tag-card-name {
   font-size: 17px;
   font-weight: 600;
   color: #e2e8f0;
   word-break: break-word;
 }
 
-.storage-card-count {
+.tag-card-count {
   font-size: 12px;
   color: #94a3b8;
 }
 
-.storage-card-count strong {
+.tag-card-count strong {
   color: #31F6B5;
 }
 
-.storage-name-edit input {
+.tag-name-edit input {
   width: 100%;
   box-sizing: border-box;
   font-size: 15px;
 }
 
-.storage-card-actions {
+.tag-card-actions {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
 }
 
-.storage-card-actions .action-butt {
+.tag-card-actions .action-butt {
   flex: 1 1 auto;
   text-align: center;
 }
@@ -212,39 +212,39 @@
   box-shadow: 0 0 10px rgba(247, 99, 69, 0.25);
 }
 
-/* ---- Add-storage card ------------------------------------------------------ */
+/* ---- Add-tag card ------------------------------------------------------ */
 
-.add-storage-card {
+.add-tag-card {
   border-style: dashed;
   border-color: rgba(63, 243, 123, 0.35);
   box-shadow: none;
   justify-content: center;
 }
 
-.add-storage-card:hover {
+.add-tag-card:hover {
   border-color: rgba(63, 243, 123, 0.7);
   box-shadow: 0 0 20px rgba(63, 243, 123, 0.15);
 }
 
-.add-storage-card .storage-card-icon {
+.add-tag-card .tag-card-icon {
   background: rgba(63, 243, 123, 0.08);
   color: #3FF37B;
 }
 
-.add-storage-form {
+.add-tag-form {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.add-storage-form input {
+.add-tag-form input {
   width: 100%;
   box-sizing: border-box;
 }
 
 /* ---- Empty state ------------------------------------------------------------ */
 
-.storage-empty {
+.tag-empty {
   grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
@@ -257,20 +257,20 @@
   border-radius: 12px;
 }
 
-.storage-empty svg {
+.tag-empty svg {
   width: 40px;
   height: 40px;
   color: #4a5568;
   margin-bottom: 6px;
 }
 
-.storage-empty h3 {
+.tag-empty h3 {
   margin: 0;
   color: #e2e8f0;
   font-size: 17px;
 }
 
-.storage-empty p {
+.tag-empty p {
   margin: 0;
   max-width: 340px;
   font-size: 13px;
@@ -326,7 +326,7 @@
 
 /* ---- Cards page toolbar ------------------------------------------------------ */
 
-.storage-cards-toolbar {
+.tag-cards-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -336,7 +336,7 @@
 }
 
 @media (max-width: 640px) {
-  .storage-header {
+  .tag-header {
     flex-direction: column;
     align-items: flex-start;
   }

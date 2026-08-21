@@ -39,8 +39,8 @@ public class CardService {
         return cardRepo.findCardsByYearAndUserId(userId, year);
     }
 
-    public List<Card> findCardsWithParam(Card card, Long userId) {
-        return cardRepo.findAll(CardSpec.build(card, userId), Sort.by(Sort.Direction.DESC, "id"));
+    public List<Card> findCardsWithParam(Card card, List<Long> tagIds, Long userId) {
+        return cardRepo.findAll(CardSpec.build(card, tagIds, userId), Sort.by(Sort.Direction.DESC, "id"));
     }
 
     public List<Card> findCardsByPage(int page, Long userId) {
@@ -62,12 +62,12 @@ public class CardService {
         return cardRepo.findFirstByUserIdOrderByIdDesc(userId);
     }
 
-    public List<Card> getCardsByStorage(Long storageId, Long userId) {
-        return cardRepo.findByStorageIdAndUserId(storageId, userId);
+    public List<Card> getCardsByTag(Long tagId, Long userId) {
+        return cardRepo.findByTags_IdAndUserIdOrderByIdDesc(tagId, userId);
     }
 
-    public long countCardsInStorage(Long storageId, Long userId) {
-        return cardRepo.countByStorageIdAndUserId(storageId, userId);
+    public long countCardsWithTag(Long tagId, Long userId) {
+        return cardRepo.countByTags_IdAndUserId(tagId, userId);
     }
 
     public Card getCardById(int id, Long userId) {
