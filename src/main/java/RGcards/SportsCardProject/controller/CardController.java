@@ -124,7 +124,7 @@ public class CardController {
         }
         model.addAttribute("transactionWithCardList", transactionWithCards);
         model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
-        return "transactionList";
+        return "transactionDetail";
     }
 
     @GetMapping("/addTransaction")
