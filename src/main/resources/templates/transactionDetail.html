@@ -146,6 +146,7 @@
               grade: row.find(".grade").val(),
               value: row.find(".value").val(),
             };
+            cardData.tagIds = TagPicker.get(row.find(".tag-picker"));
             if (!cardData.year || !cardData.set || !cardData.player) {
               hasInvalidCard = true;
             }
@@ -164,9 +165,7 @@
               numbered: row.find(".numbered").val(),
               grade: row.find(".grade").val(),
               value: row.find(".value").val(),
-              tagIds: row.find(".tag-ids input").map(function () {
-                return parseInt(this.value, 10);
-              }).get(),
+              tagIds: TagPicker.get(row.find(".tag-picker")),
             });
           }
         });
@@ -277,6 +276,7 @@
           <td><input type="text" class="numbered" size="6" /></td>
           <td><input type="text" class="grade" size="6" /></td>
           <td><input type="text" class="value" size="6" /></td>
+          <td><div class="tag-picker"></div></td>
           <td>
             <button class="copy action-butt">copy</button>
             <button class="paste action-butt">paste</button>
@@ -288,7 +288,9 @@
 
       $(".add-card-row").on("click", function () {
         var table = $(this).closest(".add-cards-section").find(".existing-cards-table");
-        table.append(newCardRowHtml());
+        var row = $(newCardRowHtml());
+        table.append(row);
+        TagPicker.initAll(row);
       });
 
       $(".page-top").on("click", ".delete-card", function () {
@@ -299,6 +301,7 @@
         var row = $(this).closest("tr");
         row.find("input[type=text]:not(.id)").val("");
         row.find("input[type=checkbox]").prop("checked", false);
+        TagPicker.set(row.find(".tag-picker"), []);
       });
 
       $(".page-top").on("click", ".copy", function () {
@@ -315,6 +318,7 @@
           numbered: row.find(".numbered").val(),
           grade: row.find(".grade").val(),
           value: row.find(".value").val(),
+          tagIds: TagPicker.get(row.find(".tag-picker")),
         };
       });
 
@@ -331,6 +335,7 @@
         row.find(".numbered").val(cardClipboard.numbered || "");
         row.find(".grade").val(cardClipboard.grade || "");
         row.find(".value").val(cardClipboard.value || "");
+        TagPicker.set(row.find(".tag-picker"), cardClipboard.tagIds || []);
       });
 
     });
@@ -585,14 +590,12 @@
               <th>numbered</th>
               <th>grade</th>
               <th>value</th>
+              <th>tags</th>
               <th>action</th>
             </tr>
             <tr th:each="card : ${transactionWithCard.cards}">
               <td>
                 <input type="hidden" class="id" th:value="${card.id}" />
-                <span class="tag-ids" style="display: none">
-                  <input type="hidden" th:each="t : ${card.tags}" th:value="${t.id}" />
-                </span>
                 <input type="text" class="year" size="4" th:value="${card.year}" />
               </td>
               <td><input type="text" class="sports" size="6" th:value="${card.sports}" /></td>
@@ -605,6 +608,11 @@
               <td><input type="text" class="numbered" size="6" th:value="${card.numbered}" /></td>
               <td><input type="text" class="grade" size="6" th:value="${card.grade}" /></td>
               <td><input type="text" class="value" size="6" th:value="${card.value}" /></td>
+              <td>
+                <div class="tag-picker">
+                  <input type="hidden" th:each="t : ${card.tags}" th:value="${t.id}" />
+                </div>
+              </td>
               <td>
                 <button class="copy action-butt">copy</button>
                 <button class="paste action-butt">paste</button>

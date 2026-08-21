@@ -49,7 +49,7 @@ public class TransactionController {
         transactionWithCards.add(new TransactionWithCard(transaction, cards));
         model.addAttribute("transactionWithCardList", transactionWithCards);
         model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
-        return "transactionList";
+        return "transactionDetail";
     }
 
     @DeleteMapping("/delete/{transactionId}")
