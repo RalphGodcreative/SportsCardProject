@@ -27,10 +27,10 @@ Open the app to a small group of external users for real-world testing and feedb
   - Should feel consistent with the public homepage and banner from Tasks 1 and 2
 
 ### 5. Per-User Usage Limits (Free Tier Protection)
-- [ ] Enforce per-user soft caps to protect free-tier infrastructure
-  - Cards per user: **100**
-  - SearchKeywords per user: **20**
-  - AI feature calls per user per month: **30** (`analyzeCardPotential`)
+- [ ] Enforce per-user soft caps to protect free-tier infrastructure, role-based via new `ROLE_TEST` tier
+  - `ROLE_ADMIN`: unlimited
+  - `ROLE_TEST`: 300 cards / 20 keywords / 30 AI calls per month
+  - `ROLE_USER` (normal user): 50 cards / 5 keywords / 0 AI calls per month
   - See [impl-usage-limits.md](impl-usage-limits.md) for detailed code changes
 
 ## Order of Work
