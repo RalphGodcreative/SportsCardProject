@@ -4,9 +4,11 @@ import RGcards.SportsCardProject.dao.UserRepository;
 import RGcards.SportsCardProject.entity.User;
 import RGcards.SportsCardProject.security.OAuth2UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
 
+    @Value("${app.registration.enabled:false}")
+    private boolean registrationEnabled;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
@@ -24,6 +29,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String name  = oAuth2User.getAttribute("name");
 
         User user = userRepository.findByEmailIgnoreCase(email).orElseGet(() -> {
+            if (!registrationEnabled) {
+                throw new OAuth2AuthenticationException(
+                        new OAuth2Error("registration_disabled"), "Registration is currently closed");
+            }
             User newUser = new User();
             newUser.setEmail(email);
             newUser.setUsername(resolveUsername(name, email));
