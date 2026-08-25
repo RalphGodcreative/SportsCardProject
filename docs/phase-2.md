@@ -5,7 +5,7 @@ Open the app to a small group of external users for real-world testing and feedb
 ## Tasks
 
 ### 1. Public Homepage
-- [ ] Make the homepage (`/`) accessible without login
+- [x] Make the homepage (`/`) accessible without login
   - Update `SecurityFilterChain` to permit `/` alongside existing public routes
   - Homepage should display useful content for non-logged-in visitors (**Content TBD**)
 
@@ -22,7 +22,7 @@ Open the app to a small group of external users for real-world testing and feedb
   - See [impl-google-oauth2.md](impl-google-oauth2.md) for detailed code changes
 
 ### 4. Redesign Login & Register Pages
-- [ ] Rewrite login and register pages with a cleaner, more polished design
+- [x] Rewrite login and register pages with a cleaner, more polished design
   - Include a **Login with Google** button wired to the OAuth2 flow from Task 3
   - Should feel consistent with the public homepage and banner from Tasks 1 and 2
 
