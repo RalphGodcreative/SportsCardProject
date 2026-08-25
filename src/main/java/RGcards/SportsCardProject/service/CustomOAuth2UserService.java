@@ -38,6 +38,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return userRepository.save(newUser);
         });
 
+        if (!user.isEnabled()) {
+            throw new OAuth2AuthenticationException(
+                    new OAuth2Error("account_disabled"), "This account has been disabled");
+        }
+
         return new OAuth2UserPrincipal(user, oAuth2User.getAttributes());
     }
 

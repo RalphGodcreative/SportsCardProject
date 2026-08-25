@@ -12,6 +12,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsernameAndIdNot(String username, Long id);
     boolean existsByEmailAndIdNot(String email, Long id);
 
+    long countByRole(String role);
+
     @Modifying
     @Query("UPDATE User u SET u.aiCallCount = 0")
     void resetAllAiCallCounts();

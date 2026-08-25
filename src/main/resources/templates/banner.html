@@ -54,6 +54,7 @@
           <div class="user-menu" id="user-menu">
             <a href="/user/edit" class="user-menu-item">Edit Profile</a>
             <a href="/admin/recommendations" class="user-menu-item" sec:authorize="hasAuthority('ROLE_ADMIN')">Recommendations</a>
+            <a href="/admin/users" class="user-menu-item" sec:authorize="hasAuthority('ROLE_ADMIN')">Users</a>
             <a href="/admin/settings" class="user-menu-item" sec:authorize="hasAuthority('ROLE_ADMIN')">Settings</a>
             <form th:action="@{/logout}" method="post">
               <button type="submit" class="user-menu-item">Logout</button>
@@ -81,6 +82,7 @@
             <span class="mobile-username" th:text="${displayUsername}">User</span>
             <a href="/user/edit" class="mobile-sub">Edit Profile</a>
             <a href="/admin/recommendations" class="mobile-sub" sec:authorize="hasAuthority('ROLE_ADMIN')">Recommendations</a>
+            <a href="/admin/users" class="mobile-sub" sec:authorize="hasAuthority('ROLE_ADMIN')">Users</a>
             <a href="/admin/settings" class="mobile-sub" sec:authorize="hasAuthority('ROLE_ADMIN')">Settings</a>
             <form th:action="@{/logout}" method="post" style="margin:0">
               <button type="submit" class="mobile-logout">Logout</button>

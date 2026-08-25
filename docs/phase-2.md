@@ -34,7 +34,7 @@ Open the app to a small group of external users for real-world testing and feedb
   - See [impl-usage-limits.md](impl-usage-limits.md) for detailed code changes
 
 ### 6. Admin User Management Page
-- [ ] Add a `/admin/users` page to manage external testers once the beta is open
+- [x] Add a `/admin/users` page to manage external testers once the beta is open
   - List all users with role, enabled/disabled state, and per-user usage stats
   - Change a user's role, enable/disable an account, delete a user (cascades all their data)
   - Set or clear a per-user override for their monthly AI-call limit (Task 5)

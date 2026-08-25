@@ -75,7 +75,13 @@ public class UsageLimits {
 
     public int maxCards(User user)    { return forRole(user, testMaxCards, userMaxCards); }
     public int maxKeywords(User user) { return forRole(user, testMaxKeywords, userMaxKeywords); }
-    public int maxAiCalls(User user)  { return forRole(user, testMaxAiCalls, userMaxAiCalls); }
+
+    public int maxAiCalls(User user) {
+        if (user.getMaxAiCallsOverride() != null) {
+            return user.getMaxAiCallsOverride();
+        }
+        return forRole(user, testMaxAiCalls, userMaxAiCalls);
+    }
 
     private int forRole(User user, int testValue, int userValue) {
         return switch (user.getRole()) {

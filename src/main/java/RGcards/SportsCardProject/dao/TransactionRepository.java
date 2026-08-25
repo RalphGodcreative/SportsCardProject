@@ -16,6 +16,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 
     long countByUserId(Long userId);
 
+    List<Transaction> findByUserId(Long userId);
+
     @Query("SELECT t FROM Transaction t WHERE t.userId = :userId AND date >= :startDate AND date <= :endDate ORDER BY date DESC")
     List<Transaction> getTransactionsInDateRange(@Param("userId") Long userId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

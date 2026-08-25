@@ -16,6 +16,9 @@ public class OAuth2UserPrincipal extends User implements OAuth2User {
         setPassword(user.getPassword());
         setRole(user.getRole());
         setProvider(user.getProvider());
+        setEnabled(user.isEnabled());
+        setAiCallCount(user.getAiCallCount());
+        setMaxAiCallsOverride(user.getMaxAiCallsOverride());
         this.attributes = attributes;
     }
 
