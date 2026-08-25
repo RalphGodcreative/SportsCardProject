@@ -2,9 +2,9 @@ package RGcards.SportsCardProject.controller;
 
 import RGcards.SportsCardProject.dao.UserRepository;
 import RGcards.SportsCardProject.entity.User;
+import RGcards.SportsCardProject.service.AppSettingService;
 import RGcards.SportsCardProject.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -17,11 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class AuthController {
 
-    @Value("${app.registration.enabled:false}")
-    private boolean registrationEnabled;
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final AppSettingService appSettingService;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -30,7 +28,7 @@ public class AuthController {
 
     @GetMapping("/register")
     public String registerPage() {
-        if (!registrationEnabled) return "redirect:/login";
+        if (!appSettingService.isRegistrationEnabled()) return "redirect:/login";
         return "register";
     }
 
@@ -41,7 +39,7 @@ public class AuthController {
             @RequestParam String password,
             Model model
     ) {
-        if (!registrationEnabled) return "redirect:/login";
+        if (!appSettingService.isRegistrationEnabled()) return "redirect:/login";
         email = email.toLowerCase();
         if (!ValidationUtil.isValidEmail(email)) {
             model.addAttribute("error", "Please enter a valid email address.");

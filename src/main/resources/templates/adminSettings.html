@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App Settings</title>
+  <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  <style>
+    .settings-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px;
+    }
+    .settings-box {
+      background: #0f0f18;
+      border: 1px solid rgba(56, 201, 250, 0.2);
+      border-radius: 8px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 640px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    }
+    .settings-box h2 {
+      color: #CA47F5;
+      text-shadow: 0 0 10px rgba(202, 71, 245, 0.5);
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-family: fantasy;
+    }
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(56, 201, 250, 0.15);
+    }
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+    .setting-label {
+      color: #38C9FA;
+      font-family: fantasy;
+      font-size: 0.9rem;
+      text-shadow: 0 0 6px rgba(56, 201, 250, 0.3);
+    }
+    .setting-desc {
+      color: #666;
+      font-size: 0.78rem;
+      margin-top: 0.2rem;
+      font-family: inherit;
+    }
+    .setting-state {
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    .setting-state.on {
+      color: #4ade80;
+    }
+    .setting-state.off {
+      color: #f87171;
+    }
+    .toggle-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-family: fantasy;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: linear-gradient(135deg, rgba(56, 201, 250, 0.15), rgba(202, 71, 245, 0.15));
+      border: 1px solid rgba(56, 201, 250, 0.4);
+      color: #38C9FA;
+      transition: all 0.2s ease;
+    }
+    .toggle-btn:hover {
+      background: linear-gradient(135deg, rgba(56, 201, 250, 0.25), rgba(202, 71, 245, 0.25));
+      border-color: #38C9FA;
+      color: #f0abfc;
+    }
+  </style>
+</head>
+<body>
+  <div th:replace="~{banner.html :: header}"></div>
+  <div class="page-top settings-wrap">
+    <div class="settings-box">
+      <h2>App Settings</h2>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Registration</div>
+          <div class="setting-desc">Allow new accounts to be created (form and Google login).</div>
+        </div>
+        <span class="setting-state" th:classappend="${registrationEnabled} ? 'on' : 'off'"
+              th:text="${registrationEnabled} ? 'ON' : 'OFF'"></span>
+        <form th:action="@{/admin/settings/registration}" method="post" style="margin:0;">
+          <input type="hidden" name="enabled" th:value="${!registrationEnabled}" />
+          <button type="submit" class="toggle-btn" th:text="${registrationEnabled} ? 'Turn Off' : 'Turn On'"></button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

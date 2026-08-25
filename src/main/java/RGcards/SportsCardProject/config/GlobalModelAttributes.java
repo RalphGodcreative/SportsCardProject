@@ -1,21 +1,22 @@
 package RGcards.SportsCardProject.config;
 
 import RGcards.SportsCardProject.entity.User;
-import org.springframework.beans.factory.annotation.Value;
+import RGcards.SportsCardProject.service.AppSettingService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalModelAttributes {
 
-    @Value("${app.registration.enabled:false}")
-    private boolean registrationEnabled;
+    private final AppSettingService appSettingService;
 
     @ModelAttribute("registrationEnabled")
     public boolean registrationEnabled() {
-        return registrationEnabled;
+        return appSettingService.isRegistrationEnabled();
     }
 
     @ModelAttribute("displayUsername")

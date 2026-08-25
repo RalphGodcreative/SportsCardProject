@@ -43,7 +43,7 @@ Open the app to a small group of external users for real-world testing and feedb
   - See [impl-admin-user-management.md](impl-admin-user-management.md) for detailed code changes
 
 ### 7. Runtime Registration Toggle
-- [ ] Make `app.registration.enabled` flippable from `/admin/settings` without a redeploy
+- [x] Make `app.registration.enabled` flippable from `/admin/settings` without a redeploy
   - Backed by a new `app_settings` key/value table, cached in memory, property kept as seed default
   - **Fixes an existing gap:** Google OAuth2 login auto-creates accounts regardless of the
     flag today, so registration is never truly closed — gate `CustomOAuth2UserService` too
