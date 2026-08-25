@@ -49,6 +49,16 @@ Open the app to a small group of external users for real-world testing and feedb
     flag today, so registration is never truly closed — gate `CustomOAuth2UserService` too
   - See [impl-registration-toggle.md](impl-registration-toggle.md) for detailed code changes
 
+### 8. Add Transaction Page Help Panel
+- [ ] Add an info icon next to the "Add New Transaction" title that opens a tutorial block, closed by an `X`
+  - Explains the five transaction types (`Break` / `Buy` / `Trade` / `Open` / `Giveaway`),
+    which are documented nowhere in the UI today
+  - Walks through every card column with a filled-in example, plus the copy/paste/clear/delete row actions
+  - Clarifies that `amount` is the transaction total while `value` is per-card — the easiest
+    thing for a new user to get backwards
+  - Reuses the existing show/hide popup pattern already on this page (the note field)
+  - See [impl-add-transaction-guide.md](impl-add-transaction-guide.md) for detailed code changes
+
 ## Order of Work
 
 - Task 1 (public homepage) first — it's the entry point for all external users
@@ -62,3 +72,6 @@ Open the app to a small group of external users for real-world testing and feedb
 - Task 7's OAuth2 fix should land before Tasks 1/2 put a public homepage and visible auth
   panel in front of external users — until then, "registration off" doesn't hold. The
   toggle itself can follow whenever
+- Task 8 (help panel) should land before external testers arrive — they'll hit the add
+  transaction page with no idea what the transaction types mean. Independent of Tasks 5-7,
+  so it can be done at any point
