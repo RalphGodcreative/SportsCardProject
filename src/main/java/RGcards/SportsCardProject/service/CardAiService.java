@@ -1,6 +1,9 @@
 package RGcards.SportsCardProject.service;
 
+import RGcards.SportsCardProject.dao.UserRepository;
 import RGcards.SportsCardProject.entity.Card;
+import RGcards.SportsCardProject.entity.User;
+import RGcards.SportsCardProject.exception.LimitExceededException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,9 +13,25 @@ import org.springframework.stereotype.Service;
 public class CardAiService {
 
     private final GeminiService geminiService;
+    private final UsageLimits usageLimits;
+    private final UserRepository userRepository;
 
-    public String analyzeCardPotential(Card card) throws JsonProcessingException {
-        String prompt = String.format(
+    public String analyzeCardPotential(Card card, User user) throws JsonProcessingException {
+        int maxAiCalls = usageLimits.maxAiCalls(user);
+        if (user.getAiCallCount() >= maxAiCalls) {
+            throw new LimitExceededException("Monthly AI call limit reached (" + maxAiCalls + ")");
+        }
+
+        String result = geminiService.generateContent(buildPrompt(card), "gemini-2.5-flash", true);
+
+        user.setAiCallCount(user.getAiCallCount() + 1);
+        userRepository.save(user);
+
+        return result;
+    }
+
+    private String buildPrompt(Card card) {
+        return String.format(
             "Analyze the price rise potential of this sports card.\n" +
             "Search up the player's current stats and recent performance to be more accurate.\n" +
             "Player: %s\nYear: %s\nSport: %s\nPublisher: %s\nSet: %s\n" +
@@ -25,6 +44,5 @@ public class CardAiService {
             card.getAuto(), card.getInsert(), card.getParallel(), card.getNumbered(),
             card.getGrade(), card.getValue()
         );
-        return geminiService.generateContent(prompt, "gemini-2.5-flash", true);
     }
 }

@@ -5,6 +5,7 @@ import RGcards.SportsCardProject.dao.UserRepository;
 import RGcards.SportsCardProject.entity.SearchKeyword;
 import RGcards.SportsCardProject.entity.SearchProduct;
 import RGcards.SportsCardProject.entity.User;
+import RGcards.SportsCardProject.exception.LimitExceededException;
 import jakarta.mail.MessagingException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class CrawlerService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UsageLimits usageLimits;
+
     public List<SearchProduct> getProductListByKeyword(String keyword) {
         return yahooAuctionHttpService.getNewProductList(keyword, null);
     }
@@ -37,13 +41,18 @@ public class CrawlerService {
         return searchKeywordRepository.findByUserId(userId);
     }
 
-    public SearchKeyword addKeyword(String keyword, Long userId) {
-        if (searchKeywordRepository.findByKeywordAndUserId(keyword, userId) != null) {
+    public SearchKeyword addKeyword(String keyword, User user) {
+        if (searchKeywordRepository.findByKeywordAndUserId(keyword, user.getId()) != null) {
             return null;
+        }
+        int maxKeywords = usageLimits.maxKeywords(user);
+        int current = searchKeywordRepository.countByUserId(user.getId());
+        if (current >= maxKeywords) {
+            throw new LimitExceededException("Keyword limit reached (" + maxKeywords + ")");
         }
         SearchKeyword searchKeyword = new SearchKeyword();
         searchKeyword.setKeyword(keyword);
-        searchKeyword.setUserId(userId);
+        searchKeyword.setUserId(user.getId());
         return searchKeywordRepository.save(searchKeyword);
     }
 

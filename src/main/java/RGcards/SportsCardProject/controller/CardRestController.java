@@ -75,7 +75,7 @@ public class CardRestController {
         }
 
         try {
-            response.put("analysis", cardAiService.analyzeCardPotential(card));
+            response.put("analysis", cardAiService.analyzeCardPotential(card, currentUser));
         } catch (Exception e) {
             response.put("error", e.getMessage());
         }

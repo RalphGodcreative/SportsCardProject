@@ -3,6 +3,7 @@ package RGcards.SportsCardProject.controller;
 import RGcards.SportsCardProject.entity.SearchKeyword;
 import RGcards.SportsCardProject.entity.SearchProduct;
 import RGcards.SportsCardProject.entity.User;
+import RGcards.SportsCardProject.exception.LimitExceededException;
 import RGcards.SportsCardProject.service.CrawlerService;
 import RGcards.SportsCardProject.service.EmailService;
 import jakarta.mail.MessagingException;
@@ -36,8 +37,12 @@ public class CrawlerController {
     @ResponseBody
     public Boolean addKeyword(@RequestParam(name = "keyword") String keyword,
                               @AuthenticationPrincipal User currentUser) {
-        SearchKeyword searchKeyword = crawlerService.addKeyword(keyword, currentUser.getId());
-        return searchKeyword != null;
+        try {
+            SearchKeyword searchKeyword = crawlerService.addKeyword(keyword, currentUser);
+            return searchKeyword != null;
+        } catch (LimitExceededException e) {
+            return false;
+        }
     }
 
     @DeleteMapping("/delete")

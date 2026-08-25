@@ -9,7 +9,9 @@ import RGcards.SportsCardProject.entity.Card;
 import RGcards.SportsCardProject.entity.SaleWithCard;
 import RGcards.SportsCardProject.entity.Transaction;
 import RGcards.SportsCardProject.entity.TransactionInfo;
+import RGcards.SportsCardProject.entity.User;
 import RGcards.SportsCardProject.enums.MoveType;
+import RGcards.SportsCardProject.exception.LimitExceededException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +32,8 @@ public class CardService {
     private TransactionRepository tranRepo;
     @Autowired
     private TransactionInfoRepository tranInfoRepo;
+    @Autowired
+    private UsageLimits usageLimits;
 
     public List<Card> getAllCardsSortById(Long userId) {
         return cardRepo.findByUserIdOrderByIdDesc(userId);
@@ -86,13 +90,20 @@ public class CardService {
         return tranInfoRepo.save(transactionInfo).getId();
     }
 
-    public void saveTransactionWithCard(TransactionWithCard transactionWithCard, Long userId) {
+    public void saveTransactionWithCard(TransactionWithCard transactionWithCard, User user) {
+        int maxCards = usageLimits.maxCards(user);
+        int current = findCardsCount(user.getId());
+        int incoming = transactionWithCard.getCards().size();
+        if (current + incoming > maxCards) {
+            throw new LimitExceededException("Card limit reached (" + maxCards + ")");
+        }
+
         Transaction transaction = transactionWithCard.getTransaction();
-        transaction.setUserId(userId);
+        transaction.setUserId(user.getId());
         List<Card> cards = transactionWithCard.getCards();
         int transactionId = saveTransaction(transaction);
         for (Card card : cards) {
-            card.setUserId(userId);
+            card.setUserId(user.getId());
             int cardId = saveCard(card);
             saveTransactionInfo(new TransactionInfo(transactionId, cardId, MoveType.IN));
         }

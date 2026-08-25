@@ -78,6 +78,45 @@
       border-color: #38C9FA;
       color: #f0abfc;
     }
+    .settings-box + .settings-box {
+      margin-top: 1.5rem;
+    }
+    .limits-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.2rem;
+    }
+    .limits-table th, .limits-table td {
+      padding: 0.5rem 0.6rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(56, 201, 250, 0.15);
+    }
+    .limits-table th {
+      color: #38C9FA;
+      font-family: fantasy;
+      font-size: 0.8rem;
+      font-weight: normal;
+    }
+    .limits-table td.role-label {
+      color: #CA47F5;
+      font-family: fantasy;
+      font-size: 0.85rem;
+    }
+    .limits-table input[type=number] {
+      width: 80px;
+      box-sizing: border-box;
+      padding: 0.4rem 0.5rem;
+      border: 1px solid rgba(56, 201, 250, 0.25);
+      border-radius: 4px;
+      background: #0a0a0f;
+      color: #e2e8f0;
+      font-size: 0.9rem;
+    }
+    .limits-table input[type=number]:focus {
+      outline: none;
+      border-color: #38C9FA;
+      box-shadow: 0 0 8px rgba(56, 201, 250, 0.2);
+    }
   </style>
 </head>
 <body>
@@ -98,6 +137,34 @@
           <button type="submit" class="toggle-btn" th:text="${registrationEnabled} ? 'Turn Off' : 'Turn On'"></button>
         </form>
       </div>
+    </div>
+
+    <div class="settings-box">
+      <h2>Usage Limits</h2>
+      <form th:action="@{/admin/settings/usage-limits}" method="post" style="margin:0;">
+        <table class="limits-table">
+          <tr>
+            <th>Role</th>
+            <th>Cards</th>
+            <th>Keywords</th>
+            <th>AI calls / month</th>
+          </tr>
+          <tr>
+            <td class="role-label">ROLE_TEST</td>
+            <td><input type="number" name="testMaxCards" min="0" th:value="${testMaxCards}" required /></td>
+            <td><input type="number" name="testMaxKeywords" min="0" th:value="${testMaxKeywords}" required /></td>
+            <td><input type="number" name="testMaxAiCalls" min="0" th:value="${testMaxAiCalls}" required /></td>
+          </tr>
+          <tr>
+            <td class="role-label">ROLE_USER</td>
+            <td><input type="number" name="userMaxCards" min="0" th:value="${userMaxCards}" required /></td>
+            <td><input type="number" name="userMaxKeywords" min="0" th:value="${userMaxKeywords}" required /></td>
+            <td><input type="number" name="userMaxAiCalls" min="0" th:value="${userMaxAiCalls}" required /></td>
+          </tr>
+        </table>
+        <p class="setting-desc" style="margin:-0.5rem 0 1rem;">ROLE_ADMIN is always unlimited.</p>
+        <button type="submit" class="toggle-btn" style="width:100%;">Save Limits</button>
+      </form>
     </div>
   </div>
 </body>
