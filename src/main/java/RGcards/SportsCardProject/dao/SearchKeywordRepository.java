@@ -10,4 +10,6 @@ public interface SearchKeywordRepository extends JpaRepository<SearchKeyword, In
     List<SearchKeyword> findByUserId(Long userId);
 
     SearchKeyword findByKeywordAndUserId(String keyword, Long userId);
+
+    int countByUserId(Long userId);
 }

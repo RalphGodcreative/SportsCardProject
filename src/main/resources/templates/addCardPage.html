@@ -18,6 +18,22 @@
       function hideNote() {
         $("#note").hide();
       }
+
+      function showGuide() {
+        $("#guide").show();
+      }
+      function hideGuide() {
+        $("#guide").hide();
+      }
+
+      $(document).ready(function () {
+        $("#guide").on("click", function (e) {
+          if (e.target.id === "guide") hideGuide();
+        });
+        $(document).on("keydown", function (e) {
+          if (e.key === "Escape") hideGuide();
+        });
+      });
     </script>
 
     <style>
@@ -70,6 +86,63 @@
         box-shadow: 0 0 40px rgba(246, 76, 189, 0.1);
         border-radius: 2px;
       }
+
+      .guide-icon {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #38C9FA;
+        width: 26px;
+        height: 26px;
+        padding: 0;
+        vertical-align: middle;
+        margin-left: 10px;
+      }
+      .guide-icon svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      #guide {
+        display: none;
+        position: fixed;
+        top: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(560px, 92vw);
+        max-height: 75vh;
+        overflow-y: auto;
+        z-index: 50;
+        text-align: left;
+        background: #1e1e2e;
+        border: 1px solid rgba(246, 76, 189, 0.3);
+        box-shadow: 0 0 40px rgba(246, 76, 189, 0.1);
+        border-radius: 4px;
+        padding: 18px 22px;
+        color: #e2e8f0;
+      }
+      .guide-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        font-weight: bold;
+        color: #FAC938;
+      }
+      .guide-close {
+        cursor: pointer;
+        padding-left: 12px;
+      }
+      .guide-body p {
+        margin: 0 0 10px;
+      }
+      .guide-body ul {
+        margin: 0 0 10px;
+        padding-left: 20px;
+      }
+      .guide-body li {
+        margin-bottom: 4px;
+      }
     </style>
     <link rel="stylesheet" th:href="@{/assets/style.css}" />
     <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
@@ -81,7 +154,16 @@
       class="page-top"
       style="display: flex; justify-content: center; margin-bottom: 20px"
     >
-      <h1>Add new Card</h1>
+      <h1>
+        Add new Card
+        <button id="guide-toggle" class="guide-icon" aria-label="How to use this page" title="How to use this page" onclick="showGuide()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="9" />
+            <path stroke-linecap="round" d="M12 11v5" />
+            <path stroke-linecap="round" d="M12 7.75h.01" />
+          </svg>
+        </button>
+      </h1>
     </div>
 
     <form method="get" th:action="@{/card/saveCard}">
@@ -138,6 +220,31 @@
           </div>
           <div>
             <textarea id="note-text" name="note" cols="30" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div id="guide">
+          <div class="guide-head">
+            <span>欄位說明</span>
+            <a class="guide-close" onclick="hideGuide()">x</a>
+          </div>
+          <div class="guide-body">
+            <p>標 * 為必填欄位；建議每個字的第一個字母都大寫，方便日後搜尋。</p>
+            <ul>
+              <li><i>*</i> year — 卡片年份，例：2026、2024-25</li>
+              <li>publisher — 發行商，例：Topps、Panini</li>
+              <li><i>*</i> set — 系列名稱，例：Chrome、Prizm、Select</li>
+              <li><i>*</i> player — 球員名稱，例：Aaron Judge、Luka Doncic</li>
+              <li>auto — 是否為簽名卡，勾選即可</li>
+              <li>insert — 特卡種類，例：Home Field Advantage、Kaboom</li>
+              <li>parallel — 平行卡版本，例：Gold Refractor、Green</li>
+              <li>numbered — 限量編號，例：021/199、3/5</li>
+              <li>sports — 運動項目，例：Baseball、Basketball</li>
+              <li>grade — 鑑定分數，例：PSA 10、BGS 9.5</li>
+              <li>value — 這張卡的價值，例：299</li>
+              <li>note — 備註，點筆記圖示開啟</li>
+              <li>tags — 標籤，一張卡可有多個（詳見 Tag 頁面）</li>
+            </ul>
           </div>
         </div>
       </div>

@@ -1,0 +1,2 @@
+ALTER TABLE users ADD COLUMN enabled BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE users ADD COLUMN max_ai_calls_override INTEGER;

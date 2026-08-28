@@ -5,7 +5,7 @@ Open the app to a small group of external users for real-world testing and feedb
 ## Tasks
 
 ### 1. Public Homepage
-- [ ] Make the homepage (`/`) accessible without login
+- [x] Make the homepage (`/`) accessible without login
   - Update `SecurityFilterChain` to permit `/` alongside existing public routes
   - Homepage should display useful content for non-logged-in visitors (**Content TBD**)
 
@@ -22,19 +22,19 @@ Open the app to a small group of external users for real-world testing and feedb
   - See [impl-google-oauth2.md](impl-google-oauth2.md) for detailed code changes
 
 ### 4. Redesign Login & Register Pages
-- [ ] Rewrite login and register pages with a cleaner, more polished design
+- [x] Rewrite login and register pages with a cleaner, more polished design
   - Include a **Login with Google** button wired to the OAuth2 flow from Task 3
   - Should feel consistent with the public homepage and banner from Tasks 1 and 2
 
 ### 5. Per-User Usage Limits (Free Tier Protection)
-- [ ] Enforce per-user soft caps to protect free-tier infrastructure, role-based via new `ROLE_TEST` tier
+- [x] Enforce per-user soft caps to protect free-tier infrastructure, role-based via new `ROLE_TEST` tier
   - `ROLE_ADMIN`: unlimited
   - `ROLE_TEST`: 300 cards / 20 keywords / 30 AI calls per month
   - `ROLE_USER` (normal user): 50 cards / 5 keywords / 0 AI calls per month
   - See [impl-usage-limits.md](impl-usage-limits.md) for detailed code changes
 
 ### 6. Admin User Management Page
-- [ ] Add a `/admin/users` page to manage external testers once the beta is open
+- [x] Add a `/admin/users` page to manage external testers once the beta is open
   - List all users with role, enabled/disabled state, and per-user usage stats
   - Change a user's role, enable/disable an account, delete a user (cascades all their data)
   - Set or clear a per-user override for their monthly AI-call limit (Task 5)
@@ -43,7 +43,7 @@ Open the app to a small group of external users for real-world testing and feedb
   - See [impl-admin-user-management.md](impl-admin-user-management.md) for detailed code changes
 
 ### 7. Runtime Registration Toggle
-- [ ] Make `app.registration.enabled` flippable from `/admin/settings` without a redeploy
+- [x] Make `app.registration.enabled` flippable from `/admin/settings` without a redeploy
   - Backed by a new `app_settings` key/value table, cached in memory, property kept as seed default
   - **Fixes an existing gap:** Google OAuth2 login auto-creates accounts regardless of the
     flag today, so registration is never truly closed — gate `CustomOAuth2UserService` too

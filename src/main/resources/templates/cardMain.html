@@ -133,9 +133,11 @@
       <button class="link-butt" onclick="window.location.href='/card/addNewCard'">add new card</button>
       <button class="link-butt" onclick="window.location.href='/card/cards'">see cards</button>
       <button class="link-butt" sec:authorize="hasAuthority('ROLE_ADMIN')" onclick="window.location.href='/card/allCard'">see all cards</button>
-      <button class="link-butt" onclick="window.location.href='card/searchCard'">search card</button>
+      <button class="link-butt" onclick="window.location.href='/card/searchCard'">search card</button>
       <button class="link-butt" onclick="window.location.href='/card/addTransaction'">add transaction</button>
       <button class="link-butt" onclick="window.location.href='/card/sellTransaction'">add sales</button>
+      <button class="link-butt" onclick="window.location.href='/transactions/'">view transactions</button>
+      <button class="link-butt" onclick="window.location.href='/tag'">manage tags</button>
     </div>
     <div class="center-div" style="margin-top: 30px;">
       <a>the latest card :</a>

@@ -3,6 +3,7 @@ package RGcards.SportsCardProject.controller;
 import RGcards.SportsCardProject.entity.User;
 import RGcards.SportsCardProject.service.CardService;
 import RGcards.SportsCardProject.service.TagService;
+import RGcards.SportsCardProject.service.UsageLimits;
 import RGcards.SportsCardProject.entity.Card;
 import RGcards.SportsCardProject.entity.SaleWithCard;
 import RGcards.SportsCardProject.entity.Transaction;
@@ -25,6 +26,9 @@ public class CardController {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private UsageLimits usageLimits;
 
     @GetMapping("")
     public String main(Model model, @AuthenticationPrincipal User currentUser) {
@@ -80,7 +84,7 @@ public class CardController {
         for (Card card : transactionWithCard.getCards()) {
             card.setTags(tagService.resolveOwnedTags(card.getTagIds(), currentUser.getId()));
         }
-        cardService.saveTransactionWithCard(transactionWithCard, currentUser.getId());
+        cardService.saveTransactionWithCard(transactionWithCard, currentUser);
         return "redirect:/card/cards";
     }
 
@@ -97,6 +101,7 @@ public class CardController {
         int cardCounts = cardService.findCardsCount(currentUser.getId());
         model.addAttribute("cards", cards);
         model.addAttribute("cardCounts", cardCounts);
+        model.addAttribute("maxCards", usageLimits.maxCards(currentUser));
         model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
         return "allCard";
     }
@@ -108,6 +113,7 @@ public class CardController {
         int cardCounts = cardService.findCardsCount(currentUser.getId());
         model.addAttribute("cards", cards);
         model.addAttribute("cardCounts", cardCounts);
+        model.addAttribute("maxCards", usageLimits.maxCards(currentUser));
         model.addAttribute("page", page);
         model.addAttribute("tags", tagService.findAllForUser(currentUser.getId()));
         return "pagingAllCard";

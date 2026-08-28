@@ -100,6 +100,23 @@
       text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
     }
 
+    .crawler-intro {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    .crawler-intro h1 {
+      margin: 0 0 10px;
+      color: #CA47F5;
+      text-shadow: 0 0 16px rgba(202, 71, 245, 0.4);
+    }
+    .crawler-intro p {
+      margin: 0 0 8px;
+      color: #94a3b8;
+      font-size: 14px;
+      line-height: 1.6;
+    }
   </style>
   <link rel="stylesheet" th:href="@{/assets/style.css}" />
 
@@ -108,7 +125,18 @@
 <body>
   <div th:replace="~{banner.html :: header}"></div>
   <div class="page-top" style="flex-direction: column; align-items: center;">
-    <div class="center-div" style="margin-bottom: 3rem; padding-top: 50px;">
+    <div class="crawler-intro" style="padding-top: 50px;">
+      <h1>Yahoo Auction Crawler</h1>
+      <p>加入關鍵字後，系統每天早上 8 點自動搜尋 Yahoo拍賣 的新上架商品，並把結果寄到你帳號的 email。</p>
+      <p>last product 是目前追蹤到的最新上架商品連結；reset all 只會清除「你自己」的搜尋紀錄，不會刪除關鍵字，下次搜尋會把所有商品都當作新的重新通知一次。</p>
+      <p>
+        目前已追蹤
+        <span th:text="${keywordCount}"></span> /
+        <span th:if="${maxKeywords == T(java.lang.Integer).MAX_VALUE}">unlimited</span><span th:unless="${maxKeywords == T(java.lang.Integer).MAX_VALUE}" th:text="${maxKeywords}"></span>
+        個關鍵字（依帳號權限而定）。
+      </p>
+    </div>
+    <div class="center-div" style="margin-bottom: 3rem; padding-top: 20px;">
       <input type="text" id="new-keyword">
       <button id="add-keyword" class="confirm-butt" onclick="addNewKeyword()">add keyword</button>
       <button id="reset-all" onclick="resetAll()" class="reset-all destroy-butt">reset all</button>
