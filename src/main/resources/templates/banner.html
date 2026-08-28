@@ -27,8 +27,11 @@
             cards
           </a>
           <div class="dropdown-content">
+            <a href="/card/addNewCard">add new Card</a>
             <a href="/card/addTransaction">add Transaction</a>
+            <a href="/card/sellTransaction">add Sales</a>
             <a href="/card/cards">view Cards</a>
+            <a href="/card/allCard" sec:authorize="hasAuthority('ROLE_ADMIN')">see all Cards</a>
             <a href="/card/searchCard">search Cards</a>
             <a href="/transactions/">view Transactions</a>
             <a href="/tag">manage Tags</a>
@@ -69,8 +72,11 @@
         <div class="mobile-menu" id="mobile-menu">
           <a href="/random">Randomizer</a>
           <a href="/card">Cards</a>
+          <a href="/card/addNewCard" class="mobile-sub">add new Card</a>
           <a href="/card/addTransaction" class="mobile-sub">add Transaction</a>
+          <a href="/card/sellTransaction" class="mobile-sub">add Sales</a>
           <a href="/card/cards" class="mobile-sub">view Cards</a>
+          <a href="/card/allCard" class="mobile-sub" sec:authorize="hasAuthority('ROLE_ADMIN')">see all Cards</a>
           <a href="/card/searchCard" class="mobile-sub">search Cards</a>
           <a href="/transactions/" class="mobile-sub">view Transactions</a>
           <a href="/tag" class="mobile-sub">manage Tags</a>
