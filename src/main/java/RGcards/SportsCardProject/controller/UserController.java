@@ -1,7 +1,10 @@
 package RGcards.SportsCardProject.controller;
 
+import RGcards.SportsCardProject.dao.SearchKeywordRepository;
 import RGcards.SportsCardProject.dao.UserRepository;
 import RGcards.SportsCardProject.entity.User;
+import RGcards.SportsCardProject.service.CardService;
+import RGcards.SportsCardProject.service.UsageLimits;
 import RGcards.SportsCardProject.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,12 +23,25 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final CardService cardService;
+    private final SearchKeywordRepository searchKeywordRepository;
+    private final UsageLimits usageLimits;
 
     @GetMapping("/edit")
     public String editPage(@AuthenticationPrincipal User user, Model model) {
         if (user == null) return "redirect:/";
         model.addAttribute("user", user);
+        addUsageAttributes(model, user);
         return "edit-user";
+    }
+
+    private void addUsageAttributes(Model model, User user) {
+        model.addAttribute("cardCount", cardService.findCardsCount(user.getId()));
+        model.addAttribute("cardLimit", usageLimits.maxCards(user));
+        model.addAttribute("keywordCount", searchKeywordRepository.countByUserId(user.getId()));
+        model.addAttribute("keywordLimit", usageLimits.maxKeywords(user));
+        model.addAttribute("aiCallCount", user.getAiCallCount());
+        model.addAttribute("aiCallLimit", usageLimits.maxAiCalls(user));
     }
 
     @PostMapping("/edit")
@@ -41,21 +57,25 @@ public class UserController {
         if (userRepository.existsByUsernameAndIdNot(username, currentUser.getId())) {
             model.addAttribute("user", currentUser);
             model.addAttribute("error", "Username is already taken.");
+            addUsageAttributes(model, currentUser);
             return "edit-user";
         }
         if (userRepository.existsByEmailAndIdNot(email, currentUser.getId())) {
             model.addAttribute("user", currentUser);
             model.addAttribute("error", "Email is already in use.");
+            addUsageAttributes(model, currentUser);
             return "edit-user";
         }
         if (!ValidationUtil.isValidEmail(email)) {
             model.addAttribute("user", currentUser);
             model.addAttribute("error", "Please enter a valid email address.");
+            addUsageAttributes(model, currentUser);
             return "edit-user";
         }
         if (password != null && !password.isBlank() && !ValidationUtil.isValidPassword(password)) {
             model.addAttribute("user", currentUser);
             model.addAttribute("error", "Password must be at least 8 characters and contain at least one letter and one number.");
+            addUsageAttributes(model, currentUser);
             return "edit-user";
         }
 

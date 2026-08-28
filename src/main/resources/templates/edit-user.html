@@ -8,7 +8,8 @@
   <style>
     .edit-profile-wrap {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       padding: 40px 16px;
     }
     .edit-profile-box {
@@ -22,11 +23,9 @@
     }
     .edit-profile-box h2 {
       color: #CA47F5;
-      text-shadow: 0 0 10px rgba(202, 71, 245, 0.5);
       margin-top: 0;
       margin-bottom: 1.5rem;
       text-align: center;
-      font-family: fantasy;
     }
     .edit-profile-box label {
       display: block;
@@ -102,6 +101,29 @@
     .msg { text-align: center; font-size: 0.875rem; margin-top: 1rem; }
     .msg.error { color: #f87171; }
     .msg.success { color: #4ade80; }
+
+    .usage-box { margin-top: 20px; }
+    .usage-role {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin: -0.8rem 0 1.2rem;
+    }
+    .usage-role span {
+      color: #38C9FA;
+      font-weight: bold;
+    }
+    .usage-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(56, 201, 250, 0.1);
+      color: #e2e8f0;
+      font-size: 0.9rem;
+    }
+    .usage-row:last-child { border-bottom: none; }
+    .usage-value { color: #CA47F5; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -142,6 +164,24 @@
 
         <button type="submit">Save Changes</button>
       </form>
+    </div>
+
+    <div class="edit-profile-box usage-box">
+      <h2>Your Usage</h2>
+      <p class="usage-role">Role: <span th:text="${#strings.replace(user.role, 'ROLE_', '')}"></span></p>
+
+      <div class="usage-row">
+        <span>Cards</span>
+        <span class="usage-value" th:text="${cardCount + ' / ' + (cardLimit == T(java.lang.Integer).MAX_VALUE ? 'unlimited' : cardLimit)}"></span>
+      </div>
+      <div class="usage-row">
+        <span>Keywords</span>
+        <span class="usage-value" th:text="${keywordCount + ' / ' + (keywordLimit == T(java.lang.Integer).MAX_VALUE ? 'unlimited' : keywordLimit)}"></span>
+      </div>
+      <div class="usage-row">
+        <span>AI calls this month</span>
+        <span class="usage-value" th:text="${aiCallCount + ' / ' + (aiCallLimit == T(java.lang.Integer).MAX_VALUE ? 'unlimited' : aiCallLimit)}"></span>
+      </div>
     </div>
   </div>
   <script>

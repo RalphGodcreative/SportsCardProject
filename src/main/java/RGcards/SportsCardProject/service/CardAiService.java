@@ -16,14 +16,17 @@ public class CardAiService {
     private final UsageLimits usageLimits;
     private final UserRepository userRepository;
 
-    public String analyzeCardPotential(Card card, User user) throws JsonProcessingException {
-        int maxAiCalls = usageLimits.maxAiCalls(user);
-        if (user.getAiCallCount() >= maxAiCalls) {
+    public String analyzeCardPotential(Card card, User principal) throws JsonProcessingException {
+        int maxAiCalls = usageLimits.maxAiCalls(principal);
+        if (principal.getAiCallCount() >= maxAiCalls) {
             throw new LimitExceededException("Monthly AI call limit reached (" + maxAiCalls + ")");
         }
 
         String result = geminiService.generateContent(buildPrompt(card), "gemini-2.5-flash", true);
 
+        // principal may be an OAuth2UserPrincipal (a User subclass used only as the
+        // security principal, not a JPA entity) -- save a real entity, not the principal
+        User user = userRepository.findById(principal.getId()).orElseThrow();
         user.setAiCallCount(user.getAiCallCount() + 1);
         userRepository.save(user);
 
