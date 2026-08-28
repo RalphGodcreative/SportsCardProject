@@ -6,6 +6,7 @@ import RGcards.SportsCardProject.entity.User;
 import RGcards.SportsCardProject.exception.LimitExceededException;
 import RGcards.SportsCardProject.service.CrawlerService;
 import RGcards.SportsCardProject.service.EmailService;
+import RGcards.SportsCardProject.service.UsageLimits;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,10 +27,15 @@ public class CrawlerController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private UsageLimits usageLimits;
+
     @GetMapping
     public String CrawlerHome(Model model, @AuthenticationPrincipal User currentUser) {
         List<SearchKeyword> allSearchKeywords = crawlerService.getAllSearchKeyword(currentUser.getId());
         model.addAttribute("searchKeywords", allSearchKeywords);
+        model.addAttribute("keywordCount", allSearchKeywords.size());
+        model.addAttribute("maxKeywords", usageLimits.maxKeywords(currentUser));
         return "crawler/keywords";
     }
 
