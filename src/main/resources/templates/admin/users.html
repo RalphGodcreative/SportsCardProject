@@ -166,7 +166,7 @@
           </td>
           <td th:text="${row.cardCount}"></td>
           <td th:text="${row.keywordCount}"></td>
-          <td th:text="${row.user.aiCallCount + ' / ' + (row.effectiveMaxAiCalls == T(Integer).MAX_VALUE ? 'unlimited' : row.effectiveMaxAiCalls)}"></td>
+          <td th:text="${row.user.aiCallCount + ' / ' + (row.effectiveMaxAiCalls == T(java.lang.Integer).MAX_VALUE ? 'unlimited' : row.effectiveMaxAiCalls)}"></td>
           <td>
             <form class="inline-form" th:action="@{/admin/users/{id}/ai-limit(id=${row.user.id})}" method="post">
               <input type="number" name="maxAiCalls" min="0" placeholder="role default"

@@ -26,18 +26,18 @@ public class UsageLimits {
     private final AppSettingRepository appSettingRepository;
     private final UserRepository userRepository;
 
-    @Value("${app.limits.test.max-cards}")
+    @Value("${app.limits.test.max-cards:300}")
     private int testMaxCardsDefault;
-    @Value("${app.limits.test.max-keywords}")
+    @Value("${app.limits.test.max-keywords:20}")
     private int testMaxKeywordsDefault;
-    @Value("${app.limits.test.max-ai-calls-per-month}")
+    @Value("${app.limits.test.max-ai-calls-per-month:30}")
     private int testMaxAiCallsDefault;
 
-    @Value("${app.limits.user.max-cards}")
+    @Value("${app.limits.user.max-cards:50}")
     private int userMaxCardsDefault;
-    @Value("${app.limits.user.max-keywords}")
+    @Value("${app.limits.user.max-keywords:5}")
     private int userMaxKeywordsDefault;
-    @Value("${app.limits.user.max-ai-calls-per-month}")
+    @Value("${app.limits.user.max-ai-calls-per-month:0}")
     private int userMaxAiCallsDefault;
 
     private volatile int testMaxCards;

@@ -136,8 +136,8 @@
       <div class="center-div" id="all-card">
         <a>all cards:</a>
         <div style="text-align: left">
-          <span th:if="${maxCards == T(Integer).MAX_VALUE}">total cards: <span th:text="${cardCounts}"></span></span>
-          <span th:unless="${maxCards == T(Integer).MAX_VALUE}">total cards: <span th:text="${cardCounts + ' / ' + maxCards}"></span></span>
+          <span th:if="${maxCards == T(java.lang.Integer).MAX_VALUE}">total cards: <span th:text="${cardCounts}"></span></span>
+          <span th:unless="${maxCards == T(java.lang.Integer).MAX_VALUE}">total cards: <span th:text="${cardCounts + ' / ' + maxCards}"></span></span>
         </div>
         <div class="table-center">
         <table id="card-table" class="mobile-cards">
