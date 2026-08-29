@@ -87,7 +87,13 @@ YOUTUBE_API_KEY=your_key
 GEMINI_API_KEY=your_key
 EBAY_CLIENT_ID=your_id
 EBAY_CLIENT_SECRET=your_secret
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
 ```
+
+> `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` are for Google OAuth2 login — see
+> [impl-google-oauth2.md](impl-google-oauth2.md). This credential is scoped to whichever GCP
+> project you register it under, not to the VM.
 
 > Copy the exact connection string from **Neon Dashboard → your project → Connection Details → Java (JDBC)**. It already includes `sslmode=require`.
 
@@ -272,12 +278,18 @@ When you push new code, the update flow is:
 
 1. Push your changes to GitHub from your local machine (normal `git push`)
 2. SSH into the VM
-3. Pull and rebuild:
+3. Find and kill the running app, then pull, rebuild, and restart:
 
 ```bash
+# Find the running java process
+ps aux | grep java
+
+# Kill it (use the PID from above)
+kill <pid>
+
 cd ~/SportsCardProject
 git pull
-./mvnw clean package -DskipTests -Pprod
+./mvnw clean package -Dmaven.test.skip=true -Pprod
 sudo systemctl restart sportscard
 ```
 
@@ -289,8 +301,8 @@ sudo systemctl restart sportscard
 - [ ] e2-micro VM created in us-central1/us-east1/us-west1 with Standard persistent disk (30 GB)
 - [ ] GCP firewall rule `allow-http` created for TCP port 80
 - [ ] Java 17, Git, Maven installed on VM
-- [ ] `/etc/sportscard/env` created with all environment variables (Neon JDBC URL included)
-- [ ] Repo cloned and JAR built (`./mvnw clean package -DskipTests -Pprod`)
+- [ ] `/etc/sportscard/env` created with all environment variables (Neon JDBC URL and Google OAuth2 client ID/secret included)
+- [ ] Repo cloned and JAR built (`./mvnw clean package -Dmaven.test.skip=true -Pprod`)
 - [ ] Nginx installed, site config created, default site removed
 - [ ] `sportscard.service` created and enabled
 - [ ] App starts and logs look healthy (`journalctl -u sportscard -f`)
