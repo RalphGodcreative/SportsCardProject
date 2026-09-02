@@ -57,7 +57,7 @@
         margin-top: 16px;
       }
     </style>
-    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <th:block th:replace="~{fragments/head :: styles}"></th:block>
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>

@@ -7,7 +7,7 @@
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-  <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  <th:block th:replace="~{fragments/head :: styles}"></th:block>
   <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
   <link rel="stylesheet" th:href="@{/assets/tag-pages.css}" />
   <script>

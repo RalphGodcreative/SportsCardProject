@@ -4,117 +4,111 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RG Website</title>
-    <style></style>
-    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <th:block th:replace="~{fragments/head :: styles}"></th:block>
   </head>
   <body>
-    <div th:fragment="header" class="banner-header">
-      <span>
-        <a class="logo" href="/">
-          <img th:src="@{/img/RGForBanner.png}" />
-        </a>
-      </span>
+    <!--
+      Navigation. One nav for both widths: the desktop row and the mobile
+      dropdown are the same markup shown at different breakpoints, so links
+      no longer have to be added in two places.
 
-      <!-- Desktop nav (hidden on mobile via CSS) -->
-      <ul id="nav-links">
-        <li class="dropdown">
-          <a class="banner-category" href="/random">
-            Randomizer
-          </a>
-        </li>
-        <li class="dropdown">
-          <a class="banner-category" href="/card">
-            cards
-          </a>
-          <div class="dropdown-content">
-            <a href="/card/addNewCard">add new Card</a>
-            <a href="/card/addTransaction">add Transaction</a>
-            <a href="/card/sellTransaction">add Sales</a>
-            <a href="/card/cards">view Cards</a>
-            <a href="/card/allCard" sec:authorize="hasAuthority('ROLE_ADMIN')">see all Cards</a>
-            <a href="/card/searchCard">search Cards</a>
-            <a href="/transactions/">view Transactions</a>
-            <a href="/tag">manage Tags</a>
+      daisyUI's .dropdown opens on focus, so this needs no JavaScript.
+    -->
+    <div th:fragment="header" class="rg-navbar">
+
+      <a class="rg-navbar__logo" href="/">
+        <img th:src="@{/img/RGForBanner.png}" alt="RG Sports Cards" />
+      </a>
+
+      <!-- ---------- desktop ---------- -->
+      <nav class="rg-nav-desktop">
+        <a class="btn btn-sm btn-ghost" href="/random">Randomizer</a>
+
+        <div class="dropdown">
+          <div tabindex="0" role="button" class="btn btn-sm btn-ghost">
+            Cards
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
           </div>
-        </li>
-        <li class="dropdown">
-          <a class="banner-category" href="/crawler">
-            Yahoo拍賣 追蹤
-          </a>
-        </li>
-      </ul>
-
-      <!-- Desktop auth panel (hidden on mobile via CSS) -->
-      <div class="auth-panel">
-        <div sec:authorize="isAnonymous()">
-          <a href="/login" class="auth-btn">Login</a>
+          <ul tabindex="0" class="dropdown-content menu rounded-box rg-menu">
+            <li><a href="/card/addNewCard">Add new card</a></li>
+            <li><a href="/card/addTransaction">Add transaction</a></li>
+            <li><a href="/card/sellTransaction">Add sales</a></li>
+            <li><a href="/card/cards">View cards</a></li>
+            <li><a href="/card/searchCard">Search cards</a></li>
+            <li><a href="/transactions/">View transactions</a></li>
+            <li><a href="/tag">Manage tags</a></li>
+            <li sec:authorize="hasAuthority('ROLE_ADMIN')">
+              <a href="/card/allCard">See all cards <span class="badge badge-sm badge-secondary">admin</span></a>
+            </li>
+          </ul>
         </div>
-        <div class="user-dropdown" sec:authorize="isAuthenticated()">
-          <button class="user-btn" id="user-toggle">
+
+        <a class="btn btn-sm btn-ghost" href="/crawler">Yahoo拍賣 追蹤</a>
+      </nav>
+
+      <span class="rg-spacer"></span>
+
+      <div class="rg-auth rg-auth-desktop">
+        <a sec:authorize="isAnonymous()" href="/login" class="btn btn-sm btn-outline btn-primary">Login</a>
+
+        <div sec:authorize="isAuthenticated()" class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-sm btn-outline btn-primary">
+            <span class="rg-user-initial" th:text="${#strings.isEmpty(displayUsername) ? 'U' : #strings.toUpperCase(#strings.substring(displayUsername, 0, 1))}">U</span>
             <span th:text="${displayUsername}">User</span>
-            <span>&#9660;</span>
-          </button>
-          <div class="user-menu" id="user-menu">
-            <a href="/user/edit" class="user-menu-item">Edit Profile</a>
-            <a href="/admin/recommendations" class="user-menu-item" sec:authorize="hasAuthority('ROLE_ADMIN')">Recommendations</a>
-            <a href="/admin/users" class="user-menu-item" sec:authorize="hasAuthority('ROLE_ADMIN')">Users</a>
-            <a href="/admin/settings" class="user-menu-item" sec:authorize="hasAuthority('ROLE_ADMIN')">Settings</a>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <ul tabindex="0" class="dropdown-content menu rounded-box rg-menu">
+            <li><a href="/user/edit">Edit profile</a></li>
+            <li sec:authorize="hasAuthority('ROLE_ADMIN')" class="menu-title">Admin</li>
+            <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/recommendations">Recommendations</a></li>
+            <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/users">Users</a></li>
+            <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/settings">Settings</a></li>
+            <li>
+              <form th:action="@{/logout}" method="post">
+                <button type="submit">Logout</button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ---------- mobile ---------- -->
+      <div class="dropdown dropdown-end rg-nav-mobile">
+        <div tabindex="0" role="button" class="btn btn-sm btn-ghost" aria-label="Toggle navigation">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg>
+        </div>
+        <ul tabindex="0" class="dropdown-content menu rounded-box rg-menu rg-menu--wide">
+          <li sec:authorize="isAuthenticated()" class="menu-title" th:text="${displayUsername}">User</li>
+          <li sec:authorize="isAuthenticated()"><a href="/user/edit">Edit profile</a></li>
+
+          <li class="menu-title">Browse</li>
+          <li><a href="/random">Randomizer</a></li>
+          <li><a href="/crawler">Yahoo拍賣 追蹤</a></li>
+
+          <li class="menu-title">Cards</li>
+          <li><a href="/card/addNewCard">Add new card</a></li>
+          <li><a href="/card/addTransaction">Add transaction</a></li>
+          <li><a href="/card/sellTransaction">Add sales</a></li>
+          <li><a href="/card/cards">View cards</a></li>
+          <li><a href="/card/searchCard">Search cards</a></li>
+          <li><a href="/transactions/">View transactions</a></li>
+          <li><a href="/tag">Manage tags</a></li>
+          <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/card/allCard">See all cards</a></li>
+
+          <li sec:authorize="hasAuthority('ROLE_ADMIN')" class="menu-title">Admin</li>
+          <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/recommendations">Recommendations</a></li>
+          <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/users">Users</a></li>
+          <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/settings">Settings</a></li>
+
+          <li sec:authorize="isAnonymous()"><a href="/login">Login</a></li>
+          <li sec:authorize="isAuthenticated()">
             <form th:action="@{/logout}" method="post">
-              <button type="submit" class="user-menu-item">Logout</button>
+              <button type="submit">Logout</button>
             </form>
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
 
-      <!-- Mobile nav (hidden on desktop via CSS) -->
-      <div class="mobile-nav">
-        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
-        <div class="mobile-menu" id="mobile-menu">
-          <a href="/random">Randomizer</a>
-          <a href="/card">Cards</a>
-          <a href="/card/addNewCard" class="mobile-sub">add new Card</a>
-          <a href="/card/addTransaction" class="mobile-sub">add Transaction</a>
-          <a href="/card/sellTransaction" class="mobile-sub">add Sales</a>
-          <a href="/card/cards" class="mobile-sub">view Cards</a>
-          <a href="/card/allCard" class="mobile-sub" sec:authorize="hasAuthority('ROLE_ADMIN')">see all Cards</a>
-          <a href="/card/searchCard" class="mobile-sub">search Cards</a>
-          <a href="/transactions/" class="mobile-sub">view Transactions</a>
-          <a href="/tag" class="mobile-sub">manage Tags</a>
-          <a href="/crawler">Yahoo拍賣 追蹤</a>
-          <div sec:authorize="isAnonymous()">
-            <a href="/login">Login</a>
-          </div>
-          <div sec:authorize="isAuthenticated()">
-            <span class="mobile-username" th:text="${displayUsername}">User</span>
-            <a href="/user/edit" class="mobile-sub">Edit Profile</a>
-            <a href="/admin/recommendations" class="mobile-sub" sec:authorize="hasAuthority('ROLE_ADMIN')">Recommendations</a>
-            <a href="/admin/users" class="mobile-sub" sec:authorize="hasAuthority('ROLE_ADMIN')">Users</a>
-            <a href="/admin/settings" class="mobile-sub" sec:authorize="hasAuthority('ROLE_ADMIN')">Settings</a>
-            <form th:action="@{/logout}" method="post" style="margin:0">
-              <button type="submit" class="mobile-logout">Logout</button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <script>
-        document.getElementById('nav-toggle').addEventListener('click', function (e) {
-          e.stopPropagation();
-          document.getElementById('mobile-menu').classList.toggle('open');
-        });
-        document.addEventListener('click', function () {
-          document.getElementById('mobile-menu').classList.remove('open');
-          var userMenu = document.getElementById('user-menu');
-          if (userMenu) userMenu.classList.remove('open');
-        });
-        var userToggle = document.getElementById('user-toggle');
-        if (userToggle) {
-          userToggle.addEventListener('click', function (e) {
-            e.stopPropagation();
-            document.getElementById('user-menu').classList.toggle('open');
-          });
-        }
-      </script>
     </div>
   </body>
 </html>

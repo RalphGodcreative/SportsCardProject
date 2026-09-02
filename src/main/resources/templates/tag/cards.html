@@ -114,7 +114,7 @@
       });
     </script>
 
-    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <th:block th:replace="~{fragments/head :: styles}"></th:block>
     <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
     <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
     <link rel="stylesheet" th:href="@{/assets/tag-pages.css}" />

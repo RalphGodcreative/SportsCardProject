@@ -1,0 +1,226 @@
+/* ==========================================================================
+   rgneon — daisyUI theme for RG Sports Cards
+   --------------------------------------------------------------------------
+   Loaded AFTER assets/daisyui.css. Everything here is unlayered, so it beats
+   daisyUI's own @layer base without needing !important.
+
+   No colour in this file is new: every value is one already used by
+   assets/style.css, just given a daisyUI semantic name so components
+   (.btn, .card, .table, .badge, .modal, .menu) pick it up automatically.
+
+     #38C9FA  navbar / links      -> primary
+     #CA47F5  tables / tags       -> secondary
+     #31F6B5  action buttons      -> accent
+     #FAC938  form fields         -> warning
+     #3FF37B  confirm / save      -> success
+     #F76345  destroy / cancel    -> error
+     #42BDFA  paging              -> info
+     #F64CBD  AI + modals         -> no daisyUI slot; kept as --rg-ai
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
+
+/* --------------------------------------------------------------------------
+   1. Tailwind theme variables daisyUI's prebuilt CSS expects.
+   The standalone daisyui.css references exactly these five and nothing else;
+   without them buttons lose their font-size and transitions.
+   -------------------------------------------------------------------------- */
+:root {
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.4285714286;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  --color-black: #000;
+}
+
+/* --------------------------------------------------------------------------
+   2. The theme itself.
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="rgneon"] {
+  color-scheme: dark;
+
+  --color-base-100: #0a0a0f;
+  --color-base-200: #12121a;
+  --color-base-300: #1e1e2e;
+  --color-base-content: #e2e8f0;
+
+  --color-primary: #38C9FA;
+  --color-primary-content: #04141c;
+  --color-secondary: #CA47F5;
+  --color-secondary-content: #150421;
+  --color-accent: #31F6B5;
+  --color-accent-content: #032018;
+  --color-neutral: #12121a;
+  --color-neutral-content: #94a3b8;
+
+  --color-info: #42BDFA;
+  --color-info-content: #04141c;
+  --color-success: #3FF37B;
+  --color-success-content: #032012;
+  --color-warning: #FAC938;
+  --color-warning-content: #1c1503;
+  --color-error: #F76345;
+  --color-error-content: #200703;
+
+  --radius-selector: 0.625rem;
+  --radius-field: 0.375rem;
+  --radius-box: 0.75rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+
+  /* Not daisyUI slots — the rest of the palette style.css already uses. */
+  --rg-ai: #F64CBD;
+  --rg-muted: #94a3b8;
+  --rg-dim: #64748b;
+  --rg-pink: #f0abfc;
+  --rg-pick: #E3F75E;
+}
+
+/* --------------------------------------------------------------------------
+   3. Legacy-default restore.
+   daisyui.css ships Tailwind's Preflight, which zeroes headings, list markers
+   and link colour. The 22 templates that predate this migration rely on
+   browser defaults for those. Restoring them here keeps every unmigrated page
+   looking exactly as it did.
+
+   DELETE THIS BLOCK once no template depends on browser defaults any more.
+   -------------------------------------------------------------------------- */
+h1 { font-size: 2em;    font-weight: bold; margin: 0.67em 0; }
+h2 { font-size: 1.5em;  font-weight: bold; margin: 0.83em 0; }
+h3 { font-size: 1.17em; font-weight: bold; margin: 1em 0; }
+h4 { font-size: 1em;    font-weight: bold; margin: 1.33em 0; }
+h5 { font-size: 0.83em; font-weight: bold; margin: 1.67em 0; }
+h6 { font-size: 0.67em; font-weight: bold; margin: 2.33em 0; }
+
+p { margin: 1em 0; }
+
+ul, ol { list-style: revert; margin: 1em 0; padding-left: 40px; }
+li { display: list-item; }
+
+a:not([class]) { color: #38C9FA; text-decoration: none; }
+a:not([class]):hover { color: #f0abfc; }
+
+/* Preflight makes every <img> display:block; the note/guide icons are inline. */
+img.add-note { display: inline-block; }
+
+/* --------------------------------------------------------------------------
+   4. Navbar.
+   Replaces .banner-header. Kept fixed at the same height as before so the
+   existing `.page-top { margin-top: 100px }` on every page still clears it
+   and nothing shifts during the migration.
+   -------------------------------------------------------------------------- */
+.rg-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 64px;
+  padding: 0 1rem;
+  background: rgba(10, 10, 15, 0.92);
+  border-bottom: 1px solid rgba(56, 201, 250, 0.25);
+  box-shadow: 0 2px 20px rgba(56, 201, 250, 0.08);
+}
+
+.rg-navbar__logo {
+  display: flex;
+  align-items: center;
+  padding-right: 1.25rem;
+}
+
+.rg-navbar__logo img {
+  display: block;
+  width: 92px;
+  height: 63px;
+}
+
+/* Glow is not a daisyUI token — it is what makes the theme look like itself. */
+.rg-glow-primary { text-shadow: 0 0 8px rgba(56, 201, 250, 0.5); }
+.rg-glow-secondary { text-shadow: 0 0 16px rgba(202, 71, 245, 0.4); }
+
+/* --------------------------------------------------------------------------
+   5. Layout helpers.
+   daisyUI ships the components (.btn, .menu, .dropdown, .card, .table) but
+   NOT Tailwind's utilities, so the handful of layout values its documented
+   markup would express as `w-52 p-2 z-10 shadow-lg` live here instead.
+   -------------------------------------------------------------------------- */
+.rg-spacer { flex-grow: 1; }
+
+.rg-nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.rg-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* .dropdown-content, sized. */
+.rg-menu {
+  z-index: 200;
+  min-width: 13rem;
+  padding: 0.375rem;
+  background: var(--color-base-200);
+  border: 1px solid rgba(56, 201, 250, 0.20);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6), 0 0 18px rgba(56, 201, 250, 0.10);
+}
+
+.rg-menu--wide { min-width: 15rem; }
+
+/* Logout is a POST form, so its trigger is a <button> inside the menu. */
+.rg-menu form { margin: 0; display: block; width: 100%; }
+.rg-menu form button {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font: inherit;
+  color: var(--color-error);
+  cursor: pointer;
+}
+
+.rg-menu .menu-title {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rg-dim);
+}
+
+.rg-user-initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 50%;
+  background: rgba(202, 71, 245, 0.18);
+  border: 1px solid rgba(202, 71, 245, 0.45);
+  color: var(--rg-pink);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* Desktop / mobile swap, at the same 768px breakpoint style.css already uses. */
+.rg-nav-mobile { display: none; }
+
+@media (max-width: 768px) {
+  .rg-navbar { padding: 0 0.75rem; }
+  .rg-navbar__logo img { width: 68px; height: 47px; }
+
+  .rg-nav-desktop,
+  .rg-auth-desktop { display: none; }
+  .rg-nav-mobile { display: block; }
+
+  .rg-menu { max-height: 78vh; overflow-y: auto; }
+}

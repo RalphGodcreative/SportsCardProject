@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>head fragments</title>
+</head>
+<body>
+
+  <!--
+    Site stylesheets, in load order.
+
+      daisyui.css  vendored daisyUI 5.7.25 (MIT). Components only — this build
+                   also carries Tailwind's Preflight, which rgneon.css puts back
+                   the browser defaults for.
+      rgneon.css   the theme: daisyUI colour slots mapped onto the palette
+                   style.css already used, plus the layout helpers daisyUI's
+                   markup would otherwise need Tailwind utilities for.
+      style.css    the original stylesheet. Loaded last so every page that has
+                   not been migrated yet still wins and looks unchanged.
+                   This shrinks as pages move over.
+  -->
+  <th:block th:fragment="styles">
+    <link rel="stylesheet" th:href="@{/assets/daisyui.css}" />
+    <link rel="stylesheet" th:href="@{/assets/rgneon.css}" />
+    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+  </th:block>
+
+</body>
+</html>
