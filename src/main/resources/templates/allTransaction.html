@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <title>All Transactions</title>
@@ -20,13 +20,13 @@
         }
 
         for (let i = 1; i <= totalPages; i++) {
-          let index;
+          let cls = "index join-item btn btn-sm";
           if (i == currentPage) {
-            index = `<a class="index current-index" href="/transactions/?page=${i}">${i}</a>`;
-          } else {
-            index = `<a class="index" href="/transactions/?page=${i}">${i}</a>`;
+            cls += " btn-active current-index";
           }
-          $("#page-index").append(index);
+          $("#page-index").append(
+            '<a class="' + cls + '" href="/transactions/?page=' + i + '">' + i + '</a>'
+          );
         }
 
         $("#first-page").on("click", function () {
@@ -44,70 +44,72 @@
       });
     </script>
 
-    <style>
-      #contain-table table,
-      tr,
-      td,
-      th {
-        border-collapse: collapse;
-        border: 1px solid rgba(202, 71, 245, 0.2);
-        color: #e2e8f0;
-      }
-      #contain-table {
-        background-color: #12121a;
-        box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
-      }
-      #contain-table th {
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
-        text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
-      }
-      #contain-table td{
-        padding-left: 5px;
-        padding-right: 5px;
-      }
-
-      .transaction-row{
-        cursor: pointer;
-      }
-      .transaction-row:hover{
-        background-color: rgba(202, 71, 245, 0.08);
-      }
-
-    </style>
     <th:block th:replace="~{fragments/head :: styles}"></th:block>
-    <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top">
-      <div class="center-div" id="contain-table">
-        <div class="center-div" id="page-control">
-          <button class="page-butt" id="first-page">&lt;&lt;</button>
-          <button class="page-butt" id="prev-page">&lt;</button>
-          <span id="page-index"></span>
-          <button class="page-butt" id="next-page">&gt;</button>
-          <button class="page-butt" id="last-page">&gt;&gt;</button>
-        </div>
-        <div class="table-center">
-        <table>
-          <tr>
-            <th>id</th>
-            <th>date</th>
-            <th>type</th>
-            <th>amount</th>
-          </tr>
-          <tr th:each="tran : ${transactions}" class="transaction-row" th:onclick="'location.href=\'/transactions/' + ${tran.id} + '\''">
-            <td>[[${tran.id}]]</td>
-            <td>[[${tran.date}]]</td>
-            <td>[[${tran.type}]]</td>
-            <td>[[${tran.amount}]]</td>
-          </tr>
-        </table>
-        </div>
-        <input type="hidden" id="transaction-counts" th:value="${transactionCounts}" />
-        <input type="hidden" id="current-page" th:value="${page}" />
+
+    <div class="rg-page">
+
+      <div class="rg-page-head">
+        <h1>Transactions</h1>
+        <p>所有買入與賣出紀錄。點任一列可以看該筆交易的細節。</p>
       </div>
+
+      <div class="rg-toolbar">
+        <div class="rg-quota">
+          <div class="rg-quota__count">
+            <strong th:text="${transactionCounts}">0</strong>
+            <span>transactions</span>
+          </div>
+        </div>
+        <span class="rg-spacer"></span>
+        <a href="/card/addTransaction" class="btn btn-sm btn-outline btn-accent">add transaction</a>
+        <a href="/card/sellTransaction" class="btn btn-sm btn-outline btn-accent">add sales</a>
+      </div>
+
+      <div class="rg-table-card">
+        <table class="table table-zebra rg-table" id="contain-table">
+          <thead>
+            <tr>
+              <th style="width: 5rem;">id</th>
+              <th style="width: 12rem;">date</th>
+              <th style="width: 8rem;">type</th>
+              <th style="text-align: right;">amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="tran : ${transactions}" class="transaction-row"
+                style="cursor: pointer;"
+                th:onclick="'location.href=\'/transactions/' + ${tran.id} + '\''">
+              <td class="rg-num" style="color: var(--rg-dim);">[[${tran.id}]]</td>
+              <td class="rg-num">[[${tran.date}]]</td>
+              <td><span class="badge badge-sm badge-ghost">[[${tran.type}]]</span></td>
+              <td class="rg-num" style="text-align: right; font-weight: 700;">[[${tran.amount}]]</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(transactions)}">
+              <td colspan="4" style="text-align: center; padding: 2.5rem 1rem; color: var(--rg-dim);">
+                還沒有交易紀錄。<a href="/card/addTransaction" class="link link-primary">新增第一筆</a>。
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="rg-pager">
+        <span class="rg-spacer"></span>
+        <div class="join" id="page-control">
+          <button class="join-item btn btn-sm" id="first-page">&lt;&lt;</button>
+          <button class="join-item btn btn-sm" id="prev-page">&lt;</button>
+          <span id="page-index" style="display: contents;"></span>
+          <button class="join-item btn btn-sm" id="next-page">&gt;</button>
+          <button class="join-item btn btn-sm" id="last-page">&gt;&gt;</button>
+        </div>
+      </div>
+
+      <input type="hidden" id="transaction-counts" th:value="${transactionCounts}" />
+      <input type="hidden" id="current-page" th:value="${page}" />
+
     </div>
   </body>
 </html>
-

@@ -1,7 +1,7 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
-    <title>Add Sale</title>
+    <title>Add Sales</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,8 +12,6 @@
       type="text/javascript"
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
-    <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
-
     <script>
       $(document).ready(function () {
         $.ajaxSetup({
@@ -25,17 +23,31 @@
           }
         });
 
-        //todo
-
         var cardIds = [];
 
+        // Result rows are built as HTML, so values are escaped before being
+        // interpolated. Also maps null/undefined to "" — createCardInfo()
+        // tests fields against "", so a literal "null" would end up in the
+        // summary line.
+        var ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+        function esc(v) {
+          if (v === null || v === undefined) return "";
+          return String(v).replace(/[&<>"']/g, function (c) { return ESCAPES[c]; });
+        }
+
+        function isBlank(v) {
+          return v === null || v === undefined || String(v).trim() === "";
+        }
+
         function saveTransaction() {
-          
+
           var transaction = {
             date: $("#date").val(),
             type: $("#type").val(),
             amount: $("#amount").val(),
-            note: $("#note").val(),
+            // There was no note element on this page at all, so this read
+            // undefined and no sale ever carried a note.
+            note: $("#note-text").val(),
           };
 
           if (
@@ -70,6 +82,13 @@
           });
         }
 
+        function refreshIncludedCount() {
+          $("#included-count").text(
+            cardIds.length === 1 ? "1 card" : cardIds.length + " cards"
+          );
+          $("#included-empty").toggle(cardIds.length === 0);
+        }
+
         $("#add-transaction").on("click", function () {
           if(cardIds.length==0){
             alert("no card added");
@@ -84,6 +103,7 @@
           let i = cardIds.indexOf(row.find(".card-id").text());
           cardIds.splice(i, 1);
           row.remove();
+          refreshIncludedCount();
         });
 
         //show included card info
@@ -131,38 +151,25 @@
 
           var includedCard = `
           <tr>
-            <td><a class="card-id">${cardData.id}</a></td>
-            <td>
-              <span class="info" style="display:none;">${info}</span>
-              <button class="action-butt show-card">show</button>
-              <button class="action-butt hide-card" style="display:none;">hide</button>
+            <td data-label="card id"><span class="card-id rg-num">${esc(cardData.id)}</span></td>
+            <td data-label="info">
+              <span class="info" style="display:none;">${esc(info)}</span>
+              <button class="btn btn-xs btn-outline btn-accent show-card">show</button>
+              <button class="btn btn-xs btn-outline btn-accent hide-card" style="display:none;">hide</button>
             </td>
-            <td><button class="remove action-butt cancel">remove</button></td>
+            <td data-label="action" style="text-align: right;">
+              <button class="remove btn btn-xs btn-outline btn-error">remove</button>
+            </td>
           </tr>
           `;
 
-          $("#include-card").append(includedCard);
-        });
-
-        // clear all data in card row
-        $("#forCards").on("click", ".clear", function () {
-          var row = $(this).closest(".card-data");
-          row.find(".year").val("");
-          row.find(".publisher").val("");
-          row.find(".set").val("");
-          row.find(".player").val("");
-          row.find(".auto").prop("checked", false);
-          row.find(".insert").val("");
-          row.find(".parallel").val("");
-          row.find(".numbered").val("");
-          row.find(".sports").val("");
-          row.find(".grade").val("");
-          row.find(".value").val("");
+          $("#include-card tbody").append(includedCard);
+          refreshIncludedCount();
         });
 
         $("#search-butt").on("click", function () {
           $("#result").hide();
-          $("#result-card .card-row").remove();
+          $("#result-body .card-row").remove();
 
           var formData = {
             id: $("#id").val(),
@@ -187,61 +194,57 @@
             traditional: true, // tagIds=1&tagIds=2, not tagIds[]=1
             dataType: "json",
             success: function (response) {
-              if (response.length == 0) {
-                alert("found no card with the criteria");
+              $("#result").show();
+              $("#result-count").text(
+                response.length === 1 ? "1 card" : response.length + " cards"
+              );
+
+              if (response.length === 0) {
+                $("#result-table").hide();
+                $("#result-empty").show();
                 return;
               }
+              $("#result-empty").hide();
+
               var resultCards = "";
-              // alert("found card : " + response.length);
-              response.forEach((card) => {
-                resultCards += `<tr class="card-row">
-            <td>
-              <a class=" id">${card.id}</a>
-            </td>
-            <td>
-              <a class=" year">${card.year}</a>
-            </td>
-            <td>
-              <a class=" sports">${card.sports}</a>
-            </td>
-            <td>
-              <a class=" publisher">${card.publisher}</a>
-            </td>
-            <td>
-              <a class=" set">${card.set}</a>
-            </td>
-            <td>
-              <a class=" player">${card.player}</a>
-            </td>
-            <td>
-              <a class=" auto">${card.auto}</a>
-            </td>
-            <td>
-              <a class=" insert">${card.insert}</a>
-            </td>
-            <td>
-              <a class=" parallel">${card.parallel}</a>
-            </td>
-            <td>
-              <a class=" numbered">${card.numbered}</a>
-            </td>
-            <td>
-              <a class=" grade">${card.grade}</a>
-            </td>
-            <td>
-              <a class=" value">${card.value}</a>
-            </td>
-            <td><a class=" note">${card.note}</a></td>
-            <td><span class="tags">${TagPicker.chipsHtml(card.tags)}</span></td>
-            <td>
-              <span style="display: flex">
-                <button class="action-butt add-card">add</button>
-              </span>
-            </td>
-          </tr>`;
+              response.forEach(function (card) {
+                // .add-card reads these back with .text(), so every field the
+                // handler wants keeps its own element: .auto must read exactly
+                // "true"/"false", and .numbered is split on "/".
+                resultCards += '<tr class="card-row">' +
+                  '<td class="rg-cell-id" data-label="id"><span class="id rg-num">' + esc(card.id) + '</span></td>' +
+                  '<td class="rg-cell-card" data-label="card">' +
+                    '<div class="rg-ident">' +
+                      '<span class="player rg-player">' + esc(card.player) + '</span>' +
+                      '<span class="auto rg-data">' + (card.auto ? "true" : "false") + '</span>' +
+                      (card.auto ? '<span class="badge badge-sm badge-warning badge-outline">auto</span>' : '') +
+                      (isBlank(card.sports) ? '<span class="sports rg-data"></span>' : '<span class="sports badge badge-sm badge-ghost">' + esc(card.sports) + '</span>') +
+                    '</div>' +
+                    '<div class="rg-meta">' +
+                      '<span class="year">' + esc(card.year) + '</span> ' +
+                      '<span class="rg-sep">·</span> ' +
+                      '<span class="publisher">' + esc(card.publisher) + '</span> ' +
+                      '<span class="rg-sep">·</span> ' +
+                      '<span class="set">' + esc(card.set) + '</span>' +
+                    '</div>' +
+                  '</td>' +
+                  '<td class="rg-cell-variant" data-label="variant">' +
+                    '<div class="rg-variant">' +
+                      '<span class="insert">' + esc(card.insert) + '</span><br />' +
+                      '<span class="parallel rg-parallel">' + esc(card.parallel) + '</span> ' +
+                      '<span class="numbered rg-num">' + esc(card.numbered) + '</span>' +
+                    '</div>' +
+                  '</td>' +
+                  '<td class="rg-cell-grade" data-label="grade"><span class="grade">' + esc(card.grade) + '</span></td>' +
+                  '<td class="rg-cell-value" data-label="value" style="text-align: right;"><span class="value rg-num" style="font-weight: 700;">' + esc(card.value) + '</span></td>' +
+                  '<td data-label="tags"><span class="tags">' + TagPicker.chipsHtml(card.tags) + '</span></td>' +
+                  '<td class="rg-cell-actions" data-label="action">' +
+                    '<div class="rg-actions"><button class="btn btn-xs btn-success add-card">add to sale</button></div>' +
+                  '</td>' +
+                '</tr>';
               });
-              $("#result-card").append(resultCards);
-              $("#result").show();
+              $("#result-body").append(resultCards);
+              $("#result-table").show();
             },
             error: function (xhr, status, error) {
               console.log(error);
@@ -299,305 +302,165 @@
           return info;
         }
 
+        refreshIncludedCount();
+
         //end of ready
       });
-
-      function showNote() {
-        $("#note").show();
-      }
-      function hideNote() {
-        $("#note").hide();
-      }
     </script>
 
-    <style>
-      #add {
-        display: flex;
-        justify-content: center;
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      #add table,
-      #add tr,
-      #add th,
-      #add td {
-        border: 1px solid rgba(250, 201, 56, 0.25);
-        border-collapse: collapse;
-        color: #e2e8f0;
-      }
-      #add th {
-        padding-left: 6px;
-        padding-right: 6px;
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
-        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
-      }
-      #add td {
-        padding-left: 6px;
-        padding-right: 6px;
-        padding-top: 4px;
-        padding-bottom: 4px;
-      }
-      i {
-        color: #f0abfc;
-      }
-
-      .add-note {
-        height: 20px;
-        width: 20px;
-        margin-left: 5px;
-        margin-right: 5px;
-        cursor: pointer;
-        filter: invert(1) brightness(1.2);
-      }
-
-      #date::-webkit-calendar-picker-indicator {
-        filter: invert(1);
-        cursor: pointer;
-      }
-
-      #note {
-        display: none;
-        position: fixed;
-        top: 15%;
-        right: 15%;
-        background: #1e1e2e;
-        border: 1px solid rgba(246, 76, 189, 0.3);
-        box-shadow: 0 0 40px rgba(246, 76, 189, 0.1);
-        border-radius: 2px;
-      }
-
-      #add-tran {
-        display: flex;
-        justify-content: center;
-        text-align: center;
-        margin-bottom: 20px;
-        margin-top: 20px;
-      }
-
-      #add-tran table,
-      #add-tran tr,
-      #add-tran th,
-      #add-tran td {
-        border: 1px solid rgba(250, 201, 56, 0.25);
-        border-collapse: collapse;
-        color: #e2e8f0;
-      }
-      #add-tran th {
-        padding-left: 6px;
-        padding-right: 6px;
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
-        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
-      }
-      #add-tran td {
-        padding-left: 6px;
-        padding-right: 6px;
-        padding-top: 4px;
-        padding-bottom: 4px;
-      }
-
-      #include table,
-      #include tr,
-      #include th,
-      #include td {
-        border: 1px solid rgba(250, 201, 56, 0.25);
-        border-collapse: collapse;
-        color: #e2e8f0;
-      }
-
-      #include th {
-        padding-left: 6px;
-        padding-right: 6px;
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
-        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
-      }
-
-      #search table,
-      #search tr,
-      #search th,
-      #search td {
-        border: 1px solid rgba(250, 201, 56, 0.2);
-        border-collapse: collapse;
-        padding: 8px;
-        color: #e2e8f0;
-      }
-      #search-table {
-        margin-left: 25%;
-        margin-right: 25%;
-        margin-top: 30px;
-        margin-bottom: 30px;
-      }
-
-      #search {
-        display: flex;
-        text-align: center;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      #search th {
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
-        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
-      }
-
-      #result table,
-      #result tr,
-      #result th,
-      #result td {
-        border: 1px solid rgba(202, 71, 245, 0.2);
-        border-collapse: collapse;
-        padding: 8px;
-        color: #e2e8f0;
-      }
-
-      #result-card {
-        margin-left: 25%;
-        margin-right: 25%;
-        margin-top: 30px;
-        margin-bottom: 30px;
-      }
-
-      #result th {
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
-        text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
-      }
-
-      #result tr:nth-child(odd) {
-        background-color: rgba(202, 71, 245, 0.04);
-      }
-
-      .action-butt {
-        margin-left: 5px;
-        margin-right: 5px;
-      }
-      .update-element {
-        display: none;
-      }
-    </style>
     <th:block th:replace="~{fragments/head :: styles}"></th:block>
-    <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
     <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top" style="justify-content: center; text-align: center">
-      <h1>Add New Sales</h1>
-    </div>
-      <div id="add-tran">
-        <table id="for-transaction">
-          <tr>
-            <th><i>*</i>date</th>
-            <th><i>*</i>type</th>
-            <th><i>*</i>amount</th>
-            <th>note</th>
-          </tr>
-          <tr>
-            <td><input type="date" id="date" size="10" /></td>
-            <td>
-              <select id="type">
-                <option value="Sell">Sell</option>
-                <option value="Trade">Trade</option>
-              </select>
-            </td>
-            <td><input type="text" id="amount" size="6" /></td>
-            <td>
-              <img
-                class="add-note"
-                alt="add note"
-                th:src="@{/img/notes.png}"
-                onclick="showNote()"
-              />
-            </td>
-          </tr>
-        </table>
+
+    <div class="rg-page rg-page--wide">
+
+      <div class="rg-page-head">
+        <h1>Add new sale</h1>
+        <p>記錄一筆賣出。先填交易資料，再從下方搜尋並加入這筆交易賣掉的卡片。</p>
       </div>
-      <div class="center-div">
-        <button id="add-transaction" class="confirm-butt">Add Transaction</button>
-      </div>
-      <div
-        id="include"
-        class="center-div"
-        style="margin-top: 20px; margin-bottom: 20px"
-      >
-        <div class="table-center">
-        <table id="include-card">
-          <tr>
-            <th>card id</th>
-            <th>info</th>
-            <th>action</th>
-          </tr>
-        </table>
+
+      <div class="rg-panel" id="add-tran" style="margin-bottom: 1.25rem;">
+        <h2 class="rg-panel__title">Transaction</h2>
+        <div class="rg-form-grid">
+          <label class="rg-field">
+            <span class="rg-field__label">date <span style="color: var(--rg-pink);">*</span></span>
+            <input type="date" id="date" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">type <span style="color: var(--rg-pink);">*</span></span>
+            <select id="type" class="select">
+              <option value="Sell">Sell</option>
+              <option value="Trade">Trade</option>
+            </select>
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">amount <span style="color: var(--rg-pink);">*</span></span>
+            <input type="text" id="amount" class="input" placeholder="整筆交易總金額" />
+          </label>
+          <label class="rg-field" style="grid-column: 1 / -1;">
+            <span class="rg-field__label">note</span>
+            <textarea id="note-text" name="note" class="textarea" rows="2" style="width: 100%;"></textarea>
+          </label>
         </div>
       </div>
-    </div>
-    <div class="center-div" style="margin-top: 20px; margin-bottom: 20px">
-      ------------------------------------------------
-    </div>
-    <div class="center-div" id="card">
-      <h3>search card to add in sale</h3>
-      <div id="search">
-        <div class="table-center">
-        <table id="search-table" class="mobile-form">
-          <tr>
-            <th>id</th>
-            <th>year</th>
-            <th>sports</th>
-            <th>publisher</th>
-            <th>set</th>
-            <th>player</th>
-            <th>auto</th>
-            <th>insert</th>
-            <th>parallel</th>
-            <th>numbered</th>
-            <th>grade</th>
-            <th>value</th>
-            <th>tags</th>
-          </tr>
-          <tr>
-            <td><input type="text" id="id" size="4" /></td>
-            <td><input type="text" id="year" size="4" /></td>
-            <td><input type="text" id="sports" size="6" /></td>
-            <td><input type="text" id="publisher" size="6" /></td>
-            <td><input type="text" id="set" size="10" /></td>
-            <td><input type="text" id="player" /></td>
-            <td><input type="checkbox" id="auto" /></td>
-            <td><input type="text" id="insert" size="6" /></td>
-            <td><input type="text" id="parallel" size="6" /></td>
-            <td><input type="text" id="numbered" size="6" /></td>
-            <td><input type="text" id="grade" size="6" /></td>
-            <td><input type="text" id="value" size="6" /></td>
-            <td>
-              <div class="tag-picker" id="tag-filter"></div>
-            </td>
-          </tr>
+
+      <div class="rg-toolbar">
+        <span style="font-size: 0.875rem; color: var(--rg-muted);">這筆交易賣掉的卡片</span>
+        <span class="badge badge-secondary badge-outline" id="included-count">0 cards</span>
+        <span class="rg-spacer"></span>
+        <button id="add-transaction" class="btn btn-sm btn-success">Add Transaction</button>
+      </div>
+
+      <div id="included-empty" class="alert alert-info alert-soft" style="margin-bottom: 1.25rem;">
+        <span>還沒有加入任何卡片。用下面的搜尋找到卡片後按 <strong>add to sale</strong>。</span>
+      </div>
+
+      <div class="rg-table-card" id="include" style="margin-bottom: 2rem;">
+        <table id="include-card" class="table table-zebra rg-table rg-card-table">
+          <thead>
+            <tr>
+              <th style="width: 6rem;">card id</th>
+              <th>info</th>
+              <th style="width: 9rem; text-align: right;">action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
         </table>
+      </div>
+
+      <div class="rg-panel" id="search">
+        <h2 class="rg-panel__title">Find cards to sell</h2>
+        <div class="rg-form-grid">
+          <label class="rg-field">
+            <span class="rg-field__label">player</span>
+            <input type="text" id="player" class="input" placeholder="Aaron Judge" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">year</span>
+            <input type="text" id="year" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">set</span>
+            <input type="text" id="set" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">publisher</span>
+            <input type="text" id="publisher" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">sports</span>
+            <input type="text" id="sports" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">insert</span>
+            <input type="text" id="insert" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">parallel</span>
+            <input type="text" id="parallel" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">numbered</span>
+            <input type="text" id="numbered" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">grade</span>
+            <input type="text" id="grade" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">value</span>
+            <input type="text" id="value" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">id</span>
+            <input type="text" id="id" class="input" />
+          </label>
+          <div class="rg-field">
+            <span class="rg-field__label">tags</span>
+            <div class="tag-picker" id="tag-filter"></div>
+          </div>
+          <label class="rg-check">
+            <input type="checkbox" id="auto" class="checkbox checkbox-sm" />
+            <span>auto only</span>
+          </label>
+        </div>
+        <div class="rg-form-actions">
+          <button id="search-butt" class="btn btn-success">search</button>
         </div>
       </div>
-      <button id="search-butt" class="confirm-butt">search</button>
-    </div>
-    <div class="center-div" id="result" style="margin-top: 30px; display: none">
-      <div class="table-center">
-      <table id="result-card" class="mobile-cards">
-        <tr>
-          <th>id</th>
-          <th>year</th>
-          <th>sports</th>
-          <th>publisher</th>
-          <th>set</th>
-          <th>player</th>
-          <th>auto</th>
-          <th>insert</th>
-          <th>parallel</th>
-          <th>numbered</th>
-          <th>grade</th>
-          <th>value</th>
-          <th>note</th>
-          <th>tags</th>
-          <th>action</th>
-        </tr>
-      </table>
+
+      <div id="result" style="display: none;">
+        <div class="rg-result-head">
+          <h2>Results</h2>
+          <span class="badge badge-secondary badge-outline" id="result-count">0 cards</span>
+          <span class="rg-spacer"></span>
+          <button id="hide-butt" class="btn btn-sm btn-outline btn-error">clear</button>
+        </div>
+
+        <div id="result-empty" class="alert alert-info alert-soft" style="display: none;">
+          <span>沒有符合條件的卡片。試著少填幾個欄位。</span>
+        </div>
+
+        <div class="rg-table-card" id="result-table">
+          <table id="result-card" class="table table-zebra rg-table rg-card-table">
+            <thead>
+              <tr>
+                <th style="width: 3.5rem;">id</th>
+                <th>card</th>
+                <th style="width: 13rem;">variant</th>
+                <th style="width: 6rem;">grade</th>
+                <th style="width: 6.5rem; text-align: right;">value</th>
+                <th style="width: 11rem;">tags</th>
+                <th style="width: 9rem; text-align: right;">action</th>
+              </tr>
+            </thead>
+            <tbody id="result-body"></tbody>
+          </table>
+        </div>
       </div>
-      <button id="hide-butt" class="destroy-butt">clear</button>
+
     </div>
   </body>
 </html>
-

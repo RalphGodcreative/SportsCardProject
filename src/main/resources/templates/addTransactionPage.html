@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <title>Add Transaction</title>
@@ -12,7 +12,6 @@
       type="text/javascript"
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
-    <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
     <script>
       $(document).ready(function () {
         $.ajaxSetup({
@@ -23,8 +22,6 @@
             );
           }
         });
-
-        //todo
 
         var clipboardCard = {
           year: "",
@@ -64,29 +61,32 @@
           return cardList;
         }
 
+        // Keep in step with the seed row in the markup below.
         function addCard() {
           var newCard = `
           <tr class="card-data">
-            <td><input type="text" class="year" id="year" size="4" /></td>
-            <td><input type="text" class="sports" id="sports" size="6" /></td>
-            <td><input type="text" class="publisher" id="publisher" size="6" /></td>
-            <td><input type="text" class="set" id="set" size="10" /></td>
-            <td><input type="text" class="player" id="player" /></td>
-            <td><input type="checkbox" class="auto" /></td>
-            <td><input type="text" class="insert" id="insert" size="6" /></td>
-            <td><input type="text" class="parallel" id="parallel" size="6" /></td>
-            <td><input type="text" class="numbered" id="numbered" size="6" /></td>
-            <td><input type="text" class="grade" id="grade" size="6" /></td>
-            <td><input type="text" class="value" id="value" size="6" /></td>
-            <td><div class="tag-picker"></div></td>
-            <td>
-              <button class="copy action-butt">copy</button>
-              <button class="paste action-butt">paste</button>
-              <button class="clear action-butt cancel">clear</button>
-              <button class="delete-card action-butt cancel">delete</button>
+            <td data-label="year"><input type="text" class="year input input-sm" /></td>
+            <td data-label="sports"><input type="text" class="sports input input-sm" /></td>
+            <td data-label="publisher"><input type="text" class="publisher input input-sm" /></td>
+            <td data-label="set"><input type="text" class="set input input-sm" /></td>
+            <td data-label="player"><input type="text" class="player input input-sm" /></td>
+            <td data-label="auto"><input type="checkbox" class="auto checkbox checkbox-sm" /></td>
+            <td data-label="insert"><input type="text" class="insert input input-sm" /></td>
+            <td data-label="parallel"><input type="text" class="parallel input input-sm" /></td>
+            <td data-label="numbered"><input type="text" class="numbered input input-sm" /></td>
+            <td data-label="grade"><input type="text" class="grade input input-sm" /></td>
+            <td data-label="value"><input type="text" class="value input input-sm" /></td>
+            <td data-label="tags"><div class="tag-picker"></div></td>
+            <td class="rg-cell-actions">
+              <div class="rg-row-actions">
+                <button class="copy btn btn-xs btn-outline btn-accent">copy</button>
+                <button class="paste btn btn-xs btn-outline btn-accent">paste</button>
+                <button class="clear btn btn-xs btn-outline btn-error">clear</button>
+                <button class="delete-card btn btn-xs btn-outline btn-error">delete</button>
+              </div>
             </td>
           </tr>`;
-          $("#forCards").append(newCard);
+          $("#forCards tbody").append(newCard);
           TagPicker.initAll($("#forCards .card-data").last());
         }
 
@@ -95,7 +95,9 @@
             date: $("#date").val(),
             type: $("#type").val(),
             amount: $("#amount").val(),
-            note: $("#note").val(),
+            // #note used to be the wrapper div, so .val() was always undefined
+            // and the note never reached the server. Read the textarea.
+            note: $("#note-text").val(),
           };
 
           if (
@@ -209,323 +211,170 @@
         });
       });
 
-      function showNote() {
-        $("#note").show();
-      }
-      function hideNote() {
-        $("#note").hide();
-      }
-
       function showGuide() {
-        $("#guide").show();
+        $("#guide").addClass("modal-open");
       }
       function hideGuide() {
-        $("#guide").hide();
+        $("#guide").removeClass("modal-open");
       }
     </script>
 
-    <style>
-      #add {
-        display: flex;
-        justify-content: center;
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      #add table,
-      #add tr,
-      #add th,
-      #add td {
-        border: 1px solid rgba(250, 201, 56, 0.25);
-        border-collapse: collapse;
-        color: #e2e8f0;
-      }
-      #add th {
-        padding-left: 6px;
-        padding-right: 6px;
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
-        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
-      }
-      #add td {
-        padding-left: 6px;
-        padding-right: 6px;
-        padding-top: 4px;
-        padding-bottom: 4px;
-      }
-      i {
-        color: #f0abfc;
-      }
-
-      .add-note {
-        height: 20px;
-        width: 20px;
-        margin-left: 5px;
-        margin-right: 5px;
-        cursor: pointer;
-        filter: invert(1) brightness(1.2);
-      }
-
-      #date::-webkit-calendar-picker-indicator {
-        filter: invert(1);
-        cursor: pointer;
-      }
-
-      #note {
-        display: none;
-        position: fixed;
-        top: 15%;
-        right: 15%;
-        background: #1e1e2e;
-        border: 1px solid rgba(246, 76, 189, 0.3);
-        box-shadow: 0 0 40px rgba(246, 76, 189, 0.1);
-        border-radius: 2px;
-      }
-
-      .guide-icon {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: #38C9FA;
-        width: 26px;
-        height: 26px;
-        padding: 0;
-        vertical-align: middle;
-        margin-left: 10px;
-      }
-      .guide-icon svg {
-        width: 100%;
-        height: 100%;
-      }
-
-      #guide {
-        display: none;
-        position: fixed;
-        top: 10%;
-        left: 50%;
-        transform: translateX(-50%);
-        width: min(560px, 92vw);
-        max-height: 75vh;
-        overflow-y: auto;
-        z-index: 50;
-        text-align: left;
-        background: #1e1e2e;
-        border: 1px solid rgba(246, 76, 189, 0.3);
-        box-shadow: 0 0 40px rgba(246, 76, 189, 0.1);
-        border-radius: 4px;
-        padding: 18px 22px;
-        color: #e2e8f0;
-      }
-      .guide-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-        font-weight: bold;
-        color: #FAC938;
-      }
-      .guide-close {
-        cursor: pointer;
-        padding-left: 12px;
-      }
-      .guide-body p {
-        margin: 0 0 10px;
-      }
-      .guide-body ul {
-        margin: 0 0 10px;
-        padding-left: 20px;
-      }
-      .guide-body li {
-        margin-bottom: 4px;
-      }
-
-      #add-tran {
-        display: flex;
-        justify-content: center;
-        text-align: center;
-        margin-bottom: 20px;
-        margin-top: 20px;
-      }
-
-      #add-tran table,
-      #add-tran tr,
-      #add-tran th,
-      #add-tran td {
-        border: 1px solid rgba(250, 201, 56, 0.25);
-        border-collapse: collapse;
-        color: #e2e8f0;
-      }
-      #add-tran th {
-        padding-left: 6px;
-        padding-right: 6px;
-        background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
-        text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
-      }
-      #add-tran td {
-        padding-left: 6px;
-        padding-right: 6px;
-        padding-top: 4px;
-        padding-bottom: 4px;
-      }
-
-    </style>
     <th:block th:replace="~{fragments/head :: styles}"></th:block>
-    <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
     <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top" style="justify-content: center; text-align: center">
-      <div>
-      <h1>
-        Add New Transaction
-        <button id="guide-toggle" class="guide-icon" aria-label="How to use this page" title="How to use this page">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <circle cx="12" cy="12" r="9" />
-            <path stroke-linecap="round" d="M12 11v5" />
-            <path stroke-linecap="round" d="M12 7.75h.01" />
-          </svg>
-        </button>
-      </h1>
-      <div id="add-tran">
-        <table id="for-transaction">
-          <tr>
-            <th><i>*</i>date</th>
-            <th><i>*</i>type</th>
-            <th><i>*</i>amount</th>
-            <th>note</th>
-          </tr>
-          <tr>
-            <td><input type="date" id="date" size="10" /></td>
-            <td>
-              <select id="type">
-                <option value="Break">Break</option>
-                <option value="Buy">Buy</option>
-                <option value="Trade">Trade</option>
-                <option value="Open">Open</option>
-                <option value="Giveaway">Giveaway</option>
-              </select>
-            </td>
-            <td><input type="text" id="amount" size="6" /></td>
-            <td>
-              <img
-                class="add-note"
-                alt="add note"
-                th:src="@{/img/notes.png}"
-                onclick="showNote()"
-              />
-            </td>
-          </tr>
+
+    <!-- How-to. Closes on a click landing on #guide itself, i.e. outside the box. -->
+    <div id="guide" class="modal">
+      <div class="modal-box" style="max-width: 38rem;">
+        <h3 style="margin: 0 0 0.875rem; font-size: 1.125rem; font-weight: 900; color: var(--color-warning);">如何使用這個頁面</h3>
+        <div style="font-size: 0.875rem; line-height: 1.7; color: var(--rg-muted);">
+          <p><strong style="color: var(--color-base-content);">交易資料（上方）</strong><br />
+            date / type / amount 為必填，note 可選填。<br />
+            amount 填整筆交易的總金額，不是單張卡的價格。</p>
+
+          <p><strong style="color: var(--color-base-content);">交易類型</strong><br />
+            Break — 團拆獲得<br />
+            Buy — 直接購買<br />
+            Trade — 交換所得<br />
+            Open — 自行開卡獲得<br />
+            Giveaway — 抽獎、贈送取得<br />
+            （以上皆為卡片「取得」的紀錄；賣出請至 Sell 頁面。）</p>
+
+          <p><strong style="color: var(--color-base-content);">卡片列表（下方）</strong><br />
+            按 add card 逐張加入這筆交易的卡片。標 * 為必填。</p>
+          <ul style="padding-left: 1.25rem;">
+            <li><span style="color: var(--rg-pink);">*</span> year — 卡片年份，例：2026、2024-25</li>
+            <li>sports — 運動項目，例：Baseball、Basketball</li>
+            <li>publisher — 發行商，例：Topps、Panini</li>
+            <li><span style="color: var(--rg-pink);">*</span> set — 系列名稱，例：Chrome、Prizm、Select</li>
+            <li><span style="color: var(--rg-pink);">*</span> player — 球員名稱，例：Aaron Judge、Luka Doncic</li>
+            <li>auto — 是否為簽名卡，勾選即可</li>
+            <li>insert — 特卡種類，例：Home Field Advantage、Kaboom</li>
+            <li>parallel — 平行卡版本，例：Gold Refractor、Green</li>
+            <li>numbered — 限量編號，例：021/199、3/5</li>
+            <li>grade — 鑑定分數，例：PSA 10、BGS 9.5</li>
+            <li>value — 這張卡的個別價值，例：299</li>
+            <li>tags — 標籤，一張卡可有多個（詳見 Tag 頁面）</li>
+          </ul>
+          <p>建議每個字的第一個字母都大寫，方便日後搜尋。</p>
+
+          <p><strong style="color: var(--color-base-content);">快速輸入</strong><br />
+            copy — 複製這一列的欄位內容<br />
+            paste — 將複製的欄位內容貼到這一列<br />
+            clear — 清空這一列<br />
+            delete — 刪除這一列</p>
+
+          <p>完成後按 Add Transaction 儲存整筆交易。</p>
+        </div>
+        <div class="modal-action">
+          <button class="btn btn-sm btn-ghost" onclick="hideGuide()">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="rg-page rg-page--wide">
+
+      <div class="rg-page-head">
+        <h1>
+          Add new transaction
+          <button id="guide-toggle" class="btn btn-sm btn-circle btn-ghost" aria-label="How to use this page" title="How to use this page">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="9" />
+              <path stroke-linecap="round" d="M12 11v5" />
+              <path stroke-linecap="round" d="M12 7.75h.01" />
+            </svg>
+          </button>
+        </h1>
+        <p>記錄一筆「取得」卡片的交易，並逐張加入這筆交易帶進來的卡片。</p>
+      </div>
+
+      <div class="rg-panel" id="add-tran" style="margin-bottom: 1.25rem;">
+        <h2 class="rg-panel__title">Transaction</h2>
+        <div class="rg-form-grid">
+          <label class="rg-field">
+            <span class="rg-field__label">date <span style="color: var(--rg-pink);">*</span></span>
+            <input type="date" id="date" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">type <span style="color: var(--rg-pink);">*</span></span>
+            <select id="type" class="select">
+              <option value="Break">Break</option>
+              <option value="Buy">Buy</option>
+              <option value="Trade">Trade</option>
+              <option value="Open">Open</option>
+              <option value="Giveaway">Giveaway</option>
+            </select>
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">amount <span style="color: var(--rg-pink);">*</span></span>
+            <input type="text" id="amount" class="input" placeholder="整筆交易總金額" />
+          </label>
+          <label class="rg-field" style="grid-column: 1 / -1;">
+            <span class="rg-field__label">note</span>
+            <textarea id="note-text" name="note" class="textarea" rows="2" style="width: 100%;"></textarea>
+          </label>
+        </div>
+      </div>
+
+      <div class="rg-toolbar">
+        <span style="font-size: 0.875rem; color: var(--rg-muted);">這筆交易帶進來的卡片</span>
+        <span class="rg-spacer"></span>
+        <button id="add-card" class="btn btn-sm btn-success">add card</button>
+      </div>
+
+      <div class="rg-table-card">
+        <table id="forCards" class="table rg-table rg-form-table">
+          <thead>
+            <tr>
+              <th>year <span style="color: var(--rg-pink);">*</span></th>
+              <th>sports</th>
+              <th>publisher</th>
+              <th>set <span style="color: var(--rg-pink);">*</span></th>
+              <th>player <span style="color: var(--rg-pink);">*</span></th>
+              <th>auto</th>
+              <th>insert</th>
+              <th>parallel</th>
+              <th>numbered</th>
+              <th>grade</th>
+              <th>value</th>
+              <th>tags</th>
+              <th>action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="card-data">
+              <td data-label="year"><input type="text" class="year input input-sm" /></td>
+              <td data-label="sports"><input type="text" class="sports input input-sm" /></td>
+              <td data-label="publisher"><input type="text" class="publisher input input-sm" /></td>
+              <td data-label="set"><input type="text" class="set input input-sm" /></td>
+              <td data-label="player"><input type="text" class="player input input-sm" /></td>
+              <td data-label="auto"><input type="checkbox" class="auto checkbox checkbox-sm" /></td>
+              <td data-label="insert"><input type="text" class="insert input input-sm" /></td>
+              <td data-label="parallel"><input type="text" class="parallel input input-sm" /></td>
+              <td data-label="numbered"><input type="text" class="numbered input input-sm" /></td>
+              <td data-label="grade"><input type="text" class="grade input input-sm" /></td>
+              <td data-label="value"><input type="text" class="value input input-sm" /></td>
+              <td data-label="tags"><div class="tag-picker"></div></td>
+              <td class="rg-cell-actions">
+                <div class="rg-row-actions">
+                  <button class="copy btn btn-xs btn-outline btn-accent">copy</button>
+                  <button class="paste btn btn-xs btn-outline btn-accent">paste</button>
+                  <button class="clear btn btn-xs btn-outline btn-error">clear</button>
+                  <button class="delete-card btn btn-xs btn-outline btn-error">delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
-      <div class="center-div" style="margin-top: 20px; margin-bottom: 20px">
-        <button id="add-card" class="confirm-butt">add card</button>
+
+      <div class="rg-form-actions">
+        <button id="add-transaction" class="btn btn-success">Add Transaction</button>
+        <a href="/card" class="btn btn-ghost">Cancel</a>
       </div>
-      <div id="add">
-        <div class="table-center">
-        <table id="forCards" class="mobile-form">
-          <tr>
-            <th><i>*</i>year</th>
-            <th>sports</th>
-            <th>publisher</th>
-            <th><i>*</i>set</th>
-            <th><i>*</i>player</th>
-            <th>auto</th>
-            <th>insert</th>
-            <th>parallel</th>
-            <th>numbered</th>
-            <th>grade</th>
-            <th>value</th>
-            <!-- <th>note</th> -->
-            <th>tags</th>
-            <th>action</th>
-          </tr>
-          <tr class="card-data">
-            <td><input type="text" class="year" id="year" size="4" /></td>
-            <td><input type="text" class="sports" id="sports" size="6" /></td>
-            <td><input type="text" class="publisher" id="publisher" size="6" /></td>
-            <td><input type="text" class="set" id="set" size="10" /></td>
-            <td><input type="text" class="player" id="player" /></td>
-            <td><input type="checkbox" class="auto" /></td>
-            <td><input type="text" class="insert" id="insert" size="6" /></td>
-            <td><input type="text" class="parallel" id="parallel" size="6" /></td>
-            <td><input type="text" class="numbered" id="numbered" size="6" /></td>
-            <td><input type="text" class="grade" id="grade" size="6" /></td>
-            <td><input type="text" class="value" id="value" size="6" /></td>
-            <!-- <td>
-              <img class="add-note" alt="add note" th:src="@{/img/notes.png}" />
-            </td> -->
-            <td><div class="tag-picker"></div></td>
-            <td>
-              <button class="copy action-butt">copy</button>
-              <button class="paste action-butt">paste</button>
-              <button class="clear action-butt cancel">clear</button>
-              <button class="delete-card action-butt cancel">delete</button>
-            </td>
-          </tr>
-        </table>
-        </div>
 
-        <div id="note">
-          <div style="text-align: end">
-            <a style="cursor: pointer; padding-right: 5%" onclick="hideNote()"
-              >x</a
-            >
-          </div>
-          <div>
-            <textarea id="note-text" name="note" cols="30" rows="3"></textarea>
-          </div>
-        </div>
-
-        <div id="guide">
-          <div class="guide-head">
-            <span>如何使用這個頁面</span>
-            <a class="guide-close" onclick="hideGuide()">x</a>
-          </div>
-          <div class="guide-body">
-            <p><strong>交易資料（上方表格）</strong><br />
-              date / type / amount 為必填，note 可選填（點筆記圖示開啟）。<br />
-              amount 填整筆交易的總金額，不是單張卡的價格。</p>
-
-            <p><strong>交易類型</strong><br />
-              Break — 團拆獲得<br />
-              Buy — 直接購買<br />
-              Trade — 交換所得<br />
-              Open — 自行開卡獲得<br />
-              Giveaway — 抽獎、贈送取得<br />
-              （以上皆為卡片「取得」的紀錄；賣出請至 Sell 頁面。）</p>
-
-            <p><strong>卡片列表（下方表格）</strong><br />
-              按 add card 逐張加入這筆交易的卡片。標 * 為必填。</p>
-            <ul>
-              <li><i>*</i> year — 卡片年份，例：2026、2024-25</li>
-              <li>sports — 運動項目，例：Baseball、Basketball</li>
-              <li>publisher — 發行商，例：Topps、Panini</li>
-              <li><i>*</i> set — 系列名稱，例：Chrome、Prizm、Select</li>
-              <li><i>*</i> player — 球員名稱，例：Aaron Judge、Luka Doncic</li>
-              <li>auto — 是否為簽名卡，勾選即可</li>
-              <li>insert — 特卡種類，例：Home Field Advantage、Kaboom</li>
-              <li>parallel — 平行卡版本，例：Gold Refractor、Green</li>
-              <li>numbered — 限量編號，例：021/199、3/5</li>
-              <li>grade — 鑑定分數，例：PSA 10、BGS 9.5</li>
-              <li>value — 這張卡的個別價值，可紀錄大筆交易中單卡的價格，例：299</li>
-              <li>tags — 標籤，一張卡可有多個（詳見 Tag 頁面）</li>
-            </ul>
-            <p>建議每個字的第一個字母都大寫，方便日後搜尋。</p>
-
-            <p><strong>快速輸入</strong><br />
-              copy — 複製這一列的欄位內容<br />
-              paste — 將複製的欄位內容貼到這一列<br />
-              clear — 清空這一列<br />
-              delete — 刪除這一列</p>
-
-            <p>完成後按 Add Transaction 儲存整筆交易。</p>
-          </div>
-        </div>
-      </div>
-      <div class="center-div">
-        <button id="add-transaction" class="confirm-butt">Add Transaction</button>
-      </div>
-      </div>
     </div>
   </body>
 </html>
-
