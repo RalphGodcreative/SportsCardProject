@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <title>Search Cards</title>
@@ -13,8 +13,7 @@
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
     <script type="text/javascript" th:src="@{/js/util.js}"></script>
-    <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
-    <script h:inline="javascript">
+    <script>
       $(document).ready(function () {
         $.ajaxSetup({
           beforeSend: function(xhr) {
@@ -25,10 +24,121 @@
           }
         });
 
+        // Result rows are built here as HTML, so card values have to be
+        // escaped before they are interpolated. Also turns null/undefined
+        // into "" rather than the string "null".
+        var ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+        function esc(v) {
+          if (v === null || v === undefined) return "";
+          return String(v).replace(/[&<>"']/g, function (c) { return ESCAPES[c]; });
+        }
+
+        function isBlank(v) {
+          return v === null || v === undefined || String(v).trim() === "";
+        }
+
+        var SPORT_ICONS = {
+          baseball: '<circle cx="12" cy="12" r="9"/><path d="M6.2 5.4c2 2.2 3 4.5 3 6.6s-1 4.4-3 6.6"/><path d="M17.8 5.4c-2 2.2-3 4.5-3 6.6s1 4.4 3 6.6"/>',
+          basketball: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3v18"/><path d="M5.6 5.6c3.5 3.5 3.5 9.3 0 12.8"/><path d="M18.4 5.6c-3.5 3.5-3.5 9.3 0 12.8"/>',
+          football: '<ellipse cx="12" cy="12" rx="9" ry="5.6" transform="rotate(-30 12 12)"/><path d="M9.2 14.8l5.6-5.6"/>'
+        };
+
+        function sportIcon(sports) {
+          var key = String(sports || "").toLowerCase();
+          var paths = SPORT_ICONS[key] || '<circle cx="12" cy="12" r="9"/>';
+          return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">' + paths + '</svg>';
+        }
+
+        function rowHtml(card) {
+          // Mirrors the server-rendered rows in pagingAllCard.html / allCard.html.
+          // Two things getCompLink() in util.js depends on:
+          //   - .show-auto must hold literally "true"/"false"; it stays hidden.
+          //   - the "raw" placeholder must NOT carry .show-grade, or an ungraded
+          //     card would put "raw" into the eBay search.
+          var gradeCell = isBlank(card.grade)
+            ? '<span class="show rg-none" style="font-size: 0.8rem;">raw</span>'
+            : '<span class="show show-grade badge badge-sm badge-info badge-outline">' + esc(card.grade) + '</span>';
+
+          return '<tr class="card-row">' +
+            '<td class="rg-cell-id" data-label="id">' +
+              '<span class="show show-id rg-num">' + esc(card.id) + '</span>' +
+              '<input type="text" class="update-element id" value="' + esc(card.id) + '" disabled />' +
+            '</td>' +
+
+            '<td class="rg-cell-card" data-label="card">' +
+              '<div class="rg-ident">' +
+                sportIcon(card.sports) +
+                '<span class="show show-player rg-player">' + esc(card.player) + '</span>' +
+                '<span class="show-auto rg-data">' + (card.auto ? "true" : "false") + '</span>' +
+                (card.auto ? '<span class="badge badge-sm badge-warning badge-outline">auto</span>' : '') +
+                (isBlank(card.sports) ? '' : '<span class="show show-sports badge badge-sm badge-ghost">' + esc(card.sports) + '</span>') +
+              '</div>' +
+              '<div class="show rg-meta">' +
+                '<span class="show-year">' + esc(card.year) + '</span> ' +
+                '<span class="rg-sep">·</span> ' +
+                '<span class="show-publisher">' + esc(card.publisher) + '</span> ' +
+                '<span class="rg-sep">·</span> ' +
+                '<span class="show-set">' + esc(card.set) + '</span>' +
+              '</div>' +
+              (isBlank(card.note) ? '' : '<span class="show show-note rg-note">' + esc(card.note) + '</span>') +
+              '<input type="text" class="update-element player" value="' + esc(card.player) + '" placeholder="player" />' +
+              '<input type="text" class="update-element year" value="' + esc(card.year) + '" placeholder="year" />' +
+              '<input type="text" class="update-element publisher" value="' + esc(card.publisher) + '" placeholder="publisher" />' +
+              '<input type="text" class="update-element set" value="' + esc(card.set) + '" placeholder="set" />' +
+              '<input type="text" class="update-element sports" value="' + esc(card.sports) + '" placeholder="sports" />' +
+              '<label class="update-element rg-auto-field">' +
+                '<input type="checkbox" class="auto"' + (card.auto ? ' checked' : '') + ' /> auto' +
+              '</label>' +
+            '</td>' +
+
+            '<td class="rg-cell-variant" data-label="variant">' +
+              '<div class="show rg-variant">' +
+                (isBlank(card.insert)
+                  ? '<span class="rg-none">base</span>'
+                  : '<span class="show-insert">' + esc(card.insert) + '</span>') +
+                '<br />' +
+                (isBlank(card.parallel)
+                  ? '<span class="rg-none">no parallel</span>'
+                  : '<span class="show-parallel rg-parallel">' + esc(card.parallel) + '</span>') +
+                ' <span class="show-numbered rg-num">' + esc(card.numbered) + '</span>' +
+              '</div>' +
+              '<input type="text" class="update-element insert" value="' + esc(card.insert) + '" placeholder="insert" />' +
+              '<input type="text" class="update-element parallel" value="' + esc(card.parallel) + '" placeholder="parallel" />' +
+              '<input type="text" class="update-element numbered" value="' + esc(card.numbered) + '" placeholder="numbered" />' +
+            '</td>' +
+
+            '<td class="rg-cell-grade" data-label="grade">' +
+              gradeCell +
+              '<input type="text" class="update-element grade" value="' + esc(card.grade) + '" placeholder="grade" />' +
+            '</td>' +
+
+            '<td class="rg-cell-value" data-label="value" style="text-align: right;">' +
+              '<span class="show show-value rg-num" style="font-weight: 700;">' + esc(card.value) + '</span>' +
+              '<input type="text" class="update-element value" value="' + esc(card.value) + '" placeholder="value" />' +
+            '</td>' +
+
+            '<td class="rg-cell-tags" data-label="tags">' +
+              '<span class="show show-tags">' + TagPicker.chipsHtml(card.tags) + '</span>' +
+              '<div class="update-element tag-picker" data-selected="' + (card.tags || []).map(function (t) { return t.id; }).join(',') + '"></div>' +
+            '</td>' +
+
+            '<td class="rg-cell-actions" data-label="action">' +
+              '<div class="rg-actions">' +
+                '<button class="show btn btn-xs btn-outline btn-accent modify">modify</button>' +
+                '<button class="show btn btn-xs btn-outline btn-accent comps">comps</button>' +
+                '<button class="show btn btn-xs btn-outline btn-accent get-tran" onclick="window.location.href=\'/card/cardTransaction/' + esc(card.id) + '\'">transaction</button>' +
+                '<button class="show btn btn-xs btn-outline rg-btn-ai potential-btn" data-id="' + esc(card.id) + '">potential</button>' +
+                '<button class="update-element btn btn-xs btn-success save">save</button>' +
+                '<button class="update-element btn btn-xs btn-outline btn-error cancel">cancel</button>' +
+              '</div>' +
+            '</td>' +
+          '</tr>';
+        }
+
         //search card
         function search(){
-          $("#result").hide();
-          $("#result-card .card-row").remove();
+          $("#result-body .card-row").remove();
+          $("#result-empty").hide();
 
           var formData = {
             id: $("#id").val(),
@@ -53,145 +163,24 @@
             traditional: true, // tagIds=1&tagIds=2, not tagIds[]=1
             dataType: "json",
             success: function (response) {
-              if (response.length == 0) {
-                alert("found no card with the criteria");
+              $("#result").show();
+              $("#result-count").text(
+                response.length === 1 ? "1 card" : response.length + " cards"
+              );
+
+              if (response.length === 0) {
+                $("#result-table").hide();
+                $("#result-empty").show();
                 return;
               }
+
               var resultCards = "";
-              alert("found card : " + response.length);
-              response.forEach((card) => {
-                resultCards += `<tr class="card-row">
-            <td>
-              <a class="show show-id">${card.id}</a
-              ><input
-                type="text"
-                class="update-element id"
-                size="4"
-                value="${card.id}"
-                disabled
-              />
-            </td>
-            <td>
-              <a class="show show-year">${card.year}</a
-              ><input
-                type="text"
-                class="update-element year"
-                size="4"
-                value="${card.year}"
-              />
-            </td>
-            <td>
-              <a class="show show-sports">${card.sports}</a
-              ><input
-                type="text"
-                class="update-element sports"
-                size="6"
-                value="${card.sports}"
-              />
-            </td>
-            <td>
-              <a class="show show-publisher">${card.publisher}</a
-              ><input
-                type="text"
-                class="update-element publisher"
-                size="6"
-                value="${card.publisher}"
-              />
-            </td>
-            <td>
-              <a class="show show-set">${card.set}</a
-              ><input
-                type="text"
-                class="update-element set"
-                size="10"
-                value="${card.set}"
-              />
-            </td>
-            <td>
-              <a class="show show-player">${card.player}</a
-              ><input
-                type="text"
-                class="update-element player"
-                value="${card.player}"
-              />
-            </td>
-            <td>
-              <a class="show show-auto">${card.auto}</a
-              ><input
-                type="checkbox"
-                class="update-element auto"
-                checked="${card.auto}"
-              />
-            </td>
-            <td>
-              <a class="show show-insert">${card.insert}</a
-              ><input
-                type="text"
-                class="update-element insert"
-                size="6"
-                value="${card.insert}"
-              />
-            </td>
-            <td>
-              <a class="show show-parallel">${card.parallel}</a
-              ><input
-                type="text"
-                class="update-element parallel"
-                size="6"
-                value="${card.parallel}"
-              />
-            </td>
-            <td>
-              <a class="show show-numbered">${card.numbered}</a
-              ><input
-                type="text"
-                class="update-element numbered"
-                size="6"
-                value="${card.numbered}"
-              />
-            </td>
-            <td>
-              <a class="show show-grade">${card.grade}</a
-              ><input
-                type="text"
-                class="update-element grade"
-                size="6"
-                value="${card.grade}"
-              />
-            </td>
-            <td>
-              <a class="show show-value">${card.value}</a
-              ><input
-                type="text"
-                class="update-element value"
-                size="6"
-                value="${card.value}"
-              />
-            </td>
-            <td><a class="show show-note">${card.note}</a></td>
-            <td>
-              <span class="show show-tags">${TagPicker.chipsHtml(card.tags)}</span>
-              <div class="update-element tag-picker" data-selected="${(card.tags || []).map(t => t.id).join(',')}"></div>
-            </td>
-            <td>
-              <span style="display: flex">
-                <button class="show action-butt modify">modify</button>
-                <button class="show action-butt comps">comps</button>
-                <button class="show action-butt get-tran" onclick="window.location.href='/card/cardTransaction/${card.id}'">
-                  transaction
-                </button>
-                <button class="show action-butt potential-btn" data-id="${card.id}">potential</button>
-                <button class="update-element action-butt save">save</button>
-                <button class="update-element action-butt cancel">
-                  cancel
-                </button>
-              </span>
-            </td>
-          </tr>`;
+              response.forEach(function (card) {
+                resultCards += rowHtml(card);
               });
-              $("#result-card").append(resultCards);
+              $("#result-body").append(resultCards);
               TagPicker.initAll($("#result-card")[0]);
-              $("#result").show();
+              $("#result-table").show();
             },
             error: function (xhr, status, error) {
               console.log(error);
@@ -242,7 +231,7 @@
         $("#result").on("click", ".potential-btn", function () {
           var cardId = $(this).data("id");
           $("#potential-modal-body").text("Loading...");
-          $("#potential-modal").addClass("show");
+          $("#potential-modal").addClass("modal-open");
           $.ajax({
             url: "/cardRest/" + cardId + "/potential",
             type: "GET",
@@ -256,8 +245,8 @@
           });
         });
 
-        $("#potential-modal-close").on("click", function () {
-          $("#potential-modal").removeClass("show");
+        $("#potential-modal-close, #potential-modal-backdrop").on("click", function () {
+          $("#potential-modal").removeClass("modal-open");
         });
 
         $("#result").on("click", ".cancel", function () {
@@ -307,87 +296,126 @@
     </script>
 
     <th:block th:replace="~{fragments/head :: styles}"></th:block>
-    <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
-    <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
     <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
   </head>
   <body>
-    <div id="potential-modal">
-      <div id="potential-modal-box">
-        <h3>AI Price Rise Potential</h3>
-        <div id="potential-modal-body">Loading...</div>
-        <button id="potential-modal-close">Close</button>
-      </div>
-    </div>
     <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top" style="justify-content: center">
-      <div class="center-div"><h1>Search Card</h1></div>
-    </div>
-    <div class="center-div" id="card">
-      <div class="center-div" id="search">
-        <div class="table-center">
-        <table id="search-table" class="mobile-form">
-          <tr>
-            <th>id</th>
-            <th>year</th>
-            <th>sports</th>
-            <th>publisher</th>
-            <th>set</th>
-            <th>player</th>
-            <th>auto</th>
-            <th>insert</th>
-            <th>parallel</th>
-            <th>numbered</th>
-            <th>grade</th>
-            <th>value</th>
-            <th>tags</th>
-          </tr>
-          <tr>
-            <td><input type="text" id="id" size="4" /></td>
-            <td><input type="text" id="year" size="4" /></td>
-            <td><input type="text" id="sports" size="6" /></td>
-            <td><input type="text" id="publisher" size="6" /></td>
-            <td><input type="text" id="set" size="10" /></td>
-            <td><input type="text" id="player" /></td>
-            <td><input type="checkbox" id="auto" /></td>
-            <td><input type="text" id="insert" size="6" /></td>
-            <td><input type="text" id="parallel" size="6" /></td>
-            <td><input type="text" id="numbered" size="6" /></td>
-            <td><input type="text" id="grade" size="6" /></td>
-            <td><input type="text" id="value" size="6" /></td>
-            <td>
-              <div class="tag-picker" id="tag-filter"></div>
-            </td>
-          </tr>
-        </table>
+
+    <!-- AI potential. daisyUI modal, opened by adding .modal-open. -->
+    <div id="potential-modal" class="modal">
+      <div class="modal-box" style="max-width: 34rem;">
+        <h3 style="margin: 0 0 0.75rem; font-size: 1.125rem; font-weight: 900; color: var(--rg-ai); text-shadow: 0 0 10px rgba(246, 76, 189, 0.5);">
+          AI Price Rise Potential
+        </h3>
+        <div id="potential-modal-body" style="line-height: 1.8;">Loading...</div>
+        <div class="modal-action">
+          <button id="potential-modal-close" class="btn btn-sm btn-outline btn-error">Close</button>
         </div>
       </div>
-      <button id="search-butt" class="confirm-butt">search</button>
+      <div id="potential-modal-backdrop" class="modal-backdrop"></div>
     </div>
-    <div class="center-div" id="result" style="margin-top: 30px; display: none">
-      <div class="table-center">
-      <table id="result-card" class="mobile-cards">
-        <tr>
-          <th>id</th>
-          <th>year</th>
-          <th>sports</th>
-          <th>publisher</th>
-          <th>set</th>
-          <th>player</th>
-          <th>auto</th>
-          <th>insert</th>
-          <th>parallel</th>
-          <th>numbered</th>
-          <th>grade</th>
-          <th>value</th>
-          <th>note</th>
-          <th>tags</th>
-          <th>action</th>
-        </tr>
-      </table>
-    </div>
-      <button id="hide-butt" class="destroy-butt">clear</button>
+
+    <div class="rg-page rg-page--wide">
+
+      <div class="rg-page-head">
+        <h1>Search Cards</h1>
+        <p>填任意欄位就好，空白的欄位會被忽略。按 Enter 也可以直接搜尋。</p>
+      </div>
+
+      <div class="rg-panel" id="search">
+        <h2 class="rg-panel__title">Criteria</h2>
+
+        <div class="rg-form-grid">
+          <label class="rg-field">
+            <span class="rg-field__label">player</span>
+            <input type="text" id="player" class="input" placeholder="Aaron Judge" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">year</span>
+            <input type="text" id="year" class="input" placeholder="2024" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">set</span>
+            <input type="text" id="set" class="input" placeholder="Chrome" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">publisher</span>
+            <input type="text" id="publisher" class="input" placeholder="Topps" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">sports</span>
+            <input type="text" id="sports" class="input" placeholder="Baseball" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">insert</span>
+            <input type="text" id="insert" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">parallel</span>
+            <input type="text" id="parallel" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">numbered</span>
+            <input type="text" id="numbered" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">grade</span>
+            <input type="text" id="grade" class="input" placeholder="PSA 10" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">value</span>
+            <input type="text" id="value" class="input" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">id</span>
+            <input type="text" id="id" class="input" />
+          </label>
+          <div class="rg-field">
+            <span class="rg-field__label">tags</span>
+            <div class="tag-picker" id="tag-filter"></div>
+          </div>
+          <label class="rg-check">
+            <input type="checkbox" id="auto" class="checkbox checkbox-sm" />
+            <span>auto only</span>
+          </label>
+        </div>
+
+        <div class="rg-form-actions">
+          <button id="search-butt" class="btn btn-success">search</button>
+          <a href="/card/cards" class="btn btn-ghost">back to cards</a>
+        </div>
+      </div>
+
+      <div id="result" style="display: none;">
+        <div class="rg-result-head">
+          <h2>Results</h2>
+          <span class="badge badge-secondary badge-outline" id="result-count">0 cards</span>
+          <span class="rg-spacer"></span>
+          <button id="hide-butt" class="btn btn-sm btn-outline btn-error">clear</button>
+        </div>
+
+        <div id="result-empty" class="alert alert-info alert-soft" style="display: none;">
+          <span>沒有符合條件的卡片。試著少填幾個欄位。</span>
+        </div>
+
+        <div class="rg-table-card" id="result-table">
+          <table class="table table-zebra rg-table rg-card-table" id="result-card">
+            <thead>
+              <tr>
+                <th style="width: 3.5rem;">id</th>
+                <th>card</th>
+                <th style="width: 13rem;">variant</th>
+                <th style="width: 6rem;">grade</th>
+                <th style="width: 6.5rem; text-align: right;">value</th>
+                <th style="width: 11rem;">tags</th>
+                <th style="width: 13rem; text-align: right;">action</th>
+              </tr>
+            </thead>
+            <tbody id="result-body"></tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   </body>
 </html>
-
