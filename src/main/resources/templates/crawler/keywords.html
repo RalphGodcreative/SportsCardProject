@@ -3,8 +3,7 @@
 
 <head>
 
-  <title>Yahoo Auction Crawler
-  </title>
+  <title>Yahoo Auction Crawler</title>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -94,78 +93,96 @@
 
   </script>
 
-  <style>
-    #keyword-table th {
-      background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
-      text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
-    }
-
-    .crawler-intro {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 0 20px;
-      text-align: center;
-    }
-    .crawler-intro h1 {
-      margin: 0 0 10px;
-      color: #CA47F5;
-      text-shadow: 0 0 16px rgba(202, 71, 245, 0.4);
-    }
-    .crawler-intro p {
-      margin: 0 0 8px;
-      color: #94a3b8;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-  </style>
   <th:block th:replace="~{fragments/head :: styles}"></th:block>
 
 </head>
 
 <body>
   <div th:replace="~{banner.html :: header}"></div>
-  <div class="page-top" style="flex-direction: column; align-items: center;">
-    <div class="crawler-intro" style="padding-top: 50px;">
-      <h1>Yahoo Auction Crawler</h1>
-      <p>加入關鍵字後，系統每天早上 8 點自動搜尋 Yahoo拍賣 的新上架商品，並把結果寄到你帳號的 email。</p>
-      <p>last product 是目前追蹤到的最新上架商品連結；reset all 只會清除「你自己」的搜尋紀錄，不會刪除關鍵字，下次搜尋會把所有商品都當作新的重新通知一次。</p>
-      <p>
-        目前已追蹤
-        <span th:text="${keywordCount}"></span> /
-        <span th:if="${maxKeywords == T(java.lang.Integer).MAX_VALUE}">unlimited</span><span th:unless="${maxKeywords == T(java.lang.Integer).MAX_VALUE}" th:text="${maxKeywords}"></span>
-        個關鍵字（依帳號權限而定）。
-      </p>
+
+  <div class="rg-page">
+
+    <div class="rg-page-head">
+      <h1>Yahoo 拍賣追蹤</h1>
+      <p>加入關鍵字後，系統每天早上 8 點自動搜尋 Yahoo 拍賣的新上架商品，並把結果寄到你帳號的 email。</p>
     </div>
-    <div class="center-div" style="margin-bottom: 3rem; padding-top: 20px;">
-      <input type="text" id="new-keyword">
-      <button id="add-keyword" class="confirm-butt" onclick="addNewKeyword()">add keyword</button>
-      <button id="reset-all" onclick="resetAll()" class="reset-all destroy-butt">reset all</button>
-      <!-- <button id="search-all" onclick="location.href='/crawler/search-all'" class="search-all confirm-butt">search all</button> -->
-      <button id="search-all-async" sec:authorize="hasAuthority('ROLE_ADMIN')" onclick="searchAllAsync()" class="search-all confirm-butt">search all in background</button>
+
+    <div class="rg-toolbar">
+
+      <div class="rg-quota">
+        <div class="rg-quota__count">
+          <strong th:text="${keywordCount}">0</strong>
+          <span th:if="${maxKeywords == T(java.lang.Integer).MAX_VALUE}">/ unlimited 關鍵字</span>
+          <span th:unless="${maxKeywords == T(java.lang.Integer).MAX_VALUE}"
+                th:text="'/ ' + ${maxKeywords} + ' 關鍵字'">/ 0 關鍵字</span>
+        </div>
+        <progress th:unless="${maxKeywords == T(java.lang.Integer).MAX_VALUE}"
+                  class="progress progress-secondary"
+                  th:value="${keywordCount}" th:max="${maxKeywords}"></progress>
+      </div>
+
+      <div class="rg-rule"></div>
+
+      <div class="join">
+        <input type="text" id="new-keyword" class="input join-item"
+               placeholder="例：Paul Skenes rookie auto" />
+        <button id="add-keyword" class="btn btn-success join-item" onclick="addNewKeyword()">add keyword</button>
+      </div>
+
+      <span class="rg-spacer"></span>
+
+      <button id="reset-all" onclick="resetAll()" class="reset-all btn btn-outline btn-error">reset all</button>
+      <!-- <button id="search-all" onclick="location.href='/crawler/search-all'" class="search-all btn btn-outline btn-accent">search all</button> -->
+      <button id="search-all-async" sec:authorize="hasAuthority('ROLE_ADMIN')" onclick="searchAllAsync()"
+              class="search-all btn btn-outline btn-accent">
+        search all in background
+        <span class="badge badge-sm badge-secondary">admin</span>
+      </button>
     </div>
-    <table class="default-table" id="keyword-table">
-      <tr>
-        <th>keyword</th>
-        <th>last product</th>
-        <th>last search time</th>
-        <th>last modify date</th>
-        <th>action</th>
-      </tr>
-      <tr th:each="searchKeyword : ${searchKeywords}">
-        <td>[[${searchKeyword.keyword}]]</td>
-        <td>
-          <th:block th:if="${searchKeyword.lastId != null}">
-            <a th:href="@{'https://tw.bid.yahoo.com/item/' + ${searchKeyword.lastId}}" target="_blank">link</a>
-          </th:block>
-        </td>
-        <td>[[${searchKeyword.lastSearchTime != null ? #temporals.format(searchKeyword.lastSearchTime, 'yyyy-MM-dd HH:mm') : ''}]]</td>
-        <td>[[${searchKeyword.lastModifyDate != null ? #temporals.format(searchKeyword.lastModifyDate, 'yyyy-MM-dd HH:mm') : ''}]]</td>
-        <td>
-          <input type="hidden" th:value="${searchKeyword.id}">
-          <button class="delete-keyword destroy-butt">delete</button>
-        </td>
-      </tr>
-    </table>
+
+    <div class="alert alert-info alert-soft" style="margin-bottom: 1.25rem;">
+      <span>
+        <strong>last product</strong> 是目前追蹤到的最新上架商品連結。
+        <strong>reset all</strong> 只會清除「你自己」的搜尋紀錄，不會刪除關鍵字 —
+        下次搜尋會把所有商品都當作新的重新通知一次。
+      </span>
+    </div>
+
+    <div class="rg-table-card">
+      <table class="table table-zebra rg-table" id="keyword-table">
+        <thead>
+          <tr>
+            <th>keyword</th>
+            <th>last product</th>
+            <th>last search time</th>
+            <th>last modify date</th>
+            <th style="text-align: right;">action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="searchKeyword : ${searchKeywords}">
+            <td style="font-weight: 700;">[[${searchKeyword.keyword}]]</td>
+            <td>
+              <th:block th:if="${searchKeyword.lastId != null}">
+                <a class="link link-primary" th:href="@{'https://tw.bid.yahoo.com/item/' + ${searchKeyword.lastId}}" target="_blank">link</a>
+              </th:block>
+              <span th:if="${searchKeyword.lastId == null}" style="color: var(--rg-dim);">—</span>
+            </td>
+            <td class="rg-num">[[${searchKeyword.lastSearchTime != null ? #temporals.format(searchKeyword.lastSearchTime, 'yyyy-MM-dd HH:mm') : ''}]]</td>
+            <td class="rg-num">[[${searchKeyword.lastModifyDate != null ? #temporals.format(searchKeyword.lastModifyDate, 'yyyy-MM-dd HH:mm') : ''}]]</td>
+            <td style="text-align: right;">
+              <input type="hidden" th:value="${searchKeyword.id}">
+              <button class="delete-keyword btn btn-sm btn-outline btn-error">delete</button>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(searchKeywords)}">
+            <td colspan="5" style="text-align: center; padding: 2rem 1rem; color: var(--rg-dim);">
+              還沒有追蹤任何關鍵字。在上面輸入一個關鍵字開始追蹤。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
   </div>
 </body>
