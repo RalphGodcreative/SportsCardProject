@@ -3,80 +3,45 @@
 
 <head>
 
-  <title>product Searching Result
-  </title>
+  <title>Product Searching Result</title>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-  <script>
-
-  </script>
-
-  <style>
-    .keyword-box {
-      border: 1px solid rgba(202, 71, 245, 0.3);
-      box-shadow: 0 0 12px rgba(202, 71, 245, 0.08);
-      border-radius: 2px;
-      width: calc(50% - 20px);
-      margin: 10px;
-      box-sizing: border-box;
-      vertical-align: top;
-      float: left;
-      background-color: #12121a;
-    }
-
-    .box-container {
-      width: 100%;
-      padding: 20px;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    .result-box {
-      width: calc(50% - 10px);
-      float: left;
-      margin: 5px;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 20px;
-      padding: 20px;
-    }
-
-    .product-image {
-      max-width: 150px;
-    }
-
-    .product-price {
-      color: #fbbf24;
-      text-shadow: 0 0 6px rgba(251, 191, 36, 0.4);
-    }
-  </style>
   <th:block th:replace="~{fragments/head :: styles}"></th:block>
 
 </head>
 
 <body>
   <div th:replace="~{banner.html :: header}"></div>
-  <div class="page-top">
-    Search Result
-  </div>
-  <div class="box-container">
 
-    <div class="keyword-box" th:each="entry: ${resultList}">
-      <h4 th:text="${entry.key.keyword}"></h4>
-      <div class="result-box" th:each="product : ${entry.value}">
-        <a class="product-link" th:href="${product.link}"  th:text="${product.title}" target="_blank" ></a>
-        <img class="product-image" th:src="${product.image}" />
-        <span class="product-price">$ <span th:text="${product.price}"></span></span>
-        <span th:if="${product.onAuction}"  th:text="${product.timeLeft}"></span>
+  <div class="rg-page rg-page--wide">
+
+    <div class="rg-page-head">
+      <h1>Search result</h1>
+      <p>每個關鍵字目前在 Yahoo 拍賣搜到的商品。</p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <div class="rg-panel rg-panel--plain" th:each="entry: ${resultList}">
+        <h2 class="rg-panel__title" style="color: var(--color-secondary);" th:text="${entry.key.keyword}"></h2>
+
+        <div class="rg-grid">
+          <a class="rg-tile product-link" th:each="product : ${entry.value}"
+             th:href="${product.link}" target="_blank" rel="noopener"
+             style="align-items: center; text-align: center;">
+            <img class="product-image" th:src="${product.image}" alt=""
+                 style="max-width: 150px; border-radius: var(--radius-field);" />
+            <span style="font-size: 0.875rem; line-height: 1.5;" th:text="${product.title}"></span>
+            <span class="product-price" style="font-weight: 700; color: #fbbf24; text-shadow: 0 0 6px rgba(251, 191, 36, 0.4);">
+              $ <span th:text="${product.price}"></span>
+            </span>
+            <span th:if="${product.onAuction}" class="badge badge-sm badge-ghost" th:text="${product.timeLeft}"></span>
+          </a>
+        </div>
       </div>
     </div>
+
   </div>
 </body>
 

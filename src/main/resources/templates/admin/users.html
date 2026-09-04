@@ -5,185 +5,89 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Manage Users</title>
   <th:block th:replace="~{fragments/head :: styles}"></th:block>
-  <style>
-    .users-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 16px;
-    }
-    .users-box {
-      background: #0f0f18;
-      border: 1px solid rgba(56, 201, 250, 0.2);
-      border-radius: 8px;
-      padding: 2rem;
-      width: 100%;
-      max-width: 1100px;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
-      overflow-x: auto;
-    }
-    .users-box h2 {
-      color: #CA47F5;
-      text-shadow: 0 0 10px rgba(202, 71, 245, 0.5);
-      margin-top: 0;
-      margin-bottom: 1.5rem;
-      text-align: center;
-      font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-    .error-banner {
-      background: rgba(248, 113, 113, 0.1);
-      border: 1px solid rgba(248, 113, 113, 0.4);
-      color: #f87171;
-      border-radius: 4px;
-      padding: 0.7rem 1rem;
-      margin-bottom: 1.2rem;
-      font-size: 0.9rem;
-    }
-    table.users-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 900px;
-    }
-    .users-table th, .users-table td {
-      padding: 0.6rem 0.7rem;
-      text-align: left;
-      border-bottom: 1px solid rgba(56, 201, 250, 0.15);
-      vertical-align: middle;
-    }
-    .users-table th {
-      color: #38C9FA;
-      font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      font-size: 0.8rem;
-      font-weight: normal;
-    }
-    .users-table td {
-      color: #e2e8f0;
-      font-size: 0.85rem;
-    }
-    .users-table select, .users-table input[type=number] {
-      background: #0a0a0f;
-      color: #e2e8f0;
-      border: 1px solid rgba(56, 201, 250, 0.25);
-      border-radius: 4px;
-      padding: 0.3rem 0.4rem;
-      font-size: 0.82rem;
-    }
-    .users-table input[type=number] {
-      width: 70px;
-    }
-    .row-btn {
-      padding: 0.3rem 0.6rem;
-      border-radius: 4px;
-      font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      font-size: 0.75rem;
-      cursor: pointer;
-      background: linear-gradient(135deg, rgba(56, 201, 250, 0.15), rgba(202, 71, 245, 0.15));
-      border: 1px solid rgba(56, 201, 250, 0.4);
-      color: #38C9FA;
-    }
-    .row-btn:hover {
-      background: linear-gradient(135deg, rgba(56, 201, 250, 0.25), rgba(202, 71, 245, 0.25));
-      color: #f0abfc;
-    }
-    .row-btn.danger {
-      border-color: rgba(248, 113, 113, 0.4);
-      color: #f87171;
-      background: rgba(248, 113, 113, 0.08);
-    }
-    .row-btn.danger:hover {
-      background: rgba(248, 113, 113, 0.15);
-    }
-    .status-pill {
-      font-size: 0.75rem;
-      font-weight: bold;
-      padding: 0.15rem 0.5rem;
-      border-radius: 10px;
-    }
-    .status-pill.enabled {
-      color: #4ade80;
-      background: rgba(74, 222, 128, 0.1);
-    }
-    .status-pill.disabled {
-      color: #f87171;
-      background: rgba(248, 113, 113, 0.1);
-    }
-    .self-tag {
-      color: #666;
-      font-size: 0.75rem;
-      font-style: italic;
-    }
-    .inline-form {
-      display: inline-flex;
-      gap: 0.4rem;
-      align-items: center;
-      margin: 0;
-    }
-  </style>
 </head>
 <body>
   <div th:replace="~{banner.html :: header}"></div>
-  <div class="page-top users-wrap">
-    <div class="users-box">
-      <h2>Manage Users</h2>
 
-      <div class="error-banner" th:if="${error}" th:text="${error}"></div>
+  <div class="rg-page rg-page--wide">
 
-      <table class="users-table">
-        <tr>
-          <th>User</th>
-          <th>Role</th>
-          <th>Status</th>
-          <th>Cards</th>
-          <th>Keywords</th>
-          <th>AI calls</th>
-          <th>AI limit override</th>
-          <th></th>
-        </tr>
-        <tr th:each="row : ${rows}">
-          <td>
-            <div th:text="${row.user.username}"></div>
-            <div style="color:#666;font-size:0.75rem;" th:text="${row.user.email}"></div>
-          </td>
-          <td>
-            <span th:if="${row.user.id == #authentication.principal.id}" th:text="${row.user.role}"></span>
-            <form th:unless="${row.user.id == #authentication.principal.id}"
-                  class="inline-form" th:action="@{/admin/users/{id}/role(id=${row.user.id})}" method="post">
-              <select name="role" onchange="this.form.submit()">
-                <option th:each="r : ${roles}" th:value="${r}" th:text="${r}" th:selected="${r == row.user.role}"></option>
-              </select>
-            </form>
-          </td>
-          <td>
-            <span class="status-pill" th:classappend="${row.user.enabled ? 'enabled' : 'disabled'}"
-                  th:text="${row.user.enabled ? 'Enabled' : 'Disabled'}"></span>
-            <div th:if="${row.user.id == #authentication.principal.id}" class="self-tag">you</div>
-            <form th:unless="${row.user.id == #authentication.principal.id}"
-                  class="inline-form" style="margin-top:0.3rem;"
-                  th:action="@{/admin/users/{id}/enabled(id=${row.user.id})}" method="post">
-              <input type="hidden" name="enabled" th:value="${!row.user.enabled}" />
-              <button type="submit" class="row-btn" th:text="${row.user.enabled ? 'Disable' : 'Enable'}"></button>
-            </form>
-          </td>
-          <td th:text="${row.cardCount}"></td>
-          <td th:text="${row.keywordCount}"></td>
-          <td th:text="${row.user.aiCallCount + ' / ' + (row.effectiveMaxAiCalls == T(java.lang.Integer).MAX_VALUE ? 'unlimited' : row.effectiveMaxAiCalls)}"></td>
-          <td>
-            <form class="inline-form" th:action="@{/admin/users/{id}/ai-limit(id=${row.user.id})}" method="post">
-              <input type="number" name="maxAiCalls" min="0" placeholder="role default"
-                     th:value="${row.user.maxAiCallsOverride}" />
-              <button type="submit" class="row-btn">Save</button>
-            </form>
-          </td>
-          <td>
-            <form th:unless="${row.user.id == #authentication.principal.id}"
-                  th:action="@{/admin/users/{id}/delete(id=${row.user.id})}" method="post"
-                  onsubmit="return confirm('Delete this user and ALL of their data? This cannot be undone.');">
-              <button type="submit" class="row-btn danger">Delete</button>
-            </form>
-          </td>
-        </tr>
+    <div class="rg-page-head">
+      <h1>Manage users</h1>
+      <p>角色、啟用狀態與 AI 呼叫上限。留空 AI limit 代表沿用該角色的預設值。</p>
+    </div>
+
+    <div class="alert alert-error alert-soft" th:if="${error}" style="margin-bottom: 1.25rem;">
+      <span th:text="${error}"></span>
+    </div>
+
+    <div class="rg-table-card">
+      <table class="table table-zebra rg-table users-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th style="width: 9rem;">Role</th>
+            <th style="width: 8rem;">Status</th>
+            <th style="width: 5rem;">Cards</th>
+            <th style="width: 6rem;">Keywords</th>
+            <th style="width: 8rem;">AI calls</th>
+            <th style="width: 12rem;">AI limit override</th>
+            <th style="width: 6rem; text-align: right;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="row : ${rows}">
+            <td>
+              <div style="font-weight: 700;" th:text="${row.user.username}"></div>
+              <div style="font-size: 0.75rem; color: var(--rg-dim);" th:text="${row.user.email}"></div>
+            </td>
+            <td>
+              <span th:if="${row.user.id == #authentication.principal.id}"
+                    class="badge badge-sm badge-secondary badge-outline" th:text="${row.user.role}"></span>
+              <form th:unless="${row.user.id == #authentication.principal.id}"
+                    style="margin: 0;" th:action="@{/admin/users/{id}/role(id=${row.user.id})}" method="post">
+                <select name="role" class="select select-sm" style="width: 100%;" onchange="this.form.submit()">
+                  <option th:each="r : ${roles}" th:value="${r}" th:text="${r}" th:selected="${r == row.user.role}"></option>
+                </select>
+              </form>
+            </td>
+            <td>
+              <span class="badge badge-sm"
+                    th:classappend="${row.user.enabled ? 'badge-success' : 'badge-error'}"
+                    th:text="${row.user.enabled ? 'Enabled' : 'Disabled'}"></span>
+              <div th:if="${row.user.id == #authentication.principal.id}"
+                   style="font-size: 0.75rem; font-style: italic; color: var(--rg-dim); margin-top: 0.25rem;">you</div>
+              <form th:unless="${row.user.id == #authentication.principal.id}"
+                    style="margin: 0.375rem 0 0;"
+                    th:action="@{/admin/users/{id}/enabled(id=${row.user.id})}" method="post">
+                <input type="hidden" name="enabled" th:value="${!row.user.enabled}" />
+                <button type="submit" class="btn btn-xs btn-outline btn-primary" th:text="${row.user.enabled ? 'Disable' : 'Enable'}"></button>
+              </form>
+            </td>
+            <td class="rg-num" th:text="${row.cardCount}"></td>
+            <td class="rg-num" th:text="${row.keywordCount}"></td>
+            <td class="rg-num" th:text="${row.user.aiCallCount + ' / ' + (row.effectiveMaxAiCalls == T(java.lang.Integer).MAX_VALUE ? 'unlimited' : row.effectiveMaxAiCalls)}"></td>
+            <td>
+              <form style="margin: 0; display: flex; gap: 0.375rem; align-items: center;"
+                    th:action="@{/admin/users/{id}/ai-limit(id=${row.user.id})}" method="post">
+                <input type="number" name="maxAiCalls" min="0" placeholder="role default"
+                       class="input input-sm" style="width: 6.5rem;"
+                       th:value="${row.user.maxAiCallsOverride}" />
+                <button type="submit" class="btn btn-xs btn-outline btn-primary">Save</button>
+              </form>
+            </td>
+            <td style="text-align: right;">
+              <form th:unless="${row.user.id == #authentication.principal.id}"
+                    style="margin: 0;"
+                    th:action="@{/admin/users/{id}/delete(id=${row.user.id})}" method="post"
+                    onsubmit="return confirm('Delete this user and ALL of their data? This cannot be undone.');">
+                <button type="submit" class="btn btn-xs btn-outline btn-error">Delete</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
+
   </div>
 </body>
 </html>

@@ -28,30 +28,19 @@
       }
     </script>
 
-    <style>
-      #block {
-        opacity: 70%;
-        background-color: #8791ce;
-        width: 30%;
-        height: 30%;
-        display: flex;
-        position: absolute;
-        justify-content: center;
-        text-align: center;
-        align-items: center;
-      }
-    </style>
     <th:block th:replace="~{fragments/head :: styles}"></th:block>
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
 
-    <div class="page-top" style="display: flex; justify-content: center">
-      <div id="block">
-        <div style="display: block">
-          <a>who is the most beautiful Rakuten Girl?</a>
-          <input id="answer" type="text" />
-          <button onclick="unlock()">answer</button>
+    <div class="rg-page" style="max-width: 40rem;">
+      <div id="block" class="rg-panel rg-panel--plain" style="text-align: center;">
+        <p style="margin: 0 0 1rem; font-size: 1.0625rem; font-weight: 700;">
+          who is the most beautiful Rakuten Girl?
+        </p>
+        <div class="join" style="justify-content: center;">
+          <input id="answer" type="text" class="input join-item" />
+          <button class="btn btn-success join-item" onclick="unlock()">answer</button>
         </div>
       </div>
 
