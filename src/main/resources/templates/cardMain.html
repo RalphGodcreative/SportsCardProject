@@ -11,8 +11,7 @@
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{/js/util.js}"></script>
-  <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
-  <script th:inline="javascript">
+  <script>
     $(document).ready(function () {
       $.ajaxSetup({
         beforeSend: function(xhr) {
@@ -81,163 +80,172 @@
     });
   </script>
 
-  <style>
-    #last-card table,
-    #last-card tr,
-    #last-card th,
-    #last-card td {
-      border: 1px solid rgba(202, 71, 245, 0.2);
-      border-collapse: collapse;
-      padding: 8px;
-      color: #e2e8f0;
-    }
-
-    #last-card {
-      margin-left: 25%;
-      margin-right: 25%;
-      margin-top: 30px;
-      margin-bottom: 30px;
-      background-color: #12121a;
-      box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
-    }
-
-    th {
-      background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
-      text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
-    }
-
-    .action-butt {
-      margin-left: 5px;
-      margin-right: 5px;
-    }
-
-    .update-element {
-      display: none;
-    }
-
-  </style>
   <th:block th:replace="~{fragments/head :: styles}"></th:block>
-  <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
-  <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
   <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
 </head>
 
 <body>
   <div th:replace="~{banner.html :: header}"></div>
-  <div class="page-top" style="justify-content: center">
-    <div>
-    <div class="center-div">
+
+  <div class="rg-page">
+
+    <div class="rg-page-head">
       <h1>Card Management</h1>
-    </div>
-    <div class="center-div">
-      <button class="link-butt" onclick="window.location.href='/card/addNewCard'">add new card</button>
-      <button class="link-butt" onclick="window.location.href='/card/cards'">see cards</button>
-      <button class="link-butt" sec:authorize="hasAuthority('ROLE_ADMIN')" onclick="window.location.href='/card/allCard'">see all cards</button>
-      <button class="link-butt" onclick="window.location.href='/card/searchCard'">search card</button>
-      <button class="link-butt" onclick="window.location.href='/card/addTransaction'">add transaction</button>
-      <button class="link-butt" onclick="window.location.href='/card/sellTransaction'">add sales</button>
-      <button class="link-butt" onclick="window.location.href='/transactions/'">view transactions</button>
-      <button class="link-butt" onclick="window.location.href='/tag'">manage tags</button>
-    </div>
-    <div class="center-div" style="margin-top: 30px;">
-      <a>the latest card :</a>
+      <p>收藏的入口頁。下面是你最近新增的一張卡片。</p>
     </div>
 
-    <div th:if="${lastCard == null}" class="center-div" style="margin-top: 20px; color: #aaa;">
-      No cards yet. Add your first card above!
+    <div class="rg-grid" style="margin-bottom: 1.75rem;">
+      <a href="/card/addNewCard" class="rg-tile" style="gap: 0.375rem;">
+        <span class="rg-tile__name">Add new card</span>
+        <span class="rg-tile__meta">新增一張卡片到收藏</span>
+      </a>
+      <a href="/card/cards" class="rg-tile" style="gap: 0.375rem;">
+        <span class="rg-tile__name">See cards</span>
+        <span class="rg-tile__meta">分頁瀏覽整個收藏</span>
+      </a>
+      <a href="/card/searchCard" class="rg-tile" style="gap: 0.375rem;">
+        <span class="rg-tile__name">Search cards</span>
+        <span class="rg-tile__meta">依球員、系列、鑑定分數搜尋</span>
+      </a>
+      <a href="/card/addTransaction" class="rg-tile" style="gap: 0.375rem;">
+        <span class="rg-tile__name">Add transaction</span>
+        <span class="rg-tile__meta">記錄一筆買入</span>
+      </a>
+      <a href="/card/sellTransaction" class="rg-tile" style="gap: 0.375rem;">
+        <span class="rg-tile__name">Add sales</span>
+        <span class="rg-tile__meta">記錄一筆賣出</span>
+      </a>
+      <a href="/transactions/" class="rg-tile" style="gap: 0.375rem;">
+        <span class="rg-tile__name">View transactions</span>
+        <span class="rg-tile__meta">買賣紀錄與損益</span>
+      </a>
+      <a href="/tag" class="rg-tile" style="gap: 0.375rem;">
+        <span class="rg-tile__name">Manage tags</span>
+        <span class="rg-tile__meta">自訂標籤，分類收藏</span>
+      </a>
+      <a sec:authorize="hasAuthority('ROLE_ADMIN')" href="/card/allCard" class="rg-tile" style="gap: 0.375rem;">
+        <span class="rg-tile__name">See all cards <span class="badge badge-sm badge-secondary">admin</span></span>
+        <span class="rg-tile__meta">不分頁，一次顯示全部</span>
+      </a>
     </div>
 
-    <div th:if="${lastCard != null}" class="center-div" id="last-card" style="display: flex;">
+    <h2 style="margin: 0 0 0.875rem; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rg-dim);">
+      The latest card
+    </h2>
 
-      <table class="mobile-cards">
-        <tr>
-          <th>id</th>
-          <th>year</th>
-          <th>sports</th>
-          <th>publisher</th>
-          <th>set</th>
-          <th>player</th>
-          <th>auto</th>
-          <th>insert</th>
-          <th>parallel</th>
-          <th>numbered</th>
-          <th>grade</th>
-          <th>value</th>
-          <th>note</th>
-          <th>tags</th>
-          <th>action</th>
-        </tr>
-        <tr>
-          <td>
-            <a class="show show-id">[[${lastCard.id}]]</a><input type="text" class="update-element id" size="4"
-              th:value="${lastCard.id}" disabled />
-          </td>
-          <td>
-            <a class="show show-year">[[${lastCard.year}]]</a><input type="text" class="update-element year" size="4"
-              th:value="${lastCard.year}" />
-          </td>
-          <td>
-            <a class="show show-sports">[[${lastCard.sports}]]</a><input type="text" class="update-element sports"
-              size="6" th:value="${lastCard.sports}" />
-          </td>
-          <td>
-            <a class="show show-publisher">[[${lastCard.publisher}]]</a><input type="text"
-              class="update-element publisher" size="6" th:value="${lastCard.publisher}" />
-          </td>
-          <td>
-            <a class="show show-set">[[${lastCard.set}]]</a><input type="text" class="update-element set" size="10"
-              th:value="${lastCard.set}" />
-          </td>
-          <td>
-            <a class="show show-player">[[${lastCard.player}]]</a><input type="text" class="update-element player"
-              th:value="${lastCard.player}" />
-          </td>
-          <td>
-            <a class="show show-auto">[[${lastCard.auto}]]</a><input type="checkbox" class="update-element auto"
-              th:checked="${lastCard.auto}" />
-          </td>
-          <td>
-            <a class="show show-insert">[[${lastCard.insert}]]</a><input type="text" class="update-element insert"
-              size="6" th:value="${lastCard.insert}" />
-          </td>
-          <td>
-            <a class="show show-parallel">[[${lastCard.parallel}]]</a><input type="text" class="update-element parallel"
-              size="6" th:value="${lastCard.parallel}" />
-          </td>
-          <td>
-            <a class="show show-numbered">[[${lastCard.numbered}]]</a><input type="text" class="update-element numbered"
-              size="6" th:value="${lastCard.numbered}" />
-          </td>
-          <td>
-            <a class="show show-grade">[[${lastCard.grade}]]</a><input type="text" class="update-element grade" size="6"
-              th:value="${lastCard.grade}" />
-          </td>
-          <td>
-            <a class="show show-value">[[${lastCard.value}]]</a><input type="text" class="update-element value" size="6"
-              th:value="${lastCard.value}" />
-          </td>
-          <td><a class="show show-note">[[${lastCard.note}]]</a></td>
-          <td th:replace="~{fragments/tagCell :: cell(${lastCard})}"></td>
-          <td>
-            <span style="display: flex">
-              <button class="show action-butt modify">modify</button>
-              <button class="show action-butt comps">comps</button>
-              <button class="show action-butt get-tran"
-                th:onclick="'window.location.href=\'/card/cardTransaction/' + ${lastCard.id} + '\''">
-                transaction
-              </button>
-              <button class="update-element action-butt save">save</button>
-              <button class="update-element action-butt cancel">
-                cancel
-              </button>
-            </span>
-          </td>
-        </tr>
+    <div th:if="${lastCard == null}" class="alert alert-info alert-soft">
+      <span>還沒有任何卡片。<a href="/card/addNewCard" class="link link-primary">新增第一張卡片</a>。</span>
+    </div>
+
+    <div th:if="${lastCard != null}" class="rg-table-card">
+      <table class="table table-zebra rg-table rg-card-table" id="last-card">
+        <thead>
+          <tr>
+            <th style="width: 3.5rem;">id</th>
+            <th>card</th>
+            <th style="width: 13rem;">variant</th>
+            <th style="width: 6rem;">grade</th>
+            <th style="width: 6.5rem; text-align: right;">value</th>
+            <th style="width: 11rem;">tags</th>
+            <th style="width: 11rem; text-align: right;">action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+
+            <td class="rg-cell-id" data-label="id">
+              <span class="show show-id rg-num">[[${lastCard.id}]]</span>
+              <input type="text" class="update-element id" th:value="${lastCard.id}" disabled />
+            </td>
+
+            <td class="rg-cell-card" data-label="card">
+              <div class="rg-ident">
+                <th:block th:switch="${#strings.toLowerCase(lastCard.sports)}">
+                  <svg th:case="'baseball'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M6.2 5.4c2 2.2 3 4.5 3 6.6s-1 4.4-3 6.6"/><path d="M17.8 5.4c-2 2.2-3 4.5-3 6.6s1 4.4 3 6.6"/></svg>
+                  <svg th:case="'basketball'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3v18"/><path d="M5.6 5.6c3.5 3.5 3.5 9.3 0 12.8"/><path d="M18.4 5.6c-3.5 3.5-3.5 9.3 0 12.8"/></svg>
+                  <svg th:case="'football'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><ellipse cx="12" cy="12" rx="9" ry="5.6" transform="rotate(-30 12 12)"/><path d="M9.2 14.8l5.6-5.6"/></svg>
+                  <svg th:case="*" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/></svg>
+                </th:block>
+
+                <span class="show show-player rg-player">[[${lastCard.player}]]</span>
+
+                <!-- getCompLink() in util.js reads this with .text() and compares
+                     it to "true". Never displayed; the visible cue is the badge. -->
+                <span class="show-auto rg-data">[[${lastCard.auto}]]</span>
+                <span th:if="${lastCard.auto}" class="badge badge-sm badge-warning badge-outline">auto</span>
+
+                <span th:if="${lastCard.sports != null and !lastCard.sports.isEmpty()}" class="show show-sports badge badge-sm badge-ghost">[[${lastCard.sports}]]</span>
+              </div>
+
+              <div class="show rg-meta">
+                <span class="show-year">[[${lastCard.year}]]</span>
+                <span class="rg-sep">·</span>
+                <span class="show-publisher">[[${lastCard.publisher}]]</span>
+                <span class="rg-sep">·</span>
+                <span class="show-set">[[${lastCard.set}]]</span>
+              </div>
+
+              <span th:if="${lastCard.note != null and !lastCard.note.isEmpty()}" class="show show-note rg-note">[[${lastCard.note}]]</span>
+
+              <input type="text" class="update-element player" th:value="${lastCard.player}" placeholder="player" />
+              <input type="text" class="update-element year" th:value="${lastCard.year}" placeholder="year" />
+              <input type="text" class="update-element publisher" th:value="${lastCard.publisher}" placeholder="publisher" />
+              <input type="text" class="update-element set" th:value="${lastCard.set}" placeholder="set" />
+              <input type="text" class="update-element sports" th:value="${lastCard.sports}" placeholder="sports" />
+              <label class="update-element rg-auto-field">
+                <input type="checkbox" class="auto" th:checked="${lastCard.auto}" /> auto
+              </label>
+            </td>
+
+            <td class="rg-cell-variant" data-label="variant">
+              <div class="show rg-variant">
+                <span class="show-insert">[[${lastCard.insert}]]</span>
+                <span th:if="${lastCard.insert == null or lastCard.insert.isEmpty()}" class="rg-none">base</span>
+                <br />
+                <span class="show-parallel rg-parallel">[[${lastCard.parallel}]]</span>
+                <span th:if="${lastCard.parallel == null or lastCard.parallel.isEmpty()}" class="rg-none">no parallel</span>
+                <span class="show-numbered rg-num">[[${lastCard.numbered}]]</span>
+              </div>
+
+              <input type="text" class="update-element insert" th:value="${lastCard.insert}" placeholder="insert" />
+              <input type="text" class="update-element parallel" th:value="${lastCard.parallel}" placeholder="parallel" />
+              <input type="text" class="update-element numbered" th:value="${lastCard.numbered}" placeholder="numbered" />
+            </td>
+
+            <td class="rg-cell-grade" data-label="grade">
+              <span th:if="${lastCard.grade != null and !lastCard.grade.isEmpty()}" class="show show-grade badge badge-sm badge-info badge-outline">[[${lastCard.grade}]]</span>
+              <!-- Placeholder only. Must NOT carry .show-grade: getCompLink()
+                   appends that element's text to the eBay search. -->
+              <span th:if="${lastCard.grade == null or lastCard.grade.isEmpty()}" class="show rg-none" style="font-size: 0.8rem;">raw</span>
+              <input type="text" class="update-element grade" th:value="${lastCard.grade}" placeholder="grade" />
+            </td>
+
+            <td class="rg-cell-value" data-label="value" style="text-align: right;">
+              <span class="show show-value rg-num" style="font-weight: 700;">[[${lastCard.value}]]</span>
+              <input type="text" class="update-element value" th:value="${lastCard.value}" placeholder="value" />
+            </td>
+
+            <td th:replace="~{fragments/tagCell :: cell(${lastCard})}"></td>
+
+            <td class="rg-cell-actions" data-label="action">
+              <div class="rg-actions">
+                <button class="show btn btn-xs btn-outline btn-accent modify">modify</button>
+                <button class="show btn btn-xs btn-outline btn-accent comps">comps</button>
+                <button class="show btn btn-xs btn-outline btn-accent get-tran"
+                        th:onclick="'window.location.href=\'/card/cardTransaction/' + ${lastCard.id} + '\''">
+                  transaction
+                </button>
+                <button class="update-element btn btn-xs btn-success save">save</button>
+                <button class="update-element btn btn-xs btn-outline btn-error cancel">cancel</button>
+              </div>
+            </td>
+
+          </tr>
+        </tbody>
       </table>
     </div>
-  </div>
-</div>
-</body>
 
+  </div>
+</body>
 
 </html>
