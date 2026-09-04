@@ -433,6 +433,43 @@ img.add-note { display: inline-block; }
   margin-top: 1.25rem;
 }
 
+/* Auto-filling tile grid: tags, and anything else card-shaped. */
+.rg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 1rem;
+}
+
+.rg-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.125rem 1.25rem 1.25rem;
+  background: var(--color-base-200);
+  border: 1px solid rgba(202, 71, 245, 0.18);
+  border-radius: var(--radius-box);
+}
+
+.rg-tile__icon { color: var(--color-secondary); opacity: 0.8; }
+.rg-tile__name { font-size: 1.0625rem; font-weight: 700; }
+.rg-tile__meta { font-size: 0.8125rem; color: var(--rg-dim); }
+.rg-tile__actions { display: flex; align-items: center; gap: 0.5rem; margin-top: auto; }
+
+.rg-stat-row { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+.rg-stat-pill {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  background: var(--color-base-200);
+  border: 1px solid rgba(56, 201, 250, 0.20);
+  border-radius: var(--radius-field);
+}
+
+.rg-stat-pill strong { font-size: 1.25rem; font-weight: 900; line-height: 1; }
+.rg-stat-pill span { font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--rg-dim); }
+
 .rg-result-head {
   display: flex;
   align-items: center;
