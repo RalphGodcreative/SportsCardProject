@@ -99,8 +99,11 @@ h6 { font-size: 0.67em; font-weight: bold; margin: 2.33em 0; }
 
 p { margin: 1em 0; }
 
-ul, ol { list-style: revert; margin: 1em 0; padding-left: 40px; }
-li { display: list-item; }
+/* Only plain lists get their bullets back. A classed list is a component -
+   daisyUI's .menu (the navbar dropdowns) above all - and preflight's
+   list-style: none is what it expects. */
+ul:not([class]), ol:not([class]) { list-style: revert; margin: 1em 0; padding-left: 40px; }
+:where(ul:not([class]), ol:not([class])) > li { display: list-item; }
 
 a:not([class]) { color: #38C9FA; text-decoration: none; }
 a:not([class]):hover { color: #f0abfc; }
@@ -309,57 +312,51 @@ img.add-note { display: inline-block; }
 
 /* --------------------------------------------------------------------------
    7. Card table.
-   The 15 columns collapse to 7: year/publisher/set sit under the player name,
-   and insert/parallel/numbered share one Variant cell. Every original field
-   still has its own .show-* element and its own .update-element input inside
-   the SAME <tr>, so the existing jQuery — .modify/.cancel toggling, .save
-   reading row.find(".year") etc., and getCompLink() in util.js reading
-   .show-year / .show-auto / ... — keeps working untouched.
+   The original flat layout: one column per field. Each cell holds a .show-*
+   element for viewing and an .update-element input for editing; the pages'
+   jQuery toggles between them on modify/cancel, .save reads
+   row.find(".year") etc., and getCompLink() in util.js reads the .show-*
+   text. The table is wide, so .rg-table-card scrolls it sideways on desktop
+   and the rows become stacked cards under 768px.
    -------------------------------------------------------------------------- */
+.rg-card-table { font-size: 0.8125rem; white-space: nowrap; }
+
+.rg-card-table :where(th, td) { padding: 0.4rem 0.55rem; vertical-align: middle; }
+
 .rg-card-table .update-element { display: none; }
 
 .rg-card-table input.update-element,
 .rg-card-table select.update-element {
-  width: 100%;
-  margin: 2px 0;
+  padding: 0.15rem 0.4rem;
+  font: inherit;
+  color: var(--color-base-content);
+  background: var(--color-base-100);
+  border: 1px solid rgba(202, 71, 245, 0.35);
+  border-radius: var(--radius-field);
 }
+
+.rg-card-table input.update-element:focus,
+.rg-card-table select.update-element:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 2px rgba(202, 71, 245, 0.18);
+}
+
+.rg-card-table input.update-element[disabled] { opacity: 0.55; }
 
 .rg-card-table input.update-element[type="checkbox"] { width: auto; }
 
-.rg-ident {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.125rem;
-}
+/* Everything else is short enough to stay on one line; these two are not. */
+.rg-card-table td[data-label="note"],
+.rg-card-table td[data-label="tags"] { white-space: normal; max-width: 14rem; }
 
-.rg-ident svg { flex-shrink: 0; color: var(--color-accent); }
+.rg-player { font-weight: 700; color: var(--color-base-content); }
 
-.rg-player { font-size: 0.9rem; font-weight: 700; color: var(--color-base-content); }
-
-.rg-meta {
-  font-size: 0.78rem;
-  color: var(--rg-muted);
-  padding-left: 1.5rem;
-}
-
-.rg-meta .rg-sep { color: var(--rg-dim); }
-
-.rg-note {
-  display: block;
-  margin-top: 0.25rem;
-  padding-left: 1.5rem;
+.rg-card-table .show-note {
   font-size: 0.75rem;
   font-style: italic;
   color: var(--rg-dim);
 }
-
-.rg-variant { font-size: 0.78rem; line-height: 1.6; color: var(--rg-muted); }
-.rg-variant .rg-parallel { color: var(--rg-pink); }
-.rg-none { color: var(--rg-dim); }
-
-.rg-auto-field { font-size: 0.8rem; color: var(--rg-muted); }
 
 /* #F64CBD has no daisyUI colour slot, so the AI action is themed by hand. */
 .rg-btn-ai {
@@ -538,12 +535,6 @@ img.add-note { display: inline-block; }
 .rating-medium { color: #fbbf24; text-shadow: 0 0 6px rgba(251, 191, 36, 0.4); font-weight: bold; }
 .rating-high { color: #34d399; text-shadow: 0 0 6px rgba(52, 211, 153, 0.4); font-weight: bold; }
 
-/* Carries card.auto as literal "true"/"false" for getCompLink(), which reads
-   .show-auto with .text(). Never shown; the visible cue is the badge beside
-   it. Deliberately NOT given the .show class, so .modify/.cancel leave it
-   alone and it can never be revealed. */
-.rg-data { display: none !important; }
-
 .rg-actions {
   display: flex;
   gap: 0.375rem;
@@ -597,9 +588,9 @@ img.add-note { display: inline-block; }
 }
 
 /* ---- Mobile: rows become cards -------------------------------------------
-   Labels come from data-label written in the template, so this needs no
-   JavaScript. responsive-card-table.js and responsive-tables.css are for the
-   pages that still use .mobile-cards; this page uses neither.
+   With the flat columns back, a row is too wide for a phone, so each <td>
+   becomes a labelled line. Labels come from the data-label written in the
+   template, so this needs no JavaScript.
    -------------------------------------------------------------------------- */
 @media (max-width: 768px) {
   .rg-table-card { overflow-x: visible; background: transparent; border: none; box-shadow: none; }
@@ -608,6 +599,8 @@ img.add-note { display: inline-block; }
   .rg-card-table tbody,
   .rg-card-table tr,
   .rg-card-table td { display: block; width: 100%; }
+
+  .rg-card-table { white-space: normal; }
 
   .rg-card-table thead { display: none; }
 
@@ -626,7 +619,7 @@ img.add-note { display: inline-block; }
     align-items: center;
     gap: 0.875rem;
     text-align: right;
-    padding: 0.6rem 1rem;
+    padding: 0.5rem 1rem;
     border-bottom: 1px solid rgba(202, 71, 245, 0.08);
   }
 
@@ -641,23 +634,18 @@ img.add-note { display: inline-block; }
     color: #c084fc;
   }
 
-  /* The identity cell is the card's header: full width, no label. */
-  .rg-card-table td.rg-cell-card {
-    display: block;
-    text-align: left;
-    padding: 0.875rem 1rem;
-    background: rgba(202, 71, 245, 0.04);
-  }
-  .rg-card-table td.rg-cell-card::before { content: none; }
+  /* The inputs get the full width of the line while editing. */
+  .rg-card-table input.update-element { flex: 1 1 auto; min-width: 0; }
+  .rg-card-table input.update-element[type="checkbox"] { flex: 0 0 auto; }
+
+  /* Stacked lines are already full width; drop the desktop wrap caps. */
+  .rg-card-table td[data-label="note"],
+  .rg-card-table td[data-label="tags"] { max-width: none; }
 
   .rg-card-table td.rg-cell-actions { display: block; border-bottom: none; }
   .rg-card-table td.rg-cell-actions::before { content: none; }
   .rg-card-table .rg-actions { justify-content: stretch; }
   .rg-card-table .rg-actions .btn { flex: 1 1 auto; min-height: 2.75rem; }
-
-  .rg-card-table td.rg-cell-id { display: none; }
-
-  .rg-meta, .rg-note { padding-left: 0; }
 }
 
 /* Desktop / mobile swap, at the same 768px breakpoint style.css already uses. */

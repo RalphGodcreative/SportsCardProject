@@ -141,89 +141,15 @@
       <table class="table table-zebra rg-table rg-card-table" id="last-card">
         <thead>
           <tr>
-            <th style="width: 3.5rem;">id</th>
-            <th>card</th>
-            <th style="width: 13rem;">variant</th>
-            <th style="width: 6rem;">grade</th>
-            <th style="width: 6.5rem; text-align: right;">value</th>
-            <th style="width: 11rem;">tags</th>
-            <th style="width: 11rem; text-align: right;">action</th>
+            <th:block th:replace="~{fragments/cardRow :: headers}"></th:block>
+            <th>tags</th>
+            <th>action</th>
           </tr>
         </thead>
         <tbody>
           <tr>
 
-            <td class="rg-cell-id" data-label="id">
-              <span class="show show-id rg-num">[[${lastCard.id}]]</span>
-              <input type="text" class="update-element id" th:value="${lastCard.id}" disabled />
-            </td>
-
-            <td class="rg-cell-card" data-label="card">
-              <div class="rg-ident">
-                <th:block th:switch="${#strings.toLowerCase(lastCard.sports)}">
-                  <svg th:case="'baseball'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M6.2 5.4c2 2.2 3 4.5 3 6.6s-1 4.4-3 6.6"/><path d="M17.8 5.4c-2 2.2-3 4.5-3 6.6s1 4.4 3 6.6"/></svg>
-                  <svg th:case="'basketball'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3v18"/><path d="M5.6 5.6c3.5 3.5 3.5 9.3 0 12.8"/><path d="M18.4 5.6c-3.5 3.5-3.5 9.3 0 12.8"/></svg>
-                  <svg th:case="'football'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><ellipse cx="12" cy="12" rx="9" ry="5.6" transform="rotate(-30 12 12)"/><path d="M9.2 14.8l5.6-5.6"/></svg>
-                  <svg th:case="*" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/></svg>
-                </th:block>
-
-                <span class="show show-player rg-player">[[${lastCard.player}]]</span>
-
-                <!-- getCompLink() in util.js reads this with .text() and compares
-                     it to "true". Never displayed; the visible cue is the badge. -->
-                <span class="show-auto rg-data">[[${lastCard.auto}]]</span>
-                <span th:if="${lastCard.auto}" class="badge badge-sm badge-warning badge-outline">auto</span>
-
-                <span th:if="${lastCard.sports != null and !lastCard.sports.isEmpty()}" class="show show-sports badge badge-sm badge-ghost">[[${lastCard.sports}]]</span>
-              </div>
-
-              <div class="show rg-meta">
-                <span class="show-year">[[${lastCard.year}]]</span>
-                <span class="rg-sep">·</span>
-                <span class="show-publisher">[[${lastCard.publisher}]]</span>
-                <span class="rg-sep">·</span>
-                <span class="show-set">[[${lastCard.set}]]</span>
-              </div>
-
-              <span th:if="${lastCard.note != null and !lastCard.note.isEmpty()}" class="show show-note rg-note">[[${lastCard.note}]]</span>
-
-              <input type="text" class="update-element player" th:value="${lastCard.player}" placeholder="player" />
-              <input type="text" class="update-element year" th:value="${lastCard.year}" placeholder="year" />
-              <input type="text" class="update-element publisher" th:value="${lastCard.publisher}" placeholder="publisher" />
-              <input type="text" class="update-element set" th:value="${lastCard.set}" placeholder="set" />
-              <input type="text" class="update-element sports" th:value="${lastCard.sports}" placeholder="sports" />
-              <label class="update-element rg-auto-field">
-                <input type="checkbox" class="auto" th:checked="${lastCard.auto}" /> auto
-              </label>
-            </td>
-
-            <td class="rg-cell-variant" data-label="variant">
-              <div class="show rg-variant">
-                <span class="show-insert">[[${lastCard.insert}]]</span>
-                <span th:if="${lastCard.insert == null or lastCard.insert.isEmpty()}" class="rg-none">base</span>
-                <br />
-                <span class="show-parallel rg-parallel">[[${lastCard.parallel}]]</span>
-                <span th:if="${lastCard.parallel == null or lastCard.parallel.isEmpty()}" class="rg-none">no parallel</span>
-                <span class="show-numbered rg-num">[[${lastCard.numbered}]]</span>
-              </div>
-
-              <input type="text" class="update-element insert" th:value="${lastCard.insert}" placeholder="insert" />
-              <input type="text" class="update-element parallel" th:value="${lastCard.parallel}" placeholder="parallel" />
-              <input type="text" class="update-element numbered" th:value="${lastCard.numbered}" placeholder="numbered" />
-            </td>
-
-            <td class="rg-cell-grade" data-label="grade">
-              <span th:if="${lastCard.grade != null and !lastCard.grade.isEmpty()}" class="show show-grade badge badge-sm badge-info badge-outline">[[${lastCard.grade}]]</span>
-              <!-- Placeholder only. Must NOT carry .show-grade: getCompLink()
-                   appends that element's text to the eBay search. -->
-              <span th:if="${lastCard.grade == null or lastCard.grade.isEmpty()}" class="show rg-none" style="font-size: 0.8rem;">raw</span>
-              <input type="text" class="update-element grade" th:value="${lastCard.grade}" placeholder="grade" />
-            </td>
-
-            <td class="rg-cell-value" data-label="value" style="text-align: right;">
-              <span class="show show-value rg-num" style="font-weight: 700;">[[${lastCard.value}]]</span>
-              <input type="text" class="update-element value" th:value="${lastCard.value}" placeholder="value" />
-            </td>
+            <th:block th:replace="~{fragments/cardRow :: cells(${lastCard})}"></th:block>
 
             <td th:replace="~{fragments/tagCell :: cell(${lastCard})}"></td>
 

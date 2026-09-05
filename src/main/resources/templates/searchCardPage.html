@@ -33,91 +33,47 @@
           return String(v).replace(/[&<>"']/g, function (c) { return ESCAPES[c]; });
         }
 
-        function isBlank(v) {
-          return v === null || v === undefined || String(v).trim() === "";
-        }
-
-        var SPORT_ICONS = {
-          baseball: '<circle cx="12" cy="12" r="9"/><path d="M6.2 5.4c2 2.2 3 4.5 3 6.6s-1 4.4-3 6.6"/><path d="M17.8 5.4c-2 2.2-3 4.5-3 6.6s1 4.4 3 6.6"/>',
-          basketball: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3v18"/><path d="M5.6 5.6c3.5 3.5 3.5 9.3 0 12.8"/><path d="M18.4 5.6c-3.5 3.5-3.5 9.3 0 12.8"/>',
-          football: '<ellipse cx="12" cy="12" rx="9" ry="5.6" transform="rotate(-30 12 12)"/><path d="M9.2 14.8l5.6-5.6"/>'
-        };
-
-        function sportIcon(sports) {
-          var key = String(sports || "").toLowerCase();
-          var paths = SPORT_ICONS[key] || '<circle cx="12" cy="12" r="9"/>';
-          return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">' + paths + '</svg>';
+        function cell(label, value, cls, size) {
+          // One column per field: the .show-* span while viewing, the
+          // .update-element input while editing. Same class names the
+          // server-rendered rows use, so the shared jQuery and
+          // getCompLink() in util.js work on these rows too.
+          return '<td data-label="' + label + '">' +
+            '<span class="show show-' + label + (cls ? ' ' + cls : '') + '">' + esc(value) + '</span>' +
+            '<input type="text" class="update-element ' + label + '" size="' + size + '" value="' + esc(value) + '" />' +
+          '</td>';
         }
 
         function rowHtml(card) {
-          // Mirrors the server-rendered rows in pagingAllCard.html / allCard.html.
-          // Two things getCompLink() in util.js depends on:
-          //   - .show-auto must hold literally "true"/"false"; it stays hidden.
-          //   - the "raw" placeholder must NOT carry .show-grade, or an ungraded
-          //     card would put "raw" into the eBay search.
-          var gradeCell = isBlank(card.grade)
-            ? '<span class="show rg-none" style="font-size: 0.8rem;">raw</span>'
-            : '<span class="show show-grade badge badge-sm badge-info badge-outline">' + esc(card.grade) + '</span>';
-
+          // Mirrors the server-rendered rows built by fragments/cardRow.html.
           return '<tr class="card-row">' +
-            '<td class="rg-cell-id" data-label="id">' +
+            '<td data-label="id">' +
               '<span class="show show-id rg-num">' + esc(card.id) + '</span>' +
-              '<input type="text" class="update-element id" value="' + esc(card.id) + '" disabled />' +
+              '<input type="text" class="update-element id" size="4" value="' + esc(card.id) + '" disabled />' +
             '</td>' +
 
-            '<td class="rg-cell-card" data-label="card">' +
-              '<div class="rg-ident">' +
-                sportIcon(card.sports) +
-                '<span class="show show-player rg-player">' + esc(card.player) + '</span>' +
-                '<span class="show-auto rg-data">' + (card.auto ? "true" : "false") + '</span>' +
-                (card.auto ? '<span class="badge badge-sm badge-warning badge-outline">auto</span>' : '') +
-                (isBlank(card.sports) ? '' : '<span class="show show-sports badge badge-sm badge-ghost">' + esc(card.sports) + '</span>') +
-              '</div>' +
-              '<div class="show rg-meta">' +
-                '<span class="show-year">' + esc(card.year) + '</span> ' +
-                '<span class="rg-sep">·</span> ' +
-                '<span class="show-publisher">' + esc(card.publisher) + '</span> ' +
-                '<span class="rg-sep">·</span> ' +
-                '<span class="show-set">' + esc(card.set) + '</span>' +
-              '</div>' +
-              (isBlank(card.note) ? '' : '<span class="show show-note rg-note">' + esc(card.note) + '</span>') +
-              '<input type="text" class="update-element player" value="' + esc(card.player) + '" placeholder="player" />' +
-              '<input type="text" class="update-element year" value="' + esc(card.year) + '" placeholder="year" />' +
-              '<input type="text" class="update-element publisher" value="' + esc(card.publisher) + '" placeholder="publisher" />' +
-              '<input type="text" class="update-element set" value="' + esc(card.set) + '" placeholder="set" />' +
-              '<input type="text" class="update-element sports" value="' + esc(card.sports) + '" placeholder="sports" />' +
-              '<label class="update-element rg-auto-field">' +
-                '<input type="checkbox" class="auto"' + (card.auto ? ' checked' : '') + ' /> auto' +
-              '</label>' +
+            cell("year", card.year, "rg-num", 4) +
+            cell("sports", card.sports, "", 6) +
+            cell("publisher", card.publisher, "", 6) +
+            cell("set", card.set, "", 10) +
+            cell("player", card.player, "rg-player", 12) +
+
+            // getCompLink() compares .show-auto's text to "true", so the flag
+            // is rendered as a literal true/false, as the old table did.
+            '<td data-label="auto">' +
+              '<span class="show show-auto">' + (card.auto ? "true" : "false") + '</span>' +
+              '<input type="checkbox" class="update-element auto"' + (card.auto ? ' checked' : '') + ' />' +
             '</td>' +
 
-            '<td class="rg-cell-variant" data-label="variant">' +
-              '<div class="show rg-variant">' +
-                (isBlank(card.insert)
-                  ? '<span class="rg-none">base</span>'
-                  : '<span class="show-insert">' + esc(card.insert) + '</span>') +
-                '<br />' +
-                (isBlank(card.parallel)
-                  ? '<span class="rg-none">no parallel</span>'
-                  : '<span class="show-parallel rg-parallel">' + esc(card.parallel) + '</span>') +
-                ' <span class="show-numbered rg-num">' + esc(card.numbered) + '</span>' +
-              '</div>' +
-              '<input type="text" class="update-element insert" value="' + esc(card.insert) + '" placeholder="insert" />' +
-              '<input type="text" class="update-element parallel" value="' + esc(card.parallel) + '" placeholder="parallel" />' +
-              '<input type="text" class="update-element numbered" value="' + esc(card.numbered) + '" placeholder="numbered" />' +
-            '</td>' +
+            cell("insert", card.insert, "", 6) +
+            cell("parallel", card.parallel, "", 6) +
+            cell("numbered", card.numbered, "rg-num", 6) +
+            cell("grade", card.grade, "", 6) +
+            cell("value", card.value, "rg-num", 6) +
 
-            '<td class="rg-cell-grade" data-label="grade">' +
-              gradeCell +
-              '<input type="text" class="update-element grade" value="' + esc(card.grade) + '" placeholder="grade" />' +
-            '</td>' +
+            '<td data-label="note"><span class="show show-note">' + esc(card.note) + '</span></td>' +
 
-            '<td class="rg-cell-value" data-label="value" style="text-align: right;">' +
-              '<span class="show show-value rg-num" style="font-weight: 700;">' + esc(card.value) + '</span>' +
-              '<input type="text" class="update-element value" value="' + esc(card.value) + '" placeholder="value" />' +
-            '</td>' +
-
-            '<td class="rg-cell-tags" data-label="tags">' +
+            '<td data-label="tags">' +
               '<span class="show show-tags">' + TagPicker.chipsHtml(card.tags) + '</span>' +
               '<div class="update-element tag-picker" data-selected="' + (card.tags || []).map(function (t) { return t.id; }).join(',') + '"></div>' +
             '</td>' +
@@ -327,24 +283,32 @@
 
         <div class="rg-form-grid">
           <label class="rg-field">
-            <span class="rg-field__label">player</span>
-            <input type="text" id="player" class="input" placeholder="Aaron Judge" />
+            <span class="rg-field__label">id</span>
+            <input type="text" id="id" class="input" />
           </label>
           <label class="rg-field">
             <span class="rg-field__label">year</span>
             <input type="text" id="year" class="input" placeholder="2024" />
           </label>
           <label class="rg-field">
-            <span class="rg-field__label">set</span>
-            <input type="text" id="set" class="input" placeholder="Chrome" />
+            <span class="rg-field__label">sports</span>
+            <input type="text" id="sports" class="input" placeholder="Baseball" />
           </label>
           <label class="rg-field">
             <span class="rg-field__label">publisher</span>
             <input type="text" id="publisher" class="input" placeholder="Topps" />
           </label>
           <label class="rg-field">
-            <span class="rg-field__label">sports</span>
-            <input type="text" id="sports" class="input" placeholder="Baseball" />
+            <span class="rg-field__label">set</span>
+            <input type="text" id="set" class="input" placeholder="Chrome" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">player</span>
+            <input type="text" id="player" class="input" placeholder="Aaron Judge" />
+          </label>
+          <label class="rg-check">
+            <input type="checkbox" id="auto" class="checkbox checkbox-sm" />
+            <span>auto only</span>
           </label>
           <label class="rg-field">
             <span class="rg-field__label">insert</span>
@@ -366,18 +330,10 @@
             <span class="rg-field__label">value</span>
             <input type="text" id="value" class="input" />
           </label>
-          <label class="rg-field">
-            <span class="rg-field__label">id</span>
-            <input type="text" id="id" class="input" />
-          </label>
           <div class="rg-field">
             <span class="rg-field__label">tags</span>
             <div class="tag-picker" id="tag-filter"></div>
           </div>
-          <label class="rg-check">
-            <input type="checkbox" id="auto" class="checkbox checkbox-sm" />
-            <span>auto only</span>
-          </label>
         </div>
 
         <div class="rg-form-actions">
@@ -402,13 +358,21 @@
           <table class="table table-zebra rg-table rg-card-table" id="result-card">
             <thead>
               <tr>
-                <th style="width: 3.5rem;">id</th>
-                <th>card</th>
-                <th style="width: 13rem;">variant</th>
-                <th style="width: 6rem;">grade</th>
-                <th style="width: 6.5rem; text-align: right;">value</th>
-                <th style="width: 11rem;">tags</th>
-                <th style="width: 13rem; text-align: right;">action</th>
+                <th>id</th>
+                <th>year</th>
+                <th>sports</th>
+                <th>publisher</th>
+                <th>set</th>
+                <th>player</th>
+                <th>auto</th>
+                <th>insert</th>
+                <th>parallel</th>
+                <th>numbered</th>
+                <th>grade</th>
+                <th>value</th>
+                <th>note</th>
+                <th>tags</th>
+                <th>action</th>
               </tr>
             </thead>
             <tbody id="result-body"></tbody>

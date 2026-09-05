@@ -6,7 +6,7 @@
      Read-only chips while viewing; a checkbox-dropdown picker while editing.
      The picker seeds its selection from the hidden inputs below, which
      tag-picker.js reads and then replaces with its own markup. -->
-<td th:fragment="cell(card)">
+<td th:fragment="cell(card)" data-label="tags">
   <span class="show show-tags">
     <span class="tag-chip" th:each="t : ${card.tags}" th:text="${t.name}"></span>
   </span>

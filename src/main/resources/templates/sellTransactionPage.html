@@ -35,10 +35,6 @@
           return String(v).replace(/[&<>"']/g, function (c) { return ESCAPES[c]; });
         }
 
-        function isBlank(v) {
-          return v === null || v === undefined || String(v).trim() === "";
-        }
-
         function saveTransaction() {
 
           var transaction = {
@@ -212,31 +208,18 @@
                 // handler wants keeps its own element: .auto must read exactly
                 // "true"/"false", and .numbered is split on "/".
                 resultCards += '<tr class="card-row">' +
-                  '<td class="rg-cell-id" data-label="id"><span class="id rg-num">' + esc(card.id) + '</span></td>' +
-                  '<td class="rg-cell-card" data-label="card">' +
-                    '<div class="rg-ident">' +
-                      '<span class="player rg-player">' + esc(card.player) + '</span>' +
-                      '<span class="auto rg-data">' + (card.auto ? "true" : "false") + '</span>' +
-                      (card.auto ? '<span class="badge badge-sm badge-warning badge-outline">auto</span>' : '') +
-                      (isBlank(card.sports) ? '<span class="sports rg-data"></span>' : '<span class="sports badge badge-sm badge-ghost">' + esc(card.sports) + '</span>') +
-                    '</div>' +
-                    '<div class="rg-meta">' +
-                      '<span class="year">' + esc(card.year) + '</span> ' +
-                      '<span class="rg-sep">·</span> ' +
-                      '<span class="publisher">' + esc(card.publisher) + '</span> ' +
-                      '<span class="rg-sep">·</span> ' +
-                      '<span class="set">' + esc(card.set) + '</span>' +
-                    '</div>' +
-                  '</td>' +
-                  '<td class="rg-cell-variant" data-label="variant">' +
-                    '<div class="rg-variant">' +
-                      '<span class="insert">' + esc(card.insert) + '</span><br />' +
-                      '<span class="parallel rg-parallel">' + esc(card.parallel) + '</span> ' +
-                      '<span class="numbered rg-num">' + esc(card.numbered) + '</span>' +
-                    '</div>' +
-                  '</td>' +
-                  '<td class="rg-cell-grade" data-label="grade"><span class="grade">' + esc(card.grade) + '</span></td>' +
-                  '<td class="rg-cell-value" data-label="value" style="text-align: right;"><span class="value rg-num" style="font-weight: 700;">' + esc(card.value) + '</span></td>' +
+                  '<td data-label="id"><span class="id rg-num">' + esc(card.id) + '</span></td>' +
+                  '<td data-label="year"><span class="year rg-num">' + esc(card.year) + '</span></td>' +
+                  '<td data-label="sports"><span class="sports">' + esc(card.sports) + '</span></td>' +
+                  '<td data-label="publisher"><span class="publisher">' + esc(card.publisher) + '</span></td>' +
+                  '<td data-label="set"><span class="set">' + esc(card.set) + '</span></td>' +
+                  '<td data-label="player"><span class="player rg-player">' + esc(card.player) + '</span></td>' +
+                  '<td data-label="auto"><span class="auto">' + (card.auto ? "true" : "false") + '</span></td>' +
+                  '<td data-label="insert"><span class="insert">' + esc(card.insert) + '</span></td>' +
+                  '<td data-label="parallel"><span class="parallel">' + esc(card.parallel) + '</span></td>' +
+                  '<td data-label="numbered"><span class="numbered rg-num">' + esc(card.numbered) + '</span></td>' +
+                  '<td data-label="grade"><span class="grade">' + esc(card.grade) + '</span></td>' +
+                  '<td data-label="value"><span class="value rg-num">' + esc(card.value) + '</span></td>' +
                   '<td data-label="tags"><span class="tags">' + TagPicker.chipsHtml(card.tags) + '</span></td>' +
                   '<td class="rg-cell-actions" data-label="action">' +
                     '<div class="rg-actions"><button class="btn btn-xs btn-success add-card">add to sale</button></div>' +
@@ -447,13 +430,20 @@
           <table id="result-card" class="table table-zebra rg-table rg-card-table">
             <thead>
               <tr>
-                <th style="width: 3.5rem;">id</th>
-                <th>card</th>
-                <th style="width: 13rem;">variant</th>
-                <th style="width: 6rem;">grade</th>
-                <th style="width: 6.5rem; text-align: right;">value</th>
-                <th style="width: 11rem;">tags</th>
-                <th style="width: 9rem; text-align: right;">action</th>
+                <th>id</th>
+                <th>year</th>
+                <th>sports</th>
+                <th>publisher</th>
+                <th>set</th>
+                <th>player</th>
+                <th>auto</th>
+                <th>insert</th>
+                <th>parallel</th>
+                <th>numbered</th>
+                <th>grade</th>
+                <th>value</th>
+                <th>tags</th>
+                <th>action</th>
               </tr>
             </thead>
             <tbody id="result-body"></tbody>
