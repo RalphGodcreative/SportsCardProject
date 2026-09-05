@@ -514,6 +514,12 @@ img.add-note { display: inline-block; }
 .rg-stat-pill strong { font-size: 1.25rem; font-weight: 900; line-height: 1; }
 .rg-stat-pill span { font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--rg-dim); }
 
+/* Search pages scroll the results panel into view. The navbar is fixed at
+   64px, so the panel needs to stop below it instead of under it. */
+#result {
+  scroll-margin-top: 84px;
+}
+
 .rg-result-head {
   display: flex;
   align-items: center;

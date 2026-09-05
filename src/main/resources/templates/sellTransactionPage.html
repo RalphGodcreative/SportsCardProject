@@ -163,6 +163,15 @@
           refreshIncludedCount();
         });
 
+        // Bring the results panel into view; #result carries a scroll-margin-top
+        // in rgneon.css so the fixed navbar does not cover the heading.
+        function scrollToResult() {
+          var el = document.getElementById("result");
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
+
         $("#search-butt").on("click", function () {
           $("#result").hide();
           $("#result-body .card-row").remove();
@@ -196,11 +205,14 @@
               );
 
               if (response.length === 0) {
+                alert("found no card with the criteria");
                 $("#result-table").hide();
                 $("#result-empty").show();
+                scrollToResult();
                 return;
               }
               $("#result-empty").hide();
+              alert("found card : " + response.length);
 
               var resultCards = "";
               response.forEach(function (card) {
@@ -228,6 +240,7 @@
               });
               $("#result-body").append(resultCards);
               $("#result-table").show();
+              scrollToResult();
             },
             error: function (xhr, status, error) {
               console.log(error);
