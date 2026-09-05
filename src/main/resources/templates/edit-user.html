@@ -4,186 +4,103 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Edit Profile</title>
-  <link rel="stylesheet" th:href="@{/assets/style.css}" />
-  <style>
-    .edit-profile-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 16px;
-    }
-    .edit-profile-box {
-      background: #0f0f18;
-      border: 1px solid rgba(56, 201, 250, 0.2);
-      border-radius: 8px;
-      padding: 2rem;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
-    }
-    .edit-profile-box h2 {
-      color: #CA47F5;
-      margin-top: 0;
-      margin-bottom: 1.5rem;
-      text-align: center;
-    }
-    .edit-profile-box label {
-      display: block;
-      color: #38C9FA;
-      font-size: 0.82rem;
-      margin-bottom: 0.3rem;
-      font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      text-shadow: 0 0 6px rgba(56, 201, 250, 0.3);
-    }
-    .edit-profile-box input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 0.6rem 0.8rem;
-      border: 1px solid rgba(56, 201, 250, 0.25);
-      border-radius: 4px;
-      background: #0a0a0f;
-      color: #e2e8f0;
-      font-size: 1rem;
-      margin-bottom: 1.1rem;
-      transition: border-color 0.2s ease;
-    }
-    .edit-profile-box input:focus {
-      outline: none;
-      border-color: #38C9FA;
-      box-shadow: 0 0 8px rgba(56, 201, 250, 0.2);
-    }
-    .edit-profile-box .hint {
-      color: #555;
-      font-size: 0.75rem;
-      margin-top: -0.9rem;
-      margin-bottom: 1rem;
-    }
-    .edit-profile-box button[type=submit] {
-      width: 100%;
-      padding: 0.7rem;
-      background: linear-gradient(135deg, rgba(56, 201, 250, 0.15), rgba(202, 71, 245, 0.15));
-      border: 1px solid rgba(56, 201, 250, 0.4);
-      border-radius: 4px;
-      color: #38C9FA;
-      font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .edit-profile-box button[type=submit]:hover {
-      background: linear-gradient(135deg, rgba(56, 201, 250, 0.25), rgba(202, 71, 245, 0.25));
-      border-color: #38C9FA;
-      color: #f0abfc;
-    }
-    .change-pwd-btn {
-      width: 100%;
-      padding: 0.6rem;
-      background: none;
-      border: 1px solid rgba(202, 71, 245, 0.35);
-      border-radius: 4px;
-      color: #CA47F5;
-      font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin-bottom: 1.1rem;
-    }
-    .change-pwd-btn:hover {
-      background: rgba(202, 71, 245, 0.08);
-      border-color: #CA47F5;
-      color: #f0abfc;
-    }
-    .pwd-section { margin-bottom: 0.5rem; }
-    .field-error { color: #f87171; font-size: 0.78rem; margin: -0.7rem 0 1rem; }
-    .pwd-rules { background: #0a0a0f; border: 1px solid rgba(56, 201, 250, 0.15); border-radius: 4px; padding: 0.6rem 0.8rem; margin: -0.7rem 0 1rem; display: flex; flex-direction: column; gap: 0.3rem; }
-    .pwd-rule { font-size: 0.82rem; color: #555; transition: color 0.2s ease; }
-    .pwd-rule.met { color: #4ade80; }
-    .msg { text-align: center; font-size: 0.875rem; margin-top: 1rem; }
-    .msg.error { color: #f87171; }
-    .msg.success { color: #4ade80; }
-
-    .usage-box { margin-top: 20px; }
-    .usage-role {
-      text-align: center;
-      color: #94a3b8;
-      font-size: 0.85rem;
-      margin: -0.8rem 0 1.2rem;
-    }
-    .usage-role span {
-      color: #38C9FA;
-      font-weight: bold;
-    }
-    .usage-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid rgba(56, 201, 250, 0.1);
-      color: #e2e8f0;
-      font-size: 0.9rem;
-    }
-    .usage-row:last-child { border-bottom: none; }
-    .usage-value { color: #CA47F5; font-weight: bold; }
-  </style>
+  <th:block th:replace="~{fragments/head :: styles}"></th:block>
 </head>
 <body>
   <div th:replace="~{banner.html :: header}"></div>
-  <div class="page-top edit-profile-wrap">
-    <div class="edit-profile-box">
-      <h2>Edit Profile</h2>
 
-      <div th:if="${error}" class="msg error" th:text="${error}"></div>
-      <div th:if="${param.saved}" class="msg success">Changes saved.</div>
+  <div class="rg-page" style="max-width: 34rem;">
 
-      <form th:action="@{/user/edit}" method="post">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required
-               th:value="${user.displayName}" />
+    <div class="rg-page-head">
+      <h1>Edit profile</h1>
+      <p>你的帳號資料與這個月的使用量。</p>
+    </div>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required
-               th:value="${user.email}" />
+    <div th:if="${error}" class="alert alert-error alert-soft" style="margin-bottom: 1rem;">
+      <span th:text="${error}"></span>
+    </div>
+    <div th:if="${param.saved}" class="alert alert-success alert-soft" style="margin-bottom: 1rem;">
+      <span>Changes saved.</span>
+    </div>
 
-        <button type="button" class="change-pwd-btn" id="toggle-pwd">Change Password</button>
+    <form id="profile-form" th:action="@{/user/edit}" method="post">
+      <div class="rg-panel rg-panel--plain" style="margin-bottom: 1.25rem;">
+        <h2 class="rg-panel__title" style="color: var(--color-primary);">Account</h2>
 
-        <div class="pwd-section" id="pwd-section" style="display:none;">
-          <label for="password">New Password</label>
-          <input type="password" id="password" name="password" autocomplete="new-password"
-                 minlength="8" pattern="^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$"
-                 title="At least 8 characters, including 1 letter and 1 number" />
-          <div class="pwd-rules">
-            <div class="pwd-rule" id="rule-length">&#10007; At least 8 characters</div>
-            <div class="pwd-rule" id="rule-letter">&#10007; At least 1 letter</div>
-            <div class="pwd-rule" id="rule-number">&#10007; At least 1 number</div>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <label class="rg-field">
+            <span class="rg-field__label">Username</span>
+            <input type="text" id="username" name="username" class="input" required
+                   th:value="${user.displayName}" />
+          </label>
+
+          <label class="rg-field">
+            <span class="rg-field__label">Email</span>
+            <input type="email" id="email" name="email" class="input" required
+                   th:value="${user.email}" />
+          </label>
+
+          <div>
+            <button type="button" class="btn btn-sm btn-outline btn-primary" id="toggle-pwd">Change Password</button>
           </div>
 
-          <label for="confirm-pwd">Confirm New Password</label>
-          <input type="password" id="confirm-pwd" autocomplete="new-password" />
-          <p class="field-error" id="pwd-confirm-error" style="display:none;">Passwords do not match.</p>
+          <div id="pwd-section" style="display:none; flex-direction: column; gap: 1rem;">
+            <label class="rg-field">
+              <span class="rg-field__label">New password</span>
+              <input type="password" id="password" name="password" class="input" autocomplete="new-password"
+                     minlength="8" pattern="^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$"
+                     title="At least 8 characters, including 1 letter and 1 number" />
+            </label>
+
+            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+              <div class="rg-pwd-rule" id="rule-length">&#10007; At least 8 characters</div>
+              <div class="rg-pwd-rule" id="rule-letter">&#10007; At least 1 letter</div>
+              <div class="rg-pwd-rule" id="rule-number">&#10007; At least 1 number</div>
+            </div>
+
+            <label class="rg-field">
+              <span class="rg-field__label">Confirm new password</span>
+              <input type="password" id="confirm-pwd" class="input" autocomplete="new-password" />
+            </label>
+            <p id="pwd-confirm-error" style="display:none; margin: 0; font-size: 0.8125rem; color: var(--color-error);">
+              Passwords do not match.
+            </p>
+          </div>
         </div>
 
-        <button type="submit">Save Changes</button>
-      </form>
+        <div class="rg-form-actions">
+          <button type="submit" class="btn btn-success">Save changes</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="rg-panel rg-panel--plain">
+      <h2 class="rg-panel__title" style="color: var(--color-primary);">Your usage</h2>
+      <p style="margin: -0.5rem 0 1rem; font-size: 0.8125rem; color: var(--rg-muted);">
+        Role: <span style="color: var(--color-primary); font-weight: 700;" th:text="${#strings.replace(user.role, 'ROLE_', '')}"></span>
+      </p>
+
+      <div style="display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid rgba(56, 201, 250, 0.1); font-size: 0.9rem;">
+          <span>Cards</span>
+          <span class="rg-num" style="color: var(--color-secondary); font-weight: 700;"
+                th:text="${cardCount + ' / ' + (cardLimit == T(java.lang.Integer).MAX_VALUE ? 'unlimited' : cardLimit)}"></span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid rgba(56, 201, 250, 0.1); font-size: 0.9rem;">
+          <span>Keywords</span>
+          <span class="rg-num" style="color: var(--color-secondary); font-weight: 700;"
+                th:text="${keywordCount + ' / ' + (keywordLimit == T(java.lang.Integer).MAX_VALUE ? 'unlimited' : keywordLimit)}"></span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; font-size: 0.9rem;">
+          <span>AI calls this month</span>
+          <span class="rg-num" style="color: var(--color-secondary); font-weight: 700;"
+                th:text="${aiCallCount + ' / ' + (aiCallLimit == T(java.lang.Integer).MAX_VALUE ? 'unlimited' : aiCallLimit)}"></span>
+        </div>
+      </div>
     </div>
 
-    <div class="edit-profile-box usage-box">
-      <h2>Your Usage</h2>
-      <p class="usage-role">Role: <span th:text="${#strings.replace(user.role, 'ROLE_', '')}"></span></p>
-
-      <div class="usage-row">
-        <span>Cards</span>
-        <span class="usage-value" th:text="${cardCount + ' / ' + (cardLimit == T(java.lang.Integer).MAX_VALUE ? 'unlimited' : cardLimit)}"></span>
-      </div>
-      <div class="usage-row">
-        <span>Keywords</span>
-        <span class="usage-value" th:text="${keywordCount + ' / ' + (keywordLimit == T(java.lang.Integer).MAX_VALUE ? 'unlimited' : keywordLimit)}"></span>
-      </div>
-      <div class="usage-row">
-        <span>AI calls this month</span>
-        <span class="usage-value" th:text="${aiCallCount + ' / ' + (aiCallLimit == T(java.lang.Integer).MAX_VALUE ? 'unlimited' : aiCallLimit)}"></span>
-      </div>
-    </div>
   </div>
+
   <script>
     var toggleBtn = document.getElementById('toggle-pwd');
     var pwdSection = document.getElementById('pwd-section');
@@ -193,7 +110,10 @@
     var ruleLength = document.getElementById('rule-length');
     var ruleLetter = document.getElementById('rule-letter');
     var ruleNumber = document.getElementById('rule-number');
-    var form = document.querySelector('form');
+    // Was document.querySelector('form'), which matched the banner's logout
+    // form — the first form in the document — so this submit guard never ran
+    // on the profile form.
+    var form = document.getElementById('profile-form');
     var pwdOpen = false;
 
     function setRule(el, met, text) {
@@ -216,7 +136,7 @@
 
     toggleBtn.addEventListener('click', function () {
       pwdOpen = !pwdOpen;
-      pwdSection.style.display = pwdOpen ? 'block' : 'none';
+      pwdSection.style.display = pwdOpen ? 'flex' : 'none';
       toggleBtn.textContent = pwdOpen ? 'Cancel Password Change' : 'Change Password';
       if (!pwdOpen) {
         pwdInput.value = '';

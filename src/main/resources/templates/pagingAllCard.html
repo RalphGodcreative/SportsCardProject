@@ -1,7 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
+
   <title>Cards</title>
 
   <meta charset="UTF-8" />
@@ -11,8 +12,7 @@
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{/js/util.js}"></script>
-  <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
-  <script h:inline="javascript">
+  <script>
     $(document).ready(function () {
       $.ajaxSetup({
         beforeSend: function(xhr) {
@@ -31,14 +31,13 @@
       }
 
       for (let i = 1; i <= totalPages; i++) {
-        let index;
+        let cls = "index join-item btn btn-sm";
         if (i == currentPage) {
-          index = `<a class="index current-index" href="/card/cards?page=${i}">${i}</a>`;
-        } else {
-          index = `<a class="index" href="/card/cards?page=${i}">${i}</a>`;
+          cls += " btn-active current-index";
         }
-
-        $("#page-index").append(index);
+        $("#page-index").append(
+          '<a class="' + cls + '" href="/card/cards?page=' + i + '">' + i + '</a>'
+        );
       }
 
       //to switch page
@@ -87,7 +86,7 @@
       $(".potential-btn").on("click", function () {
         var cardId = $(this).data("id");
         $("#potential-modal-body").text("Loading...");
-        $("#potential-modal").addClass("show");
+        $("#potential-modal").addClass("modal-open");
         $.ajax({
           url: "/cardRest/" + cardId + "/potential",
           type: "GET",
@@ -101,8 +100,8 @@
         });
       });
 
-      $("#potential-modal-close").on("click", function () {
-        $("#potential-modal").removeClass("show");
+      $("#potential-modal-close, #potential-modal-backdrop").on("click", function () {
+        $("#potential-modal").removeClass("modal-open");
       });
 
       $(".cancel").on("click", function () {
@@ -151,134 +150,120 @@
     });
   </script>
 
-  <link rel="stylesheet" th:href="@{/assets/style.css}" />
-  <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
-  <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
+  <th:block th:replace="~{fragments/head :: styles}"></th:block>
   <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
 </head>
 
 <body>
-  <div id="potential-modal">
-    <div id="potential-modal-box">
-      <h3>AI Price Rise Potential</h3>
-      <div id="potential-modal-body">Loading...</div>
-      <button id="potential-modal-close">Close</button>
-    </div>
-  </div>
   <div th:replace="~{banner.html :: header}"></div>
-  <div class="page-top" style="justify-content: center">
-    <div class="center-div">
+
+  <!-- AI potential. daisyUI modal, opened by adding .modal-open. -->
+  <div id="potential-modal" class="modal">
+    <div class="modal-box" style="max-width: 34rem;">
+      <h3 style="margin: 0 0 0.75rem; font-size: 1.125rem; font-weight: 900; color: var(--rg-ai); text-shadow: 0 0 10px rgba(246, 76, 189, 0.5);">
+        AI Price Rise Potential
+      </h3>
+      <div id="potential-modal-body" style="line-height: 1.8;">Loading...</div>
+      <div class="modal-action">
+        <button id="potential-modal-close" class="btn btn-sm btn-outline btn-error">Close</button>
+      </div>
+    </div>
+    <div id="potential-modal-backdrop" class="modal-backdrop"></div>
+  </div>
+
+  <div class="rg-page rg-page--wide">
+
+    <div class="rg-page-head">
       <h1>Cards</h1>
+      <p>你的球員卡收藏。點 modify 直接在列上編輯，potential 會呼叫 AI 評估增值空間。</p>
     </div>
-    <div class="center-div" sec:authorize="hasAuthority('ROLE_ADMIN')">
-      <a href="/card/allCard">show all in one page</a>
+
+    <div class="rg-toolbar">
+      <div class="rg-quota">
+        <div class="rg-quota__count">
+          <strong th:text="${cardCounts}">0</strong>
+          <span th:if="${maxCards == T(java.lang.Integer).MAX_VALUE}">/ unlimited cards</span>
+          <span th:unless="${maxCards == T(java.lang.Integer).MAX_VALUE}"
+                th:text="'/ ' + ${maxCards} + ' cards'">/ 0 cards</span>
+        </div>
+        <progress th:unless="${maxCards == T(java.lang.Integer).MAX_VALUE}"
+                  class="progress progress-secondary"
+                  th:value="${cardCounts}" th:max="${maxCards}"></progress>
+      </div>
+
+      <div class="rg-rule"></div>
+
+      <a href="/card/searchCard" class="btn btn-sm btn-outline btn-accent">search cards</a>
+      <a href="/transactions/" class="btn btn-sm btn-outline btn-accent">transactions</a>
+      <a href="/tag" class="btn btn-sm btn-outline btn-accent">manage tags</a>
+
+      <span class="rg-spacer"></span>
+
+      <a sec:authorize="hasAuthority('ROLE_ADMIN')" href="/card/allCard" class="btn btn-sm btn-ghost">
+        show all in one page
+        <span class="badge badge-sm badge-secondary">admin</span>
+      </a>
+      <a href="/card/addNewCard" class="btn btn-sm btn-success">add new card</a>
     </div>
-    <div class="center-div" id="all-card">
-      <a>all cards:</a>
-      <div class="center-div" id="page-control">
-        <button class="page-butt" id="first-page">&lt;&lt;</button>
-        <button class="page-butt" id="prev-page">&lt;</button>
-        <span id="page-index"></span>
-        <button class="page-butt" id="next-page">&gt;</button>
-        <button class="page-butt" id="last-page">&gt;&gt;</button>
-      </div>
-      <div ></div>
-      <div style="text-align: left">
-        <span th:if="${maxCards == T(java.lang.Integer).MAX_VALUE}">total cards: <span th:text="${cardCounts}"></span></span>
-        <span th:unless="${maxCards == T(java.lang.Integer).MAX_VALUE}">total cards: <span th:text="${cardCounts + ' / ' + maxCards}"></span></span>
-      </div>
-      <div class="table-center">
-        <table id="card-table" class="mobile-cards">
+
+    <div class="rg-table-card">
+      <table class="table table-zebra rg-table rg-card-table" id="card-table">
+        <thead>
           <tr>
-            <th>id</th>
-            <th>year</th>
-            <th>sports</th>
-            <th>publisher</th>
-            <th>set</th>
-            <th>player</th>
-            <th>auto</th>
-            <th>insert</th>
-            <th>parallel</th>
-            <th>numbered</th>
-            <th>grade</th>
-            <th>value</th>
-            <th>note</th>
+            <th:block th:replace="~{fragments/cardRow :: headers}"></th:block>
             <th>tags</th>
             <th>action</th>
           </tr>
+        </thead>
+        <tbody>
           <tr th:each="card : ${cards}">
-            <td>
-              <a class="show show-id">[[${card.id}]]</a><input type="text" class="update-element id" size="4"
-                th:value="${card.id}" disabled />
-            </td>
-            <td>
-              <a class="show show-year">[[${card.year}]]</a><input type="text" class="update-element year" size="4"
-                th:value="${card.year}" />
-            </td>
-            <td>
-              <a class="show show-sports">[[${card.sports}]]</a><input type="text" class="update-element sports"
-                size="6" th:value="${card.sports}" />
-            </td>
-            <td>
-              <a class="show show-publisher">[[${card.publisher}]]</a><input type="text"
-                class="update-element publisher" size="6" th:value="${card.publisher}" />
-            </td>
-            <td>
-              <a class="show show-set">[[${card.set}]]</a><input type="text" class="update-element set" size="10"
-                th:value="${card.set}" />
-            </td>
-            <td>
-              <a class="show show-player">[[${card.player}]]</a><input type="text" class="update-element player"
-                th:value="${card.player}" />
-            </td>
-            <td>
-              <a class="show show-auto">[[${card.auto}]]</a><input type="checkbox" class="update-element auto"
-                th:checked="${card.auto}" />
-            </td>
-            <td>
-              <a class="show show-insert">[[${card.insert}]]</a><input type="text" class="update-element insert"
-                size="6" th:value="${card.insert}" />
-            </td>
-            <td>
-              <a class="show show-parallel">[[${card.parallel}]]</a><input type="text" class="update-element parallel"
-                size="6" th:value="${card.parallel}" />
-            </td>
-            <td>
-              <a class="show show-numbered">[[${card.numbered}]]</a><input type="text" class="update-element numbered"
-                size="6" th:value="${card.numbered}" />
-            </td>
-            <td>
-              <a class="show show-grade">[[${card.grade}]]</a><input type="text" class="update-element grade" size="6"
-                th:value="${card.grade}" />
-            </td>
-            <td>
-              <a class="show show-value">[[${card.value}]]</a><input type="text" class="update-element value" size="6"
-                th:value="${card.value}" />
-            </td>
-            <td><a class="show show-note">[[${card.note}]]</a></td>
+
+            <th:block th:replace="~{fragments/cardRow :: cells(${card})}"></th:block>
+
             <td th:replace="~{fragments/tagCell :: cell(${card})}"></td>
-            <td>
-              <span style="display: flex">
-                <button class="show action-butt modify">modify</button>
-                <button class="show action-butt comps">comps</button>
-                <button class="show action-butt get-tran"
-                th:onclick="'window.location.href=\'/card/cardTransaction/' + ${card.id} + '\''">
-                transaction
+
+            <td class="rg-cell-actions" data-label="action">
+              <div class="rg-actions">
+                <button class="show btn btn-xs btn-outline btn-accent modify">modify</button>
+                <button class="show btn btn-xs btn-outline btn-accent comps">comps</button>
+                <button class="show btn btn-xs btn-outline btn-accent get-tran"
+                        th:onclick="'window.location.href=\'/card/cardTransaction/' + ${card.id} + '\''">
+                  transaction
                 </button>
-                <button class="show action-butt potential-btn" th:data-id="${card.id}">potential</button>
-                <button class="update-element action-butt save">save</button>
-                <button class="update-element action-butt cancel">
-                  cancel
-                </button>
-              </span>
+                <button class="show btn btn-xs btn-outline rg-btn-ai potential-btn" th:data-id="${card.id}">potential</button>
+                <button class="update-element btn btn-xs btn-success save">save</button>
+                <button class="update-element btn btn-xs btn-outline btn-error cancel">cancel</button>
+              </div>
+            </td>
+
+          </tr>
+
+          <tr th:if="${#lists.isEmpty(cards)}">
+            <td colspan="15" style="text-align: center; padding: 2.5rem 1rem; color: var(--rg-dim);">
+              這一頁沒有卡片。<a href="/card/addNewCard" class="link link-primary">新增第一張卡片</a>。
             </td>
           </tr>
-        </table>
-      </div>
-
-      <input type="hidden" id="card-counts" th:value="${cardCounts}" />
-      <input type="hidden" id="current-page" th:value="${page}" />
+        </tbody>
+      </table>
     </div>
+
+    <div class="rg-pager">
+      <span style="font-size: 0.8125rem; color: var(--rg-dim);">
+        total cards: <span th:text="${cardCounts}">0</span>
+      </span>
+      <span class="rg-spacer"></span>
+      <div class="join" id="page-control">
+        <button class="join-item btn btn-sm" id="first-page">&lt;&lt;</button>
+        <button class="join-item btn btn-sm" id="prev-page">&lt;</button>
+        <span id="page-index" style="display: contents;"></span>
+        <button class="join-item btn btn-sm" id="next-page">&gt;</button>
+        <button class="join-item btn btn-sm" id="last-page">&gt;&gt;</button>
+      </div>
+    </div>
+
+    <input type="hidden" id="card-counts" th:value="${cardCounts}" />
+    <input type="hidden" id="current-page" th:value="${page}" />
+
   </div>
 </body>
 

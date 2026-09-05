@@ -1,26 +1,70 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <head>
-    
-    <title>Template
-    </title>
+
+    <title>Template</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script>
-    
     </script>
 
-    <style>
-    </style>
-    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <th:block th:replace="~{fragments/head :: styles}"></th:block>
 
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top">
+
+    <!--
+      Starting point for a new page. .rg-page clears the fixed navbar and
+      centres the content; the pieces below are the shared primitives from
+      assets/rgneon.css. Prefer them (and daisyUI's own components) over a
+      per-page <style> block.
+    -->
+    <div class="rg-page">
+
+      <div class="rg-page-head">
+        <h1>Title</h1>
+        <p>One line saying what this page is for.</p>
+      </div>
+
+      <!-- Actions / filters. Drop .rg-rule and .rg-spacer where you need them. -->
+      <div class="rg-toolbar">
+        <a href="#" class="btn btn-sm btn-outline btn-accent">action</a>
+        <span class="rg-spacer"></span>
+        <a href="#" class="btn btn-sm btn-success">primary action</a>
+      </div>
+
+      <!-- A form: .rg-panel > .rg-form-grid > .rg-field -->
+      <div class="rg-panel">
+        <h2 class="rg-panel__title">Section</h2>
+        <div class="rg-form-grid">
+          <label class="rg-field">
+            <span class="rg-field__label">field</span>
+            <input type="text" class="input" />
+          </label>
+        </div>
+        <div class="rg-form-actions">
+          <button class="btn btn-success">save</button>
+        </div>
+      </div>
+
+      <!-- A table: .rg-table-card wraps it and handles sideways scroll. -->
+      <div class="rg-table-card" style="margin-top: 1.25rem;">
+        <table class="table table-zebra rg-table">
+          <thead>
+            <tr><th>column</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>value</td></tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
   </body>
 </html>

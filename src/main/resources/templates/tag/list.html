@@ -7,9 +7,7 @@
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-  <link rel="stylesheet" th:href="@{/assets/style.css}" />
-  <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
-  <link rel="stylesheet" th:href="@{/assets/tag-pages.css}" />
+  <th:block th:replace="~{fragments/head :: styles}"></th:block>
   <script>
     function getCsrf() {
       return {
@@ -38,12 +36,12 @@
 
     function openConfirmModal(id) {
       pendingDeleteId = id;
-      $('#confirm-modal').addClass('show');
+      $('#confirm-modal').addClass('modal-open');
     }
 
     function closeConfirmModal() {
       pendingDeleteId = null;
-      $('#confirm-modal').removeClass('show');
+      $('#confirm-modal').removeClass('modal-open');
     }
 
     $(document).ready(function () {
@@ -112,96 +110,95 @@
 <body>
   <div th:replace="~{banner.html :: header}"></div>
 
-  <div id="confirm-modal">
-    <div id="confirm-modal-box">
-      <h3>Delete this tag?</h3>
-      <p>Cards carrying it won't be deleted &mdash; they'll just lose this tag.</p>
-      <div id="confirm-modal-actions">
-        <button id="confirm-modal-cancel" class="neon-butt">Cancel</button>
-        <button id="confirm-modal-delete" class="destroy-butt">Delete</button>
+  <!-- Delete confirmation. The click handler closes on a hit to #confirm-modal
+       itself, which is the area outside .modal-box. -->
+  <div id="confirm-modal" class="modal">
+    <div class="modal-box" style="max-width: 26rem;">
+      <h3 style="margin: 0 0 0.5rem; font-size: 1.125rem; font-weight: 900;">Delete this tag?</h3>
+      <p style="margin: 0; font-size: 0.875rem; color: var(--rg-muted);">
+        Cards carrying it won't be deleted &mdash; they'll just lose this tag.
+      </p>
+      <div class="modal-action">
+        <button id="confirm-modal-cancel" class="btn btn-sm btn-ghost">Cancel</button>
+        <button id="confirm-modal-delete" class="btn btn-sm btn-error">Delete</button>
       </div>
     </div>
   </div>
 
-  <div class="page-top">
-    <div class="tag-page">
-      <div class="tag-header">
-        <div class="tag-header-text">
-          <span class="eyebrow">Collection</span>
-          <h1>Tags</h1>
-          <p>自訂標籤 方便管理 &mdash; 存放位置、隊伍、特殊標記等 一張卡可以有多個標籤</p>
-        </div>
-        <div class="tag-stats">
-          <div class="stat-pill">
-            <span class="stat-value" th:text="${#lists.size(tags)}">0</span>
-            <span class="stat-label">tags</span>
-          </div>
-          <div class="stat-pill">
-            <span class="stat-value" th:text="${totalTagged}">0</span>
-            <span class="stat-label">cards tagged</span>
-          </div>
-        </div>
+  <div class="rg-page">
+
+    <div class="rg-page-head">
+      <span class="badge badge-secondary badge-outline" style="margin-bottom: 0.5rem;">Collection</span>
+      <h1>Tags</h1>
+      <p>自訂標籤 方便管理 &mdash; 存放位置、隊伍、特殊標記等，一張卡可以有多個標籤。</p>
+    </div>
+
+    <div class="rg-stat-row" style="margin-bottom: 1.5rem;">
+      <div class="rg-stat-pill">
+        <strong th:text="${#lists.size(tags)}">0</strong>
+        <span>tags</span>
       </div>
-
-      <div class="tag-grid">
-        <div class="tag-card add-tag-card">
-          <div class="tag-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" />
-            </svg>
-          </div>
-          <div class="add-tag-form">
-            <input type="text" id="new-tag-name" placeholder="New tag name" maxlength="100" />
-            <button class="confirm-butt" onclick="addTag()">Add tag</button>
-          </div>
-        </div>
-
-        <div class="tag-card" th:each="tag : ${tags}" th:data-id="${tag.id}">
-          <div class="tag-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3zM6 6h.008v.008H6V6z" />
-            </svg>
-          </div>
-          <div class="tag-card-body">
-            <span class="tag-name-view tag-card-name" th:text="${tag.name}"></span>
-            <span class="tag-name-edit" style="display:none;">
-              <input type="text" th:value="${tag.name}" maxlength="100" />
-            </span>
-            <span class="tag-card-count">
-              <strong th:text="${cardCounts.get(tag.id)}">0</strong>
-              <span th:text="${cardCounts.get(tag.id) == 1 ? ' card' : ' cards'}"> cards</span>
-            </span>
-          </div>
-          <div class="tag-card-actions view-mode">
-            <button class="action-butt view-cards"
-              th:onclick="'window.location.href=\'/tag/' + ${tag.id} + '/cards\''">View cards</button>
-            <button class="icon-btn edit-tag" aria-label="Rename tag" title="Rename">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 7.125L16.862 4.487" />
-              </svg>
-            </button>
-            <button class="icon-btn icon-btn-destroy delete-tag" th:data-id="${tag.id}" aria-label="Delete tag" title="Delete">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-              </svg>
-            </button>
-          </div>
-          <div class="tag-card-actions edit-mode" style="display:none;">
-            <button class="confirm-butt save-tag">Save</button>
-            <button class="neon-butt cancel-edit">Cancel</button>
-          </div>
-        </div>
-
-        <div class="tag-empty" th:if="${#lists.isEmpty(tags)}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3zM6 6h.008v.008H6V6z" />
-          </svg>
-          <h3>No tags yet</h3>
-          <p>Create your first tag above to start organizing your collection.</p>
-        </div>
+      <div class="rg-stat-pill">
+        <strong th:text="${totalTagged}">0</strong>
+        <span>cards tagged</span>
       </div>
     </div>
+
+    <div class="rg-panel rg-panel--plain" style="margin-bottom: 1.5rem;">
+      <h2 class="rg-panel__title">New tag</h2>
+      <div class="join">
+        <input type="text" id="new-tag-name" class="input join-item" placeholder="New tag name" maxlength="100" />
+        <button class="btn btn-success join-item" onclick="addTag()">Add tag</button>
+      </div>
+    </div>
+
+    <div class="alert alert-info alert-soft" th:if="${#lists.isEmpty(tags)}">
+      <span><strong>No tags yet.</strong> Create your first tag above to start organizing your collection.</span>
+    </div>
+
+    <div class="rg-grid" th:unless="${#lists.isEmpty(tags)}">
+      <div class="rg-tile tag-card" th:each="tag : ${tags}" th:data-id="${tag.id}">
+
+        <div class="rg-tile__icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3zM6 6h.008v.008H6V6z" />
+          </svg>
+        </div>
+
+        <div>
+          <span class="tag-name-view rg-tile__name" th:text="${tag.name}">tag</span>
+          <span class="tag-name-edit" style="display:none;">
+            <input type="text" class="input input-sm" style="width: 100%;" th:value="${tag.name}" maxlength="100" />
+          </span>
+          <div class="rg-tile__meta">
+            <strong th:text="${cardCounts.get(tag.id)}">0</strong><span th:text="${cardCounts.get(tag.id) == 1 ? ' card' : ' cards'}"> cards</span>
+          </div>
+        </div>
+
+        <div class="rg-tile__actions view-mode">
+          <button class="btn btn-sm btn-outline btn-accent view-cards"
+                  th:onclick="'window.location.href=\'/tag/' + ${tag.id} + '/cards\''">View cards</button>
+          <span class="rg-spacer"></span>
+          <button class="btn btn-sm btn-ghost edit-tag" aria-label="Rename tag" title="Rename">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+            </svg>
+          </button>
+          <button class="btn btn-sm btn-ghost delete-tag" style="color: var(--color-error);" th:data-id="${tag.id}" aria-label="Delete tag" title="Delete">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.772 5.79a48.1 48.1 0 013.478-.397m7.5 0a48.1 48.1 0 013.478.397M4.772 5.79L5.84 19.673a2.25 2.25 0 002.244 2.077h7.832a2.25 2.25 0 002.244-2.077L19.228 5.79M9.26 9l.346 9m4.788-9l-.346 9M15.75 5.393v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="rg-tile__actions edit-mode" style="display:none;">
+          <button class="btn btn-sm btn-success save-tag">Save</button>
+          <button class="btn btn-sm btn-ghost cancel-edit">Cancel</button>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </body>
 </html>

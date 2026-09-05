@@ -1,0 +1,663 @@
+/* ==========================================================================
+   rgneon — daisyUI theme for RG Sports Cards
+   --------------------------------------------------------------------------
+   Loaded AFTER assets/daisyui.css. Everything here is unlayered, so it beats
+   daisyUI's own @layer base without needing !important.
+
+   No colour in this file is new: every value is one already used by
+   assets/style.css, just given a daisyUI semantic name so components
+   (.btn, .card, .table, .badge, .modal, .menu) pick it up automatically.
+
+     #38C9FA  navbar / links      -> primary
+     #CA47F5  tables / tags       -> secondary
+     #31F6B5  action buttons      -> accent
+     #FAC938  form fields         -> warning
+     #3FF37B  confirm / save      -> success
+     #F76345  destroy / cancel    -> error
+     #42BDFA  paging              -> info
+     #F64CBD  AI + modals         -> no daisyUI slot; kept as --rg-ai
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
+
+/* --------------------------------------------------------------------------
+   1. Tailwind theme variables daisyUI's prebuilt CSS expects.
+   The standalone daisyui.css references exactly these five and nothing else;
+   without them buttons lose their font-size and transitions.
+   -------------------------------------------------------------------------- */
+:root {
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.4285714286;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  --color-black: #000;
+}
+
+/* --------------------------------------------------------------------------
+   2. The theme itself.
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="rgneon"] {
+  color-scheme: dark;
+
+  --color-base-100: #0a0a0f;
+  --color-base-200: #12121a;
+  --color-base-300: #1e1e2e;
+  --color-base-content: #e2e8f0;
+
+  --color-primary: #38C9FA;
+  --color-primary-content: #04141c;
+  --color-secondary: #CA47F5;
+  --color-secondary-content: #150421;
+  --color-accent: #31F6B5;
+  --color-accent-content: #032018;
+  --color-neutral: #12121a;
+  --color-neutral-content: #94a3b8;
+
+  --color-info: #42BDFA;
+  --color-info-content: #04141c;
+  --color-success: #3FF37B;
+  --color-success-content: #032012;
+  --color-warning: #FAC938;
+  --color-warning-content: #1c1503;
+  --color-error: #F76345;
+  --color-error-content: #200703;
+
+  --radius-selector: 0.625rem;
+  --radius-field: 0.375rem;
+  --radius-box: 0.75rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+
+  /* Not daisyUI slots — the rest of the palette style.css already uses. */
+  --rg-ai: #F64CBD;
+  --rg-muted: #94a3b8;
+  --rg-dim: #64748b;
+  --rg-pink: #f0abfc;
+  --rg-pick: #E3F75E;
+}
+
+/* --------------------------------------------------------------------------
+   3. Legacy-default restore.
+   daisyui.css ships Tailwind's Preflight, which zeroes headings, list markers
+   and link colour. The 22 templates that predate this migration rely on
+   browser defaults for those. Restoring them here keeps every unmigrated page
+   looking exactly as it did.
+
+   DELETE THIS BLOCK once no template depends on browser defaults any more.
+   -------------------------------------------------------------------------- */
+h1 { font-size: 2em;    font-weight: bold; margin: 0.67em 0; }
+h2 { font-size: 1.5em;  font-weight: bold; margin: 0.83em 0; }
+h3 { font-size: 1.17em; font-weight: bold; margin: 1em 0; }
+h4 { font-size: 1em;    font-weight: bold; margin: 1.33em 0; }
+h5 { font-size: 0.83em; font-weight: bold; margin: 1.67em 0; }
+h6 { font-size: 0.67em; font-weight: bold; margin: 2.33em 0; }
+
+p { margin: 1em 0; }
+
+/* Only plain lists get their bullets back. A classed list is a component -
+   daisyUI's .menu (the navbar dropdowns) above all - and preflight's
+   list-style: none is what it expects. */
+ul:not([class]), ol:not([class]) { list-style: revert; margin: 1em 0; padding-left: 40px; }
+:where(ul:not([class]), ol:not([class])) > li { display: list-item; }
+
+a:not([class]) { color: #38C9FA; text-decoration: none; }
+a:not([class]):hover { color: #f0abfc; }
+
+/* Preflight makes every <img> display:block; the note/guide icons are inline. */
+img.add-note { display: inline-block; }
+
+/* --------------------------------------------------------------------------
+   4. Navbar.
+   Replaces .banner-header. Kept fixed at the same height as before so the
+   existing `.page-top { margin-top: 100px }` on every page still clears it
+   and nothing shifts during the migration.
+   -------------------------------------------------------------------------- */
+.rg-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 64px;
+  padding: 0 1rem;
+  background: rgba(10, 10, 15, 0.92);
+  border-bottom: 1px solid rgba(56, 201, 250, 0.25);
+  box-shadow: 0 2px 20px rgba(56, 201, 250, 0.08);
+}
+
+.rg-navbar__logo {
+  display: flex;
+  align-items: center;
+  padding-right: 1.25rem;
+}
+
+.rg-navbar__logo img {
+  display: block;
+  width: 92px;
+  height: 63px;
+}
+
+/* Glow is not a daisyUI token — it is what makes the theme look like itself. */
+.rg-glow-primary { text-shadow: 0 0 8px rgba(56, 201, 250, 0.5); }
+.rg-glow-secondary { text-shadow: 0 0 16px rgba(202, 71, 245, 0.4); }
+
+/* --------------------------------------------------------------------------
+   5. Layout helpers.
+   daisyUI ships the components (.btn, .menu, .dropdown, .card, .table) but
+   NOT Tailwind's utilities, so the handful of layout values its documented
+   markup would express as `w-52 p-2 z-10 shadow-lg` live here instead.
+   -------------------------------------------------------------------------- */
+.rg-spacer { flex-grow: 1; }
+
+.rg-nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.rg-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* .dropdown-content, sized. */
+.rg-menu {
+  z-index: 200;
+  min-width: 13rem;
+  padding: 0.375rem;
+  background: var(--color-base-200);
+  border: 1px solid rgba(56, 201, 250, 0.20);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6), 0 0 18px rgba(56, 201, 250, 0.10);
+}
+
+.rg-menu--wide { min-width: 15rem; }
+
+/* Logout is a POST form, so its trigger is a <button> inside the menu. */
+.rg-menu form { margin: 0; display: block; width: 100%; }
+.rg-menu form button {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font: inherit;
+  color: var(--color-error);
+  cursor: pointer;
+}
+
+.rg-menu .menu-title {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rg-dim);
+}
+
+.rg-user-initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 50%;
+  background: rgba(202, 71, 245, 0.18);
+  border: 1px solid rgba(202, 71, 245, 0.45);
+  color: var(--rg-pink);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   6. Page layout primitives.
+   Shared by migrated pages, so each one stops carrying its own <style> block.
+   -------------------------------------------------------------------------- */
+
+/* Clears the fixed navbar. Migrated pages use this instead of .page-top. */
+.rg-page {
+  max-width: 1120px;
+  margin: 64px auto 0;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.rg-page--wide { max-width: 1400px; }
+
+.rg-page-head { margin-bottom: 1.5rem; }
+
+.rg-page-head h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.875rem;
+  font-weight: 900;
+  color: var(--color-secondary);
+  text-shadow: 0 0 16px rgba(202, 71, 245, 0.4);
+}
+
+.rg-page-head p {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--rg-muted);
+}
+
+.rg-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.125rem;
+  padding: 0.875rem 1.125rem;
+  background: var(--color-base-200);
+  border: 1px solid rgba(202, 71, 245, 0.16);
+  border-radius: var(--radius-box);
+}
+
+.rg-quota {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 11rem;
+}
+
+.rg-quota__count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.rg-quota__count strong { font-size: 1.375rem; font-weight: 900; line-height: 1; }
+.rg-quota__count span { font-size: 0.8125rem; color: var(--rg-dim); }
+
+.rg-rule {
+  width: 1px;
+  align-self: stretch;
+  min-height: 2.5rem;
+  background: rgba(226, 232, 240, 0.08);
+}
+
+/* Table in a card, scrolling sideways rather than stretching the page. */
+.rg-table-card {
+  background: var(--color-base-200);
+  border: 1px solid rgba(202, 71, 245, 0.20);
+  border-radius: var(--radius-box);
+  box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
+  overflow-x: auto;
+}
+
+/* Keeps the purple gradient header the app has always had. */
+.rg-table thead th {
+  background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
+  text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-base-content);
+}
+
+.rg-table :where(th, td) { border-color: rgba(202, 71, 245, 0.14); }
+.rg-table tbody tr:hover { background: rgba(202, 71, 245, 0.06); }
+.rg-num { font-variant-numeric: tabular-nums; }
+
+@media (max-width: 768px) {
+  .rg-page { padding: 1.25rem 1rem 2.5rem; }
+  .rg-toolbar { gap: 0.75rem; }
+  .rg-rule { display: none; }
+}
+
+/* --------------------------------------------------------------------------
+   7. Card table.
+   The original flat layout: one column per field. Each cell holds a .show-*
+   element for viewing and an .update-element input for editing; the pages'
+   jQuery toggles between them on modify/cancel, .save reads
+   row.find(".year") etc., and getCompLink() in util.js reads the .show-*
+   text. The table is wide, so .rg-table-card scrolls it sideways on desktop
+   and the rows become stacked cards under 768px.
+   -------------------------------------------------------------------------- */
+.rg-card-table { font-size: 0.8125rem; white-space: nowrap; }
+
+.rg-card-table :where(th, td) { padding: 0.4rem 0.55rem; vertical-align: middle; }
+
+.rg-card-table .update-element { display: none; }
+
+.rg-card-table input.update-element,
+.rg-card-table select.update-element {
+  padding: 0.15rem 0.4rem;
+  font: inherit;
+  color: var(--color-base-content);
+  background: var(--color-base-100);
+  border: 1px solid rgba(202, 71, 245, 0.35);
+  border-radius: var(--radius-field);
+}
+
+.rg-card-table input.update-element:focus,
+.rg-card-table select.update-element:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 2px rgba(202, 71, 245, 0.18);
+}
+
+.rg-card-table input.update-element[disabled] { opacity: 0.55; }
+
+.rg-card-table input.update-element[type="checkbox"] { width: auto; }
+
+/* Everything else is short enough to stay on one line; these two are not. */
+.rg-card-table td[data-label="note"],
+.rg-card-table td[data-label="tags"] { white-space: normal; max-width: 14rem; }
+
+.rg-player { font-weight: 700; color: var(--color-base-content); }
+
+.rg-card-table .show-note {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--rg-dim);
+}
+
+/* #F64CBD has no daisyUI colour slot, so the AI action is themed by hand. */
+.rg-btn-ai {
+  color: var(--rg-ai);
+  border-color: rgba(246, 76, 189, 0.4);
+}
+.rg-btn-ai:hover {
+  background-color: rgba(246, 76, 189, 0.12);
+  border-color: var(--rg-ai);
+  color: var(--rg-ai);
+}
+
+.rg-pager {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+/* ---- Panels and forms ---------------------------------------------------- */
+
+.rg-panel {
+  background: var(--color-base-200);
+  border: 1px solid rgba(250, 201, 56, 0.18);
+  border-radius: var(--radius-box);
+  padding: 1.375rem 1.5rem 1.5rem;
+}
+
+.rg-panel--plain { border-color: rgba(202, 71, 245, 0.16); }
+
+.rg-panel__title {
+  margin: 0 0 1.125rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-warning);
+  text-shadow: 0 0 8px rgba(250, 201, 56, 0.35);
+}
+
+.rg-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 1rem;
+}
+
+.rg-field { display: flex; flex-direction: column; gap: 0.375rem; }
+
+.rg-field > .rg-field__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-base-content);
+}
+
+.rg-field .input { width: 100%; }
+
+.rg-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: end;
+  min-height: 2.5rem;
+  font-size: 0.875rem;
+}
+
+/* Form beside a reference panel; stacks on narrow screens. */
+.rg-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 22rem;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.rg-split__main { display: flex; flex-direction: column; gap: 1rem; }
+
+@media (max-width: 900px) {
+  .rg-split { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Auth pages: no navbar, one centred card. */
+.rg-auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.rg-auth-card {
+  width: 100%;
+  max-width: 26rem;
+  padding: 2.25rem 2.125rem 1.875rem;
+  background: var(--color-base-200);
+  border: 1px solid rgba(56, 201, 250, 0.22);
+  border-radius: 0.875rem;
+  box-shadow: 0 0 40px rgba(56, 201, 250, 0.07), 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.rg-auth-msg {
+  margin: 1.125rem 0 0;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--rg-muted);
+}
+
+.rg-pwd-rule { font-size: 0.8125rem; color: var(--rg-dim); }
+.rg-pwd-rule.met { color: #4ade80; }
+
+.rg-defs { margin: 0; display: flex; flex-direction: column; gap: 0.6875rem; }
+.rg-defs dt { font-size: 0.8125rem; font-weight: 700; }
+.rg-defs dd { margin: 0; font-size: 0.8125rem; color: var(--rg-muted); }
+
+.rg-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+/* Auto-filling tile grid: tags, and anything else card-shaped. */
+.rg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 1rem;
+}
+
+.rg-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.125rem 1.25rem 1.25rem;
+  background: var(--color-base-200);
+  border: 1px solid rgba(202, 71, 245, 0.18);
+  border-radius: var(--radius-box);
+}
+
+.rg-tile__icon { color: var(--color-secondary); opacity: 0.8; }
+.rg-tile__name { font-size: 1.0625rem; font-weight: 700; }
+.rg-tile__meta { font-size: 0.8125rem; color: var(--rg-dim); }
+.rg-tile__actions { display: flex; align-items: center; gap: 0.5rem; margin-top: auto; }
+
+.rg-stat-row { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+.rg-stat-pill {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  background: var(--color-base-200);
+  border: 1px solid rgba(56, 201, 250, 0.20);
+  border-radius: var(--radius-field);
+}
+
+.rg-stat-pill strong { font-size: 1.25rem; font-weight: 900; line-height: 1; }
+.rg-stat-pill span { font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--rg-dim); }
+
+.rg-result-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1.75rem 0 1rem;
+}
+
+.rg-result-head h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 900;
+  color: var(--color-secondary);
+}
+
+/* Applied by formatAnalysis() to the Low/Medium/High the AI returns.
+   Same values as card-pages.css, which migrated pages no longer load. */
+.rating-low { color: #f0abfc; text-shadow: 0 0 6px rgba(240, 171, 252, 0.4); font-weight: bold; }
+.rating-medium { color: #fbbf24; text-shadow: 0 0 6px rgba(251, 191, 36, 0.4); font-weight: bold; }
+.rating-high { color: #34d399; text-shadow: 0 0 6px rgba(52, 211, 153, 0.4); font-weight: bold; }
+
+.rg-actions {
+  display: flex;
+  gap: 0.375rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.rg-icon-btn { padding-left: 0.5rem; padding-right: 0.5rem; }
+
+/* ---- Repeating input rows (add transaction / add sales) ------------------ */
+.rg-form-table td { padding: 0.375rem 0.5rem; vertical-align: middle; }
+.rg-form-table .input,
+.rg-form-table .textarea { width: 100%; min-width: 4.5rem; }
+.rg-form-table .rg-row-actions { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+
+@media (max-width: 768px) {
+  .rg-form-table,
+  .rg-form-table tbody,
+  .rg-form-table tr,
+  .rg-form-table td { display: block; width: 100%; }
+
+  .rg-form-table thead { display: none; }
+
+  .rg-form-table tr {
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
+    border: 1px solid rgba(202, 71, 245, 0.25);
+    border-radius: var(--radius-box);
+    background: var(--color-base-200);
+  }
+
+  .rg-form-table td {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.4rem 1rem;
+  }
+
+  .rg-form-table td::before {
+    content: attr(data-label);
+    flex: 0 0 5.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #c084fc;
+  }
+
+  .rg-form-table td .input { flex: 1 1 auto; width: auto; }
+  .rg-form-table td.rg-cell-actions::before { content: none; }
+}
+
+/* ---- Mobile: rows become cards -------------------------------------------
+   With the flat columns back, a row is too wide for a phone, so each <td>
+   becomes a labelled line. Labels come from the data-label written in the
+   template, so this needs no JavaScript.
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .rg-table-card { overflow-x: visible; background: transparent; border: none; box-shadow: none; }
+
+  .rg-card-table,
+  .rg-card-table tbody,
+  .rg-card-table tr,
+  .rg-card-table td { display: block; width: 100%; }
+
+  .rg-card-table { white-space: normal; }
+
+  .rg-card-table thead { display: none; }
+
+  .rg-card-table tr {
+    margin-bottom: 1rem;
+    border: 1px solid rgba(202, 71, 245, 0.25);
+    border-radius: var(--radius-box);
+    background: var(--color-base-200);
+    box-shadow: 0 0 18px rgba(202, 71, 245, 0.06);
+    overflow: hidden;
+  }
+
+  .rg-card-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.875rem;
+    text-align: right;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(202, 71, 245, 0.08);
+  }
+
+  .rg-card-table td::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-align: left;
+    color: #c084fc;
+  }
+
+  /* The inputs get the full width of the line while editing. */
+  .rg-card-table input.update-element { flex: 1 1 auto; min-width: 0; }
+  .rg-card-table input.update-element[type="checkbox"] { flex: 0 0 auto; }
+
+  /* Stacked lines are already full width; drop the desktop wrap caps. */
+  .rg-card-table td[data-label="note"],
+  .rg-card-table td[data-label="tags"] { max-width: none; }
+
+  .rg-card-table td.rg-cell-actions { display: block; border-bottom: none; }
+  .rg-card-table td.rg-cell-actions::before { content: none; }
+  .rg-card-table .rg-actions { justify-content: stretch; }
+  .rg-card-table .rg-actions .btn { flex: 1 1 auto; min-height: 2.75rem; }
+}
+
+/* Desktop / mobile swap, at the same 768px breakpoint style.css already uses. */
+.rg-nav-mobile { display: none; }
+
+@media (max-width: 768px) {
+  .rg-navbar { padding: 0 0.75rem; }
+  .rg-navbar__logo img { width: 68px; height: 47px; }
+
+  .rg-nav-desktop,
+  .rg-auth-desktop { display: none; }
+  .rg-nav-mobile { display: block; }
+
+  .rg-menu { max-height: 78vh; overflow-y: auto; }
+}

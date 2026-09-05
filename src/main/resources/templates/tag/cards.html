@@ -13,8 +13,7 @@
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
     <script type="text/javascript" th:src="@{/js/util.js}"></script>
-    <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
-    <script th:inline="javascript">
+    <script>
       $(document).ready(function () {
         $.ajaxSetup({
           beforeSend: function(xhr) {
@@ -50,7 +49,7 @@
         $(".potential-btn").on("click", function () {
           var cardId = $(this).data("id");
           $("#potential-modal-body").text("Loading...");
-          $("#potential-modal").addClass("show");
+          $("#potential-modal").addClass("modal-open");
           $.ajax({
             url: "/cardRest/" + cardId + "/potential",
             type: "GET",
@@ -64,8 +63,8 @@
           });
         });
 
-        $("#potential-modal-close").on("click", function () {
-          $("#potential-modal").removeClass("show");
+        $("#potential-modal-close, #potential-modal-backdrop").on("click", function () {
+          $("#potential-modal").removeClass("modal-open");
         });
 
         $(".cancel").on("click", function () {
@@ -114,200 +113,86 @@
       });
     </script>
 
-    <link rel="stylesheet" th:href="@{/assets/style.css}" />
-    <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
-    <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
-    <link rel="stylesheet" th:href="@{/assets/tag-pages.css}" />
+    <th:block th:replace="~{fragments/head :: styles}"></th:block>
     <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
   </head>
   <body>
-    <div id="potential-modal">
-      <div id="potential-modal-box">
-        <h3>AI Price Rise Potential</h3>
-        <div id="potential-modal-body">Loading...</div>
-        <button id="potential-modal-close">Close</button>
-      </div>
-    </div>
     <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top">
-      <div class="tag-page">
-        <a class="tag-breadcrumb" href="/tag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-          </svg>
-          Back to tags
-        </a>
-        <div class="tag-header">
-          <div class="tag-header-text">
-            <span class="eyebrow">Tag</span>
-            <h1 th:text="${tag.name}"></h1>
-            <p>Every card carrying this tag.</p>
-          </div>
-          <div class="tag-stats">
-            <div class="stat-pill">
-              <span class="stat-value" th:text="${#lists.size(cards)}">0</span>
-              <span class="stat-label" th:text="${#lists.size(cards) == 1 ? 'card' : 'cards'}">cards</span>
-            </div>
-          </div>
-        </div>
 
-        <div id="all-card">
-        <div class="tag-empty" th:if="${#lists.isEmpty(cards)}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3zM6 6h.008v.008H6V6z" />
-          </svg>
-          <h3>No cards here yet</h3>
-          <p>Add this tag to cards from the cards list or search page and they'll show up here.</p>
-        </div>
-        <div class="table-center" th:unless="${#lists.isEmpty(cards)}">
-        <table id="card-table" class="mobile-cards">
-          <tr>
-            <th>id</th>
-            <th>year</th>
-            <th>sports</th>
-            <th>publisher</th>
-            <th>set</th>
-            <th>player</th>
-            <th>auto</th>
-            <th>insert</th>
-            <th>parallel</th>
-            <th>numbered</th>
-            <th>grade</th>
-            <th>value</th>
-            <th>note</th>
-            <th>tags</th>
-            <th>action</th>
-          </tr>
-          <tr th:each="card : ${cards}">
-            <td>
-              <a class="show show-id">[[${card.id}]]</a
-              ><input
-                type="text"
-                class="update-element id"
-                size="4"
-                th:value="${card.id}"
-                disabled
-              />
-            </td>
-            <td>
-              <a class="show show-year">[[${card.year}]]</a
-              ><input
-                type="text"
-                class="update-element year"
-                size="4"
-                th:value="${card.year}"
-              />
-            </td>
-            <td>
-              <a class="show show-sports">[[${card.sports}]]</a
-              ><input
-                type="text"
-                class="update-element sports"
-                size="6"
-                th:value="${card.sports}"
-              />
-            </td>
-            <td>
-              <a class="show show-publisher">[[${card.publisher}]]</a
-              ><input
-                type="text"
-                class="update-element publisher"
-                size="6"
-                th:value="${card.publisher}"
-              />
-            </td>
-            <td>
-              <a class="show show-set">[[${card.set}]]</a
-              ><input
-                type="text"
-                class="update-element set"
-                size="10"
-                th:value="${card.set}"
-              />
-            </td>
-            <td>
-              <a class="show show-player">[[${card.player}]]</a
-              ><input
-                type="text"
-                class="update-element player"
-                th:value="${card.player}"
-              />
-            </td>
-            <td>
-              <a class="show show-auto">[[${card.auto}]]</a
-              ><input
-                type="checkbox"
-                class="update-element auto"
-                th:checked="${card.auto}"
-              />
-            </td>
-            <td>
-              <a class="show show-insert">[[${card.insert}]]</a
-              ><input
-                type="text"
-                class="update-element insert"
-                size="6"
-                th:value="${card.insert}"
-              />
-            </td>
-            <td>
-              <a class="show show-parallel">[[${card.parallel}]]</a
-              ><input
-                type="text"
-                class="update-element parallel"
-                size="6"
-                th:value="${card.parallel}"
-              />
-            </td>
-            <td>
-              <a class="show show-numbered">[[${card.numbered}]]</a
-              ><input
-                type="text"
-                class="update-element numbered"
-                size="6"
-                th:value="${card.numbered}"
-              />
-            </td>
-            <td>
-              <a class="show show-grade">[[${card.grade}]]</a
-              ><input
-                type="text"
-                class="update-element grade"
-                size="6"
-                th:value="${card.grade}"
-              />
-            </td>
-            <td>
-              <a class="show show-value">[[${card.value}]]</a
-              ><input
-                type="text"
-                class="update-element value"
-                size="6"
-                th:value="${card.value}"
-              />
-            </td>
-            <td><a class="show show-note">[[${card.note}]]</a></td>
-            <td th:replace="~{fragments/tagCell :: cell(${card})}"></td>
-            <td>
-              <span style="display: flex">
-                <button class="show action-butt modify">modify</button>
-                <button class="show action-butt comps">comps</button>
-                <button class="show action-butt get-tran"
-                th:onclick="'window.location.href=\'/card/cardTransaction/' + ${card.id} + '\''">
-                transaction
-                </button>
-                <button class="show action-butt potential-btn" th:data-id="${card.id}">potential</button>
-                <button class="update-element action-butt save">save</button>
-                <button class="update-element action-butt cancel">
-                  cancel
-                </button>
-              </span>
-            </td>
-          </tr>
-        </table>
-        </div>
+    <!-- AI potential. daisyUI modal, opened by adding .modal-open. -->
+    <div id="potential-modal" class="modal">
+      <div class="modal-box" style="max-width: 34rem;">
+        <h3 style="margin: 0 0 0.75rem; font-size: 1.125rem; font-weight: 900; color: var(--rg-ai); text-shadow: 0 0 10px rgba(246, 76, 189, 0.5);">
+          AI Price Rise Potential
+        </h3>
+        <div id="potential-modal-body" style="line-height: 1.8;">Loading...</div>
+        <div class="modal-action">
+          <button id="potential-modal-close" class="btn btn-sm btn-outline btn-error">Close</button>
         </div>
       </div>
+      <div id="potential-modal-backdrop" class="modal-backdrop"></div>
+    </div>
+
+    <div class="rg-page rg-page--wide">
+
+      <a href="/tag" class="btn btn-sm btn-ghost" style="margin-bottom: 1rem;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 19.5L3 12l7.5-7.5"/><path d="M3 12h18"/></svg>
+        Back to tags
+      </a>
+
+      <div class="rg-page-head">
+        <span class="badge badge-secondary badge-outline" style="margin-bottom: 0.5rem;">Tag</span>
+        <h1 th:text="${tag.name}">Tag</h1>
+        <p>
+          Every card carrying this tag —
+          <span th:text="${#lists.size(cards)}">0</span>
+          <span th:text="${#lists.size(cards) == 1 ? 'card' : 'cards'}">cards</span>.
+        </p>
+      </div>
+
+      <div class="alert alert-info alert-soft" th:if="${#lists.isEmpty(cards)}">
+        <span>
+          <strong>No cards here yet.</strong>
+          Add this tag to cards from the <a href="/card/cards" class="link link-primary">cards list</a>
+          or <a href="/card/searchCard" class="link link-primary">search</a> page and they'll show up here.
+        </span>
+      </div>
+
+      <div class="rg-table-card" th:unless="${#lists.isEmpty(cards)}">
+        <table class="table table-zebra rg-table rg-card-table" id="card-table">
+          <thead>
+            <tr>
+              <th:block th:replace="~{fragments/cardRow :: headers}"></th:block>
+              <th>tags</th>
+              <th>action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="card : ${cards}">
+
+              <th:block th:replace="~{fragments/cardRow :: cells(${card})}"></th:block>
+
+              <td th:replace="~{fragments/tagCell :: cell(${card})}"></td>
+
+              <td class="rg-cell-actions" data-label="action">
+                <div class="rg-actions">
+                  <button class="show btn btn-xs btn-outline btn-accent modify">modify</button>
+                  <button class="show btn btn-xs btn-outline btn-accent comps">comps</button>
+                  <button class="show btn btn-xs btn-outline btn-accent get-tran"
+                          th:onclick="'window.location.href=\'/card/cardTransaction/' + ${card.id} + '\''">
+                    transaction
+                  </button>
+                  <button class="show btn btn-xs btn-outline rg-btn-ai potential-btn" th:data-id="${card.id}">potential</button>
+                  <button class="update-element btn btn-xs btn-success save">save</button>
+                  <button class="update-element btn btn-xs btn-outline btn-error cancel">cancel</button>
+                </div>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
   </body>
 </html>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <title>All Cards</title>
@@ -13,8 +13,7 @@
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
     <script type="text/javascript" th:src="@{/js/util.js}"></script>
-    <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
-    <script h:inline="javascript">
+    <script>
       $(document).ready(function () {
         $.ajaxSetup({
           beforeSend: function(xhr) {
@@ -50,7 +49,7 @@
         $(".potential-btn").on("click", function () {
           var cardId = $(this).data("id");
           $("#potential-modal-body").text("Loading...");
-          $("#potential-modal").addClass("show");
+          $("#potential-modal").addClass("modal-open");
           $.ajax({
             url: "/cardRest/" + cardId + "/potential",
             type: "GET",
@@ -64,8 +63,8 @@
           });
         });
 
-        $("#potential-modal-close").on("click", function () {
-          $("#potential-modal").removeClass("show");
+        $("#potential-modal-close, #potential-modal-backdrop").on("click", function () {
+          $("#potential-modal").removeClass("modal-open");
         });
 
         $(".cancel").on("click", function () {
@@ -114,180 +113,99 @@
       });
     </script>
 
-    <link rel="stylesheet" th:href="@{/assets/style.css}" />
-    <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
-    <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
+    <th:block th:replace="~{fragments/head :: styles}"></th:block>
     <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
   </head>
   <body>
-    <div id="potential-modal">
-      <div id="potential-modal-box">
-        <h3>AI Price Rise Potential</h3>
-        <div id="potential-modal-body">Loading...</div>
-        <button id="potential-modal-close">Close</button>
-      </div>
-    </div>
     <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top" style="justify-content: center">
-      <div class="center-div"><h1>All Cards</h1></div>
-      <div class="center-div">
-        <a href="/card/cards">see in pages</a>
-      </div>
-      <div class="center-div" id="all-card">
-        <a>all cards:</a>
-        <div style="text-align: left">
-          <span th:if="${maxCards == T(java.lang.Integer).MAX_VALUE}">total cards: <span th:text="${cardCounts}"></span></span>
-          <span th:unless="${maxCards == T(java.lang.Integer).MAX_VALUE}">total cards: <span th:text="${cardCounts + ' / ' + maxCards}"></span></span>
+
+    <!-- AI potential. daisyUI modal, opened by adding .modal-open. -->
+    <div id="potential-modal" class="modal">
+      <div class="modal-box" style="max-width: 34rem;">
+        <h3 style="margin: 0 0 0.75rem; font-size: 1.125rem; font-weight: 900; color: var(--rg-ai); text-shadow: 0 0 10px rgba(246, 76, 189, 0.5);">
+          AI Price Rise Potential
+        </h3>
+        <div id="potential-modal-body" style="line-height: 1.8;">Loading...</div>
+        <div class="modal-action">
+          <button id="potential-modal-close" class="btn btn-sm btn-outline btn-error">Close</button>
         </div>
-        <div class="table-center">
-        <table id="card-table" class="mobile-cards">
-          <tr>
-            <th>id</th>
-            <th>year</th>
-            <th>sports</th>
-            <th>publisher</th>
-            <th>set</th>
-            <th>player</th>
-            <th>auto</th>
-            <th>insert</th>
-            <th>parallel</th>
-            <th>numbered</th>
-            <th>grade</th>
-            <th>value</th>
-            <th>note</th>
-            <th>tags</th>
-            <th>action</th>
-          </tr>
-          <tr th:each="card : ${cards}">
-            <td>
-              <a class="show show-id">[[${card.id}]]</a
-              ><input
-                type="text"
-                class="update-element id"
-                size="4"
-                th:value="${card.id}"
-                disabled
-              />
-            </td>
-            <td>
-              <a class="show show-year">[[${card.year}]]</a
-              ><input
-                type="text"
-                class="update-element year"
-                size="4"
-                th:value="${card.year}"
-              />
-            </td>
-            <td>
-              <a class="show show-sports">[[${card.sports}]]</a
-              ><input
-                type="text"
-                class="update-element sports"
-                size="6"
-                th:value="${card.sports}"
-              />
-            </td>
-            <td>
-              <a class="show show-publisher">[[${card.publisher}]]</a
-              ><input
-                type="text"
-                class="update-element publisher"
-                size="6"
-                th:value="${card.publisher}"
-              />
-            </td>
-            <td>
-              <a class="show show-set">[[${card.set}]]</a
-              ><input
-                type="text"
-                class="update-element set"
-                size="10"
-                th:value="${card.set}"
-              />
-            </td>
-            <td>
-              <a class="show show-player">[[${card.player}]]</a
-              ><input
-                type="text"
-                class="update-element player"
-                th:value="${card.player}"
-              />
-            </td>
-            <td>
-              <a class="show show-auto">[[${card.auto}]]</a
-              ><input
-                type="checkbox"
-                class="update-element auto"
-                th:checked="${card.auto}"
-              />
-            </td>
-            <td>
-              <a class="show show-insert">[[${card.insert}]]</a
-              ><input
-                type="text"
-                class="update-element insert"
-                size="6"
-                th:value="${card.insert}"
-              />
-            </td>
-            <td>
-              <a class="show show-parallel">[[${card.parallel}]]</a
-              ><input
-                type="text"
-                class="update-element parallel"
-                size="6"
-                th:value="${card.parallel}"
-              />
-            </td>
-            <td>
-              <a class="show show-numbered">[[${card.numbered}]]</a
-              ><input
-                type="text"
-                class="update-element numbered"
-                size="6"
-                th:value="${card.numbered}"
-              />
-            </td>
-            <td>
-              <a class="show show-grade">[[${card.grade}]]</a
-              ><input
-                type="text"
-                class="update-element grade"
-                size="6"
-                th:value="${card.grade}"
-              />
-            </td>
-            <td>
-              <a class="show show-value">[[${card.value}]]</a
-              ><input
-                type="text"
-                class="update-element value"
-                size="6"
-                th:value="${card.value}"
-              />
-            </td>
-            <td><a class="show show-note">[[${card.note}]]</a></td>
-            <td th:replace="~{fragments/tagCell :: cell(${card})}"></td>
-            <td>
-              <span style="display: flex">
-                <button class="show action-butt modify">modify</button>
-                <button class="show action-butt comps">comps</button>
-                <button class="show action-butt get-tran"
-                th:onclick="'window.location.href=\'/card/cardTransaction/' + ${card.id} + '\''">
-                transaction
-                </button>
-                <button class="show action-butt potential-btn" th:data-id="${card.id}">potential</button>
-                <button class="update-element action-butt save">save</button>
-                <button class="update-element action-butt cancel">
-                  cancel
-                </button>
-              </span>
-            </td>
-          </tr>
+      </div>
+      <div id="potential-modal-backdrop" class="modal-backdrop"></div>
+    </div>
+
+    <div class="rg-page rg-page--wide">
+
+      <div class="rg-page-head">
+        <h1>All Cards</h1>
+        <p>整個收藏在同一頁，不分頁。卡片很多的時候這頁會比較慢，日常瀏覽建議用分頁檢視。</p>
+      </div>
+
+      <div class="rg-toolbar">
+        <div class="rg-quota">
+          <div class="rg-quota__count">
+            <strong th:text="${cardCounts}">0</strong>
+            <span th:if="${maxCards == T(java.lang.Integer).MAX_VALUE}">/ unlimited cards</span>
+            <span th:unless="${maxCards == T(java.lang.Integer).MAX_VALUE}"
+                  th:text="'/ ' + ${maxCards} + ' cards'">/ 0 cards</span>
+          </div>
+          <progress th:unless="${maxCards == T(java.lang.Integer).MAX_VALUE}"
+                    class="progress progress-secondary"
+                    th:value="${cardCounts}" th:max="${maxCards}"></progress>
+        </div>
+
+        <div class="rg-rule"></div>
+
+        <a href="/card/searchCard" class="btn btn-sm btn-outline btn-accent">search cards</a>
+        <a href="/transactions/" class="btn btn-sm btn-outline btn-accent">transactions</a>
+        <a href="/tag" class="btn btn-sm btn-outline btn-accent">manage tags</a>
+
+        <span class="rg-spacer"></span>
+
+        <a href="/card/cards" class="btn btn-sm btn-ghost">see in pages</a>
+        <a href="/card/addNewCard" class="btn btn-sm btn-success">add new card</a>
+      </div>
+
+      <div class="rg-table-card">
+        <table class="table table-zebra rg-table rg-card-table" id="card-table">
+          <thead>
+            <tr>
+              <th:block th:replace="~{fragments/cardRow :: headers}"></th:block>
+              <th>tags</th>
+              <th>action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="card : ${cards}">
+
+              <th:block th:replace="~{fragments/cardRow :: cells(${card})}"></th:block>
+
+              <td th:replace="~{fragments/tagCell :: cell(${card})}"></td>
+
+              <td class="rg-cell-actions" data-label="action">
+                <div class="rg-actions">
+                  <button class="show btn btn-xs btn-outline btn-accent modify">modify</button>
+                  <button class="show btn btn-xs btn-outline btn-accent comps">comps</button>
+                  <button class="show btn btn-xs btn-outline btn-accent get-tran"
+                          th:onclick="'window.location.href=\'/card/cardTransaction/' + ${card.id} + '\''">
+                    transaction
+                  </button>
+                  <button class="show btn btn-xs btn-outline rg-btn-ai potential-btn" th:data-id="${card.id}">potential</button>
+                  <button class="update-element btn btn-xs btn-success save">save</button>
+                  <button class="update-element btn btn-xs btn-outline btn-error cancel">cancel</button>
+                </div>
+              </td>
+
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(cards)}">
+              <td colspan="15" style="text-align: center; padding: 2.5rem 1rem; color: var(--rg-dim);">
+                還沒有任何卡片。<a href="/card/addNewCard" class="link link-primary">新增第一張卡片</a>。
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
-      </div>
+
     </div>
   </body>
 </html>
-

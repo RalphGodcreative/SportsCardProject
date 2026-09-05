@@ -4,94 +4,146 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RG Sports Cards</title>
-    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+    <th:block th:replace="~{fragments/head :: styles}"></th:block>
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
 
-    <div class="page-top">
-      <section class="hero">
-        <span class="eyebrow">RG Sports Cards</span>
-        <h1>Record. Track. Never Miss a Card.</h1>
-        <p>紀錄跟追蹤你的球員卡收藏跟交易紀錄，更有效率的球員卡庫存管理<br /><br />還有 Yahoo 拍賣每日關注特定關鍵字，把握入手心儀卡片好機會</p>
-        <div class="hero-cta">
-          <a class="btn btn-primary" href="/login" sec:authorize="isAnonymous()">Login</a>
-          <a class="btn btn-primary" href="/card" sec:authorize="isAuthenticated()">Go to Cards</a>
-          <a class="btn btn-secondary" href="/random">Try the Randomizer →</a>
+    <div class="rg-page" style="max-width: 68rem;">
+
+      <!-- hero -->
+      <section style="padding: 3rem 0 2.5rem; text-align: center;">
+        <span class="badge badge-outline badge-primary" style="letter-spacing: 0.2em; margin-bottom: 1.25rem;">RG SPORTS CARDS</span>
+
+        <h1 style="margin: 0 0 1.25rem; font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 900; line-height: 1.12; color: var(--color-secondary); text-shadow: 0 0 20px rgba(202, 71, 245, 0.45); text-wrap: balance;">
+          Record. Track. Never Miss a Card.
+        </h1>
+
+        <p style="margin: 0 auto 1rem; max-width: 38rem; font-size: 1.0625rem; line-height: 1.65; color: var(--rg-muted); text-wrap: pretty;">
+          紀錄跟追蹤你的球員卡收藏跟交易紀錄，更有效率的球員卡庫存管理
+        </p>
+        <p style="margin: 0 auto 2rem; max-width: 38rem; font-size: 1.0625rem; line-height: 1.65; color: var(--rg-muted); text-wrap: pretty;">
+          還有 Yahoo 拍賣每日關注特定關鍵字，把握入手心儀卡片好機會
+        </p>
+
+        <div style="display: flex; gap: 0.875rem; justify-content: center; flex-wrap: wrap;">
+          <a class="btn btn-success" href="/login" sec:authorize="isAnonymous()">Login</a>
+          <a class="btn btn-success" href="/card" sec:authorize="isAuthenticated()">Go to Cards</a>
+          <a class="btn btn-outline btn-accent" href="/random">Try the Randomizer</a>
         </div>
       </section>
 
-      <section class="features">
-        <a class="feature-card" href="/card/cards">
-          <span class="feature-icon">🗂️</span>
-          <h3>Card Collection</h3>
-          <p>Track year, set, grade, and value across your entire collection in one place.<br />紀錄卡片年份、系列、鑑定分數與價值，集中管理你的整個收藏。</p>
+      <!-- features -->
+      <section class="rg-grid" style="margin-bottom: 4rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));">
+        <a class="rg-tile" href="/card/cards">
+          <div class="rg-tile__icon" style="color: var(--color-primary);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v9a2 2 0 002 2h10a2 2 0 002-2V9"/><path d="M10 13h4"/></svg>
+          </div>
+          <span class="rg-tile__name" style="color: var(--color-primary);">Card Collection</span>
+          <span style="font-size: 0.875rem; line-height: 1.55; color: var(--rg-muted);">
+            Track year, set, grade, and value across your entire collection in one place.
+          </span>
+          <span style="font-size: 0.875rem; line-height: 1.55; color: var(--rg-dim);">
+            紀錄卡片年份、系列、鑑定分數與價值，集中管理你的整個收藏。
+          </span>
         </a>
-        <a class="feature-card" href="/crawler">
-          <span class="feature-icon">📝</span>
-          <h3>Yahoo Auction Daily Tracker</h3>
-          <p>Yahoo Auctions Taiwan keyword search with email report every morning, save time to get your favorite cards<br />持續關注臺灣 Yahoo 拍賣，每天早上收到特定關鍵字的搜尋結果Email，減少你手動搜尋的時間。</p>
+
+        <a class="rg-tile" href="/crawler">
+          <div class="rg-tile__icon" style="color: var(--color-secondary);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10.3 20a2 2 0 003.4 0"/></svg>
+          </div>
+          <span class="rg-tile__name" style="color: var(--color-primary);">Yahoo Auction Daily Tracker</span>
+          <span style="font-size: 0.875rem; line-height: 1.55; color: var(--rg-muted);">
+            Keyword search on Yahoo Auctions Taiwan with an email report every morning.
+          </span>
+          <span style="font-size: 0.875rem; line-height: 1.55; color: var(--rg-dim);">
+            持續關注臺灣 Yahoo 拍賣，每天早上收到特定關鍵字的搜尋結果 Email。
+          </span>
         </a>
-        <a class="feature-card" href="/card/cards">
-          <span class="feature-icon">✨</span>
-          <h3>AI Price Potential</h3>
-          <p>AI-powered analysis with live search grounding to gauge a card's upside.<br />透過 AI 結合即時資訊，評估卡片未來的增值潛力。</p>
+
+        <a class="rg-tile" href="/card/cards">
+          <div class="rg-tile__icon" style="color: var(--rg-ai);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/><path d="M18 16.5l.8 1.9 1.9.8-1.9.8-.8 1.9-.8-1.9-1.9-.8 1.9-.8.8-1.9z"/></svg>
+          </div>
+          <span class="rg-tile__name" style="color: var(--color-primary);">AI Price Potential</span>
+          <span style="font-size: 0.875rem; line-height: 1.55; color: var(--rg-muted);">
+            AI analysis with live search grounding to gauge a card's upside.
+          </span>
+          <span style="font-size: 0.875rem; line-height: 1.55; color: var(--rg-dim);">
+            透過 AI 結合即時資訊，評估卡片未來的增值潛力。
+          </span>
         </a>
       </section>
 
-      <section class="picks-heading">
-        <h2>推薦入手收藏球員</h2>
-        <p>Recommend Player to Collect Now</p>
+      <!-- picks -->
+      <section style="text-align: center; margin-bottom: 2rem;">
+        <h2 style="margin: 0 0 0.5rem; font-size: 1.75rem; font-weight: 900; color: var(--color-accent); text-shadow: 0 0 16px rgba(49, 246, 181, 0.4);">推薦入手收藏球員</h2>
+        <p style="margin: 0; color: var(--rg-muted);">Recommend Player to Collect Now</p>
       </section>
 
-      <section class="picks-group">
-        <span class="eyebrow" style="color: #E3F75E">RG's Pick</span>
-        <div class="picks" id="admin-picks"></div>
+      <section style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1.125rem;">
+          <span class="badge badge-outline" style="color: #E3F75E; border-color: rgba(227, 247, 94, 0.35); letter-spacing: 0.18em;">RG'S PICK</span>
+          <div style="flex-grow: 1; height: 1px; background: rgba(227, 247, 94, 0.16);"></div>
+        </div>
+        <div class="rg-grid" id="admin-picks" style="grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));"></div>
       </section>
 
-      <section class="picks-group">
-        <span class="eyebrow" style="color: #E3F75E">AI's Pick</span>
-        <div class="picks" id="ai-picks"></div>
+      <section style="margin-bottom: 4rem;">
+        <div style="display: flex; align-items: center; gap: 0.875rem; margin-bottom: 1.125rem;">
+          <span class="badge badge-outline" style="color: #E3F75E; border-color: rgba(227, 247, 94, 0.35); letter-spacing: 0.18em;">AI'S PICK</span>
+          <div style="flex-grow: 1; height: 1px; background: rgba(227, 247, 94, 0.16);"></div>
+          <span style="font-size: 0.75rem; color: var(--rg-dim);">Gemini + Search grounding</span>
+        </div>
+        <div class="rg-grid" id="ai-picks" style="grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));"></div>
       </section>
+
     </div>
 
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         var SPORT_META = {
-          BASEBALL: { icon: '⚾', label: 'Baseball' },
-          BASKETBALL: { icon: '🏀', label: 'Basketball' },
-          FOOTBALL: { icon: '🏈', label: 'Football' }
+          BASEBALL: { label: 'Baseball', icon: '<circle cx="12" cy="12" r="9"/><path d="M6.2 5.4c2 2.2 3 4.5 3 6.6s-1 4.4-3 6.6"/><path d="M17.8 5.4c-2 2.2-3 4.5-3 6.6s1 4.4 3 6.6"/>' },
+          BASKETBALL: { label: 'Basketball', icon: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3v18"/><path d="M5.6 5.6c3.5 3.5 3.5 9.3 0 12.8"/><path d="M18.4 5.6c-3.5 3.5-3.5 9.3 0 12.8"/>' },
+          FOOTBALL: { label: 'Football', icon: '<ellipse cx="12" cy="12" rx="9" ry="5.6" transform="rotate(-30 12 12)"/><path d="M9.2 14.8l5.6-5.6"/>' }
         };
         var SPORT_ORDER = ['BASEBALL', 'BASKETBALL', 'FOOTBALL'];
 
-        function buildCard(sport, recommendation) {
+        function buildCard(sport, recommendation, accent) {
           var meta = SPORT_META[sport];
+          var filled = !!recommendation;
+          var colour = filled ? accent : 'var(--rg-dim)';
+
           var card = document.createElement('div');
-          card.className = 'pick-card';
+          card.className = 'rg-tile';
+          if (!filled) card.style.borderColor = 'rgba(226, 232, 240, 0.10)';
 
-          var icon = document.createElement('span');
-          icon.className = 'pick-icon';
-          icon.textContent = meta.icon;
-          card.appendChild(icon);
+          // Only the sport icon and label go in as markup, and both come from
+          // SPORT_META here — never from the server response.
+          var head = document.createElement('div');
+          head.style.cssText = 'display:flex;align-items:center;gap:0.625rem;';
+          head.innerHTML =
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="' + colour +
+            '" stroke-width="1.6" stroke-linecap="round">' + meta.icon + '</svg>' +
+            '<span class="badge badge-sm badge-outline" style="color:' + colour + ';border-color:' + colour + ';">' +
+            meta.label + '</span>';
+          card.appendChild(head);
 
-          var sportLabel = document.createElement('span');
-          sportLabel.className = 'pick-sport';
-          sportLabel.textContent = meta.label;
-          card.appendChild(sportLabel);
+          var name = document.createElement('span');
+          name.className = 'rg-tile__name';
+          if (!filled) name.style.color = 'var(--rg-dim)';
+          name.textContent = filled ? recommendation.player : 'Coming Soon';
+          card.appendChild(name);
 
-          var h3 = document.createElement('h3');
-          h3.textContent = recommendation ? recommendation.player : 'Coming Soon';
-          card.appendChild(h3);
-
-          var desc = document.createElement('p');
-          desc.className = 'pick-desc';
-          desc.textContent = recommendation ? recommendation.reason : 'No recommendation yet.';
+          var desc = document.createElement('span');
+          desc.style.cssText = 'font-size:0.875rem;line-height:1.55;color:var(--rg-muted);';
+          desc.textContent = filled ? recommendation.reason : 'No recommendation yet.';
           card.appendChild(desc);
 
           return card;
         }
 
-        function renderPicks(containerId, author, recommendations) {
+        function renderPicks(containerId, author, recommendations, accent) {
           var container = document.getElementById(containerId);
           if (!container) return;
 
@@ -99,15 +151,15 @@
             var recommendation = recommendations.find(function (r) {
               return r.sport === sport && r.author === author;
             });
-            container.appendChild(buildCard(sport, recommendation));
+            container.appendChild(buildCard(sport, recommendation, accent));
           });
         }
 
         fetch('/recommendation')
           .then(function (res) { return res.json(); })
           .then(function (recommendations) {
-            renderPicks('admin-picks', 'ADMIN', recommendations);
-            renderPicks('ai-picks', 'AI', recommendations);
+            renderPicks('admin-picks', 'ADMIN', recommendations, 'var(--color-accent)');
+            renderPicks('ai-picks', 'AI', recommendations, 'var(--rg-ai)');
           })
           .catch(function (err) {
             console.error('[recommendations] failed to load', err);

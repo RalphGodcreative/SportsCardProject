@@ -16,75 +16,43 @@
       });
 
     </script>
-    
-    <style>
-      .butt {
-        margin: auto;
-      }
-      #itemCount {
-        margin: 20px;
-        font-size: 20px;
-        text-align: center;
-        color: #94a3b8;
-      }
-      #result-list {
-        background-color: #12121a;
-        border: 1px solid rgba(49, 246, 181, 0.15);
-        box-shadow: 0 0 20px rgba(49, 246, 181, 0.08);
-        padding: 8px 0;
-        min-width: 200px;
-      }
-      .result-item {
-        padding: 8px 24px;
-        color: #e2e8f0;
-        font-size: 16px;
-      }
-      .result-item:nth-child(odd) {
-        background-color: rgba(49, 246, 181, 0.04);
-      }
-      .result-item:hover {
-        background-color: rgba(49, 246, 181, 0.09);
-      }
-      .random-count {
-        color: #31F6B5;
-        text-shadow: 0 0 10px rgba(49, 246, 181, 0.6);
-        font-weight: bold;
-      }
-      .result-actions {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 16px;
-      }
-    </style>
-    <link rel="stylesheet" th:href="@{/assets/style.css}" />
+
+    <th:block th:replace="~{fragments/head :: styles}"></th:block>
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
-    <div class="page-top">
-      <div>
+
+    <div class="rg-page" style="max-width: 40rem;">
+
+      <div class="rg-page-head">
         <h1>Result</h1>
-        <div id="itemCount">you have <span id="itemLength"></span> items</div>
-
-        <div id="result-list">
-          <div class="result-item" th:each="value,status:${randomList}">
-            [[${status.count}]] : [[${value}]]
-          </div>
-        </div>
-
-        <div style="margin: 24px 0; text-align: center; font-size: 20px;">
-          you have randomized <span class="random-count">[[${randomTimes}]]</span> times
-        </div>
-
-        <div class="result-actions">
-          <form method="post" th:action="@{/randomize}">
-            <textarea style="display: none" th:name="nameList">[[${nameList}]]</textarea>
-            <input type="hidden" th:name="randomTimes" th:value="${randomTimes}" />
-            <button type="submit" class="confirm-butt">Randomize again</button>
-          </form>
-          <button class="neon-butt" th:onclick="window.location.href=[[@{/random}]]">Return</button>
-        </div>
+        <p>
+          <span id="itemCount">you have <span id="itemLength">0</span> items</span>
+          &middot;
+          randomized <span style="color: var(--color-accent); font-weight: 700; text-shadow: 0 0 10px rgba(49, 246, 181, 0.6);">[[${randomTimes}]]</span> times
+        </p>
       </div>
+
+      <div class="rg-table-card" id="result-list">
+        <table class="table table-zebra rg-table">
+          <tbody>
+            <tr class="result-item" th:each="value,status:${randomList}">
+              <td class="rg-num" style="width: 3.5rem; color: var(--rg-dim);">[[${status.count}]]</td>
+              <td>[[${value}]]</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="rg-form-actions">
+        <form method="post" th:action="@{/randomize}" style="margin: 0;">
+          <textarea style="display: none" th:name="nameList">[[${nameList}]]</textarea>
+          <input type="hidden" th:name="randomTimes" th:value="${randomTimes}" />
+          <button type="submit" class="btn btn-success">Randomize again</button>
+        </form>
+        <a href="/random" class="btn btn-ghost">Return</a>
+      </div>
+
     </div>
   </body>
 </html>

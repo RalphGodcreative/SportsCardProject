@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- The card table's original flat columns: one column per field, each with a
+     .show-* element for viewing and an .update-element input for editing.
+     The page's jQuery toggles the two on modify/cancel, .save reads
+     row.find(".year") etc., and getCompLink() in util.js reads the .show-*
+     text, so the class names here are load-bearing - keep them.
+     Pages append their own <th>tags</th><th>action</th> after these. -->
+
+<th:block th:fragment="headers">
+  <th>id</th>
+  <th>year</th>
+  <th>sports</th>
+  <th>publisher</th>
+  <th>set</th>
+  <th>player</th>
+  <th>auto</th>
+  <th>insert</th>
+  <th>parallel</th>
+  <th>numbered</th>
+  <th>grade</th>
+  <th>value</th>
+  <th>note</th>
+</th:block>
+
+<th:block th:fragment="cells(card)">
+  <td data-label="id">
+    <span class="show show-id rg-num">[[${card.id}]]</span>
+    <input type="text" class="update-element id" size="4" th:value="${card.id}" disabled />
+  </td>
+  <td data-label="year">
+    <span class="show show-year rg-num">[[${card.year}]]</span>
+    <input type="text" class="update-element year" size="4" th:value="${card.year}" />
+  </td>
+  <td data-label="sports">
+    <span class="show show-sports">[[${card.sports}]]</span>
+    <input type="text" class="update-element sports" size="6" th:value="${card.sports}" />
+  </td>
+  <td data-label="publisher">
+    <span class="show show-publisher">[[${card.publisher}]]</span>
+    <input type="text" class="update-element publisher" size="6" th:value="${card.publisher}" />
+  </td>
+  <td data-label="set">
+    <span class="show show-set">[[${card.set}]]</span>
+    <input type="text" class="update-element set" size="10" th:value="${card.set}" />
+  </td>
+  <td data-label="player">
+    <span class="show show-player rg-player">[[${card.player}]]</span>
+    <input type="text" class="update-element player" size="12" th:value="${card.player}" />
+  </td>
+  <td data-label="auto">
+    <span class="show show-auto">[[${card.auto}]]</span>
+    <input type="checkbox" class="update-element auto" th:checked="${card.auto}" />
+  </td>
+  <td data-label="insert">
+    <span class="show show-insert">[[${card.insert}]]</span>
+    <input type="text" class="update-element insert" size="6" th:value="${card.insert}" />
+  </td>
+  <td data-label="parallel">
+    <span class="show show-parallel">[[${card.parallel}]]</span>
+    <input type="text" class="update-element parallel" size="6" th:value="${card.parallel}" />
+  </td>
+  <td data-label="numbered">
+    <span class="show show-numbered rg-num">[[${card.numbered}]]</span>
+    <input type="text" class="update-element numbered" size="6" th:value="${card.numbered}" />
+  </td>
+  <td data-label="grade">
+    <span class="show show-grade">[[${card.grade}]]</span>
+    <input type="text" class="update-element grade" size="6" th:value="${card.grade}" />
+  </td>
+  <td data-label="value">
+    <span class="show show-value rg-num">[[${card.value}]]</span>
+    <input type="text" class="update-element value" size="6" th:value="${card.value}" />
+  </td>
+  <td data-label="note">
+    <span class="show show-note">[[${card.note}]]</span>
+  </td>
+</th:block>
+
+</body>
+</html>

@@ -2,9 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-
-  <title>Transactions
-  </title>
+  <title>Transaction</title>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,7 +11,6 @@
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{/js/util.js}"></script>
-  <script type="text/javascript" th:src="@{/js/responsive-card-table.js}"></script>
   <script>
     $(document).ready(function () {
       $.ajaxSetup({
@@ -100,8 +97,9 @@
         });
       });
 
+      // The per-transaction block used to be .page-top; it is .rg-page now.
       $(".tran-edit-butt").on("click", function () {
-        var block = $(this).closest(".page-top");
+        var block = $(this).closest(".rg-page");
         block.find("#tran-table .show").hide();
         block.find("#tran-table .update-element").show();
         $(this).hide();
@@ -111,7 +109,7 @@
       });
 
       $(".tran-cancel-butt").on("click", function () {
-        var block = $(this).closest(".page-top");
+        var block = $(this).closest(".rg-page");
         block.find("#tran-table .show").show();
         block.find("#tran-table .update-element").hide();
         block.find(".tran-edit-butt").show();
@@ -122,7 +120,7 @@
       });
 
       $(".tran-save-butt").on("click", function () {
-        var block = $(this).closest(".page-top");
+        var block = $(this).closest(".rg-page");
         var transactionId = block.find(".delete-butt").data("id");
 
         var existingCardUpdates = [];
@@ -238,7 +236,7 @@
 
       $(".card-remove-butt").on("click", function () {
         if (!confirm("Delete this card from the transaction? This will permanently delete the card.")) return;
-        var block = $(this).closest(".page-top");
+        var block = $(this).closest(".rg-page");
         var transactionId = block.find(".delete-butt").data("id");
         var cardId = $(this).data("card-id");
         var row = $(this).closest("tr");
@@ -262,26 +260,29 @@
 
       var cardClipboard = {};
 
+      // Keep in step with the seed rows in .existing-cards-table below.
       function newCardRowHtml() {
         return `
         <tr class="card-data">
-          <td><input type="text" class="year" size="4" /></td>
-          <td><input type="text" class="sports" size="6" /></td>
-          <td><input type="text" class="publisher" size="6" /></td>
-          <td><input type="text" class="set" size="10" /></td>
-          <td><input type="text" class="player" /></td>
-          <td><input type="checkbox" class="auto" /></td>
-          <td><input type="text" class="insert" size="6" /></td>
-          <td><input type="text" class="parallel" size="6" /></td>
-          <td><input type="text" class="numbered" size="6" /></td>
-          <td><input type="text" class="grade" size="6" /></td>
-          <td><input type="text" class="value" size="6" /></td>
-          <td><div class="tag-picker"></div></td>
-          <td>
-            <button class="copy action-butt">copy</button>
-            <button class="paste action-butt">paste</button>
-            <button class="clear action-butt cancel">clear</button>
-            <button class="delete-card action-butt cancel">delete</button>
+          <td data-label="year"><input type="text" class="year input input-sm" /></td>
+          <td data-label="sports"><input type="text" class="sports input input-sm" /></td>
+          <td data-label="publisher"><input type="text" class="publisher input input-sm" /></td>
+          <td data-label="set"><input type="text" class="set input input-sm" /></td>
+          <td data-label="player"><input type="text" class="player input input-sm" /></td>
+          <td data-label="auto"><input type="checkbox" class="auto checkbox checkbox-sm" /></td>
+          <td data-label="insert"><input type="text" class="insert input input-sm" /></td>
+          <td data-label="parallel"><input type="text" class="parallel input input-sm" /></td>
+          <td data-label="numbered"><input type="text" class="numbered input input-sm" /></td>
+          <td data-label="grade"><input type="text" class="grade input input-sm" /></td>
+          <td data-label="value"><input type="text" class="value input input-sm" /></td>
+          <td data-label="tags"><div class="tag-picker"></div></td>
+          <td class="rg-cell-actions">
+            <div class="rg-row-actions">
+              <button class="copy btn btn-xs btn-outline btn-accent">copy</button>
+              <button class="paste btn btn-xs btn-outline btn-accent">paste</button>
+              <button class="clear btn btn-xs btn-outline btn-error">clear</button>
+              <button class="delete-card btn btn-xs btn-outline btn-error">delete</button>
+            </div>
           </td>
         </tr>`;
       }
@@ -289,22 +290,22 @@
       $(".add-card-row").on("click", function () {
         var table = $(this).closest(".add-cards-section").find(".existing-cards-table");
         var row = $(newCardRowHtml());
-        table.append(row);
+        table.find("tbody").append(row);
         TagPicker.initAll(row);
       });
 
-      $(".page-top").on("click", ".delete-card", function () {
+      $(".rg-page").on("click", ".delete-card", function () {
         $(this).closest(".card-data").remove();
       });
 
-      $(".page-top").on("click", ".clear", function () {
+      $(".rg-page").on("click", ".clear", function () {
         var row = $(this).closest("tr");
         row.find("input[type=text]:not(.id)").val("");
         row.find("input[type=checkbox]").prop("checked", false);
         TagPicker.set(row.find(".tag-picker"), []);
       });
 
-      $(".page-top").on("click", ".copy", function () {
+      $(".rg-page").on("click", ".copy", function () {
         var row = $(this).closest("tr");
         cardClipboard = {
           year: row.find(".year").val(),
@@ -322,7 +323,7 @@
         };
       });
 
-      $(".page-top").on("click", ".paste", function () {
+      $(".rg-page").on("click", ".paste", function () {
         var row = $(this).closest("tr");
         row.find(".year").val(cardClipboard.year || "");
         row.find(".sports").val(cardClipboard.sports || "");
@@ -341,293 +342,163 @@
     });
   </script>
 
-  <style>
-    .update-element {
-      display: none;
-    }
-
-    #tran-table table,
-    tr,
-    th,
-    td {
-      padding: 10px;
-      border: 1px solid rgba(202, 71, 245, 0.2);
-      border-collapse: collapse;
-      color: #e2e8f0;
-    }
-
-    #tran-table {
-      border-radius: 3px;
-      overflow-x: auto;
-      background-color: #12121a;
-      box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
-    }
-
-    #tran-table th {
-      background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
-      text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
-    }
-
-    #delete-div {
-      text-align: end;
-      margin: 5% 0 5% 0;
-    }
-
-    .delete-butt,
-    .tran-edit-butt,
-    .tran-save-butt,
-    .tran-cancel-butt {
-      font-size: 20px;
-      padding: 6px 16px;
-    }
-
-    #card-table-wrap {
-      border-radius: 3px;
-      background-color: #12121a;
-      box-shadow: 0 0 20px rgba(202, 71, 245, 0.05);
-    }
-
-    #card-table {
-      border-collapse: collapse;
-    }
-
-    #card-table tr,
-    #card-table th,
-    #card-table td {
-      padding: 10px;
-      border: 1px solid rgba(202, 71, 245, 0.2);
-      color: #e2e8f0;
-    }
-
-    #card-table th {
-      background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
-      text-shadow: 0 0 8px rgba(202, 71, 245, 0.4);
-    }
-
-    .add-cards-section {
-      margin-top: 5%;
-    }
-
-    .gold-form-wrap table,
-    .gold-form-wrap tr,
-    .gold-form-wrap th,
-    .gold-form-wrap td {
-      border: 1px solid rgba(250, 201, 56, 0.25);
-      border-collapse: collapse;
-      color: #e2e8f0;
-    }
-
-    .gold-form-wrap th {
-      padding-left: 6px;
-      padding-right: 6px;
-      background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(250, 201, 56, 0.3));
-      text-shadow: 0 0 8px rgba(250, 201, 56, 0.4);
-    }
-
-    .gold-form-wrap td {
-      padding-left: 6px;
-      padding-right: 6px;
-      padding-top: 4px;
-      padding-bottom: 4px;
-    }
-
-    .add-cards-section i {
-      color: #f0abfc;
-    }
-
-  </style>
-  <link rel="stylesheet" th:href="@{/assets/style.css}" />
-  <link rel="stylesheet" th:href="@{/assets/card-pages.css}" />
-  <link rel="stylesheet" th:href="@{/assets/responsive-tables.css}" />
-
+  <th:block th:replace="~{fragments/head :: styles}"></th:block>
   <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
 </head>
 
 <body>
   <div th:replace="~{banner.html :: header}"></div>
+
   <div th:each="transactionWithCard : ${transactionWithCardList}">
-    <div class="page-top">
-      <div id="tran-table">
-        <div class="table-center">
-        <table>
-          <tr>
-            <th>id</th>
-            <th>date</th>
-            <th>type</th>
-            <th>amount</th>
-          </tr>
-          <tr>
-            <td>[[${transactionWithCard.transaction.id}]]</td>
-            <td>
-              <span class="show">[[${transactionWithCard.transaction.date}]]</span>
-              <input type="date" class="update-element tran-date" th:value="${transactionWithCard.transaction.date}" />
-            </td>
-            <td>
-              <span class="show">[[${transactionWithCard.transaction.type}]]</span>
-              <select class="update-element tran-type">
-                <option value="Break" th:selected="${transactionWithCard.transaction.type == 'Break'}">Break</option>
-                <option value="Buy" th:selected="${transactionWithCard.transaction.type == 'Buy'}">Buy</option>
-                <option value="Trade" th:selected="${transactionWithCard.transaction.type == 'Trade'}">Trade</option>
-                <option value="Open" th:selected="${transactionWithCard.transaction.type == 'Open'}">Open</option>
-                <option value="Giveaway" th:selected="${transactionWithCard.transaction.type == 'Giveaway'}">Giveaway</option>
-                <option value="Sell" th:selected="${transactionWithCard.transaction.type == 'Sell'}">Sell</option>
-              </select>
-            </td>
-            <td>
-              <span class="show">[[${transactionWithCard.transaction.amount}]]</span>
-              <input type="text" class="update-element tran-amount" th:value="${transactionWithCard.transaction.amount}" />
-            </td>
-          </tr>
-        </table>
-        </div>
-        <div id="delete-div">
-          <button class="tran-edit-butt action-butt">edit</button>
-          <button class="tran-save-butt confirm-butt update-element">save</button>
-          <button class="tran-cancel-butt destroy-butt update-element">cancel</button>
-          <button class="delete-butt destroy-butt" th:attr="data-id=${transactionWithCard.transaction.id}">delete</button>
-        </div>
+    <div class="rg-page rg-page--wide">
+
+      <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; color: var(--rg-dim); margin-bottom: 0.625rem;">
+        <a href="/transactions/" style="color: var(--rg-dim);">Transactions</a>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+        <span>#<span th:text="${transactionWithCard.transaction.id}">0</span></span>
       </div>
-      <div id="card-table-wrap">
-        <div class="table-center">
-        <table id="card-table" class="mobile-cards">
-          <tr>
-            <th>id</th>
-            <th>year</th>
-            <th>sports</th>
-            <th>publisher</th>
-            <th>set</th>
-            <th>player</th>
-            <th>auto</th>
-            <th>insert</th>
-            <th>parallel</th>
-            <th>numbered</th>
-            <th>grade</th>
-            <th>value</th>
-            <th>note</th>
-            <th>tags</th>
-            <th>action</th>
-          </tr>
-          <tr th:each="card : ${transactionWithCard.cards}">
-            <td>
-              <a class="show show-id">[[${card.id}]]</a><input type="text" class="update-element id" size="4"
-                th:value="${card.id}" disabled />
-            </td>
-            <td>
-              <a class="show show-year">[[${card.year}]]</a><input type="text" class="update-element year" size="4"
-                th:value="${card.year}" />
-            </td>
-            <td>
-              <a class="show show-sports">[[${card.sports}]]</a><input type="text" class="update-element sports" size="6"
-                th:value="${card.sports}" />
-            </td>
-            <td>
-              <a class="show show-publisher">[[${card.publisher}]]</a><input type="text" class="update-element publisher"
-                size="6" th:value="${card.publisher}" />
-            </td>
-            <td>
-              <a class="show show-set">[[${card.set}]]</a><input type="text" class="update-element set" size="10"
-                th:value="${card.set}" />
-            </td>
-            <td>
-              <a class="show show-player">[[${card.player}]]</a><input type="text" class="update-element player"
-                th:value="${card.player}" />
-            </td>
-            <td>
-              <a class="show show-auto">[[${card.auto}]]</a><input type="checkbox" class="update-element auto"
-                th:checked="${card.auto}" />
-            </td>
-            <td>
-              <a class="show show-insert">[[${card.insert}]]</a><input type="text" class="update-element insert" size="6"
-                th:value="${card.insert}" />
-            </td>
-            <td>
-              <a class="show show-parallel">[[${card.parallel}]]</a><input type="text" class="update-element parallel"
-                size="6" th:value="${card.parallel}" />
-            </td>
-            <td>
-              <a class="show show-numbered">[[${card.numbered}]]</a><input type="text" class="update-element numbered"
-                size="6" th:value="${card.numbered}" />
-            </td>
-            <td>
-              <a class="show show-grade">[[${card.grade}]]</a><input type="text" class="update-element grade" size="6"
-                th:value="${card.grade}" />
-            </td>
-            <td>
-              <a class="show show-value">[[${card.value}]]</a><input type="text" class="update-element value" size="6"
-                th:value="${card.value}" />
-            </td>
-            <td><a class="show show-note">[[${card.note}]]</a></td>
-            <td th:replace="~{fragments/tagCell :: cell(${card})}"></td>
-            <td>
-              <span style="display: flex">
-                <button class="show action-butt modify">modify</button>
-                <button class="show action-butt comps">comps</button>
-                <button class="update-element action-butt save">save</button>
-                <button class="update-element action-butt cancel">
-                  cancel
-                </button>
-              </span>
-            </td>
-          </tr>
-        </table>
-        </div>
-      </div>
-      <div class="add-cards-section" style="display:none">
-        <div class="center-div" style="margin-top: 20px; margin-bottom: 10px">
-          <button class="add-card-row confirm-butt">add card</button>
-        </div>
-        <div class="gold-form-wrap">
-          <div class="table-center">
-          <table class="existing-cards-table mobile-form">
-            <tr>
-              <th><i>*</i>year</th>
-              <th>sports</th>
-              <th>publisher</th>
-              <th><i>*</i>set</th>
-              <th><i>*</i>player</th>
-              <th>auto</th>
-              <th>insert</th>
-              <th>parallel</th>
-              <th>numbered</th>
-              <th>grade</th>
-              <th>value</th>
-              <th>tags</th>
-              <th>action</th>
-            </tr>
-            <tr th:each="card : ${transactionWithCard.cards}">
-              <td>
-                <input type="hidden" class="id" th:value="${card.id}" />
-                <input type="text" class="year" size="4" th:value="${card.year}" />
-              </td>
-              <td><input type="text" class="sports" size="6" th:value="${card.sports}" /></td>
-              <td><input type="text" class="publisher" size="6" th:value="${card.publisher}" /></td>
-              <td><input type="text" class="set" size="10" th:value="${card.set}" /></td>
-              <td><input type="text" class="player" th:value="${card.player}" /></td>
-              <td><input type="checkbox" class="auto" th:checked="${card.auto}" /></td>
-              <td><input type="text" class="insert" size="6" th:value="${card.insert}" /></td>
-              <td><input type="text" class="parallel" size="6" th:value="${card.parallel}" /></td>
-              <td><input type="text" class="numbered" size="6" th:value="${card.numbered}" /></td>
-              <td><input type="text" class="grade" size="6" th:value="${card.grade}" /></td>
-              <td><input type="text" class="value" size="6" th:value="${card.value}" /></td>
-              <td>
-                <div class="tag-picker">
-                  <input type="hidden" th:each="t : ${card.tags}" th:value="${t.id}" />
-                </div>
-              </td>
-              <td>
-                <button class="copy action-butt">copy</button>
-                <button class="paste action-butt">paste</button>
-                <button class="clear action-butt cancel">clear</button>
-                <button class="card-remove-butt action-butt cancel" th:attr="data-card-id=${card.id}">delete</button>
-              </td>
-            </tr>
-          </table>
+
+      <div class="rg-panel rg-panel--plain" id="tran-table" style="margin-bottom: 1.25rem;">
+        <h2 class="rg-panel__title" style="color: var(--color-secondary);">Transaction</h2>
+
+        <div class="rg-form-grid">
+          <div class="rg-field">
+            <span class="rg-field__label">id</span>
+            <span class="rg-num" style="min-height: 2.5rem; display: flex; align-items: center; color: var(--rg-dim);">[[${transactionWithCard.transaction.id}]]</span>
+          </div>
+          <div class="rg-field">
+            <span class="rg-field__label">date</span>
+            <span class="show rg-num" style="min-height: 2.5rem; display: flex; align-items: center;">[[${transactionWithCard.transaction.date}]]</span>
+            <input type="date" class="update-element tran-date input" th:value="${transactionWithCard.transaction.date}" />
+          </div>
+          <div class="rg-field">
+            <span class="rg-field__label">type</span>
+            <span class="show" style="min-height: 2.5rem; display: flex; align-items: center;">
+              <span class="badge badge-sm badge-ghost">[[${transactionWithCard.transaction.type}]]</span>
+            </span>
+            <select class="update-element tran-type select">
+              <option value="Break" th:selected="${transactionWithCard.transaction.type == 'Break'}">Break</option>
+              <option value="Buy" th:selected="${transactionWithCard.transaction.type == 'Buy'}">Buy</option>
+              <option value="Trade" th:selected="${transactionWithCard.transaction.type == 'Trade'}">Trade</option>
+              <option value="Open" th:selected="${transactionWithCard.transaction.type == 'Open'}">Open</option>
+              <option value="Giveaway" th:selected="${transactionWithCard.transaction.type == 'Giveaway'}">Giveaway</option>
+              <option value="Sell" th:selected="${transactionWithCard.transaction.type == 'Sell'}">Sell</option>
+            </select>
+          </div>
+          <div class="rg-field">
+            <span class="rg-field__label">amount</span>
+            <span class="show rg-num" style="min-height: 2.5rem; display: flex; align-items: center; font-weight: 700;">[[${transactionWithCard.transaction.amount}]]</span>
+            <input type="text" class="update-element tran-amount input" th:value="${transactionWithCard.transaction.amount}" />
           </div>
         </div>
+
+        <div class="rg-form-actions" id="delete-div">
+          <button class="tran-edit-butt btn btn-sm btn-outline btn-accent">edit</button>
+          <button class="tran-save-butt btn btn-sm btn-success update-element">save</button>
+          <button class="tran-cancel-butt btn btn-sm btn-outline btn-error update-element">cancel</button>
+          <span class="rg-spacer"></span>
+          <button class="delete-butt btn btn-sm btn-outline btn-error" th:attr="data-id=${transactionWithCard.transaction.id}">delete transaction</button>
+        </div>
       </div>
+
+      <!-- Read-only view of the cards in this transaction. -->
+      <div id="card-table-wrap">
+        <div class="rg-table-card">
+          <table id="card-table" class="table table-zebra rg-table rg-card-table">
+            <thead>
+              <tr>
+                <th:block th:replace="~{fragments/cardRow :: headers}"></th:block>
+                <th>tags</th>
+                <th>action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="card : ${transactionWithCard.cards}">
+
+                <th:block th:replace="~{fragments/cardRow :: cells(${card})}"></th:block>
+
+                <td th:replace="~{fragments/tagCell :: cell(${card})}"></td>
+
+                <td class="rg-cell-actions" data-label="action">
+                  <div class="rg-actions">
+                    <button class="show btn btn-xs btn-outline btn-accent modify">modify</button>
+                    <button class="show btn btn-xs btn-outline btn-accent comps">comps</button>
+                    <button class="update-element btn btn-xs btn-success save">save</button>
+                    <button class="update-element btn btn-xs btn-outline btn-error cancel">cancel</button>
+                  </div>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Shown while the transaction is being edited: every card as an
+           editable row, plus add-card for cards not yet recorded. -->
+      <div class="add-cards-section" style="display:none">
+        <div class="rg-toolbar">
+          <span style="font-size: 0.875rem; color: var(--rg-muted);">這筆交易的卡片</span>
+          <span class="rg-spacer"></span>
+          <button class="add-card-row btn btn-sm btn-success">add card</button>
+        </div>
+
+        <div class="rg-table-card">
+          <table class="existing-cards-table table rg-table rg-form-table">
+            <thead>
+              <tr>
+                <th>year <span style="color: var(--rg-pink);">*</span></th>
+                <th>sports</th>
+                <th>publisher</th>
+                <th>set <span style="color: var(--rg-pink);">*</span></th>
+                <th>player <span style="color: var(--rg-pink);">*</span></th>
+                <th>auto</th>
+                <th>insert</th>
+                <th>parallel</th>
+                <th>numbered</th>
+                <th>grade</th>
+                <th>value</th>
+                <th>tags</th>
+                <th>action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="card : ${transactionWithCard.cards}">
+                <td data-label="year">
+                  <input type="hidden" class="id" th:value="${card.id}" />
+                  <input type="text" class="year input input-sm" th:value="${card.year}" />
+                </td>
+                <td data-label="sports"><input type="text" class="sports input input-sm" th:value="${card.sports}" /></td>
+                <td data-label="publisher"><input type="text" class="publisher input input-sm" th:value="${card.publisher}" /></td>
+                <td data-label="set"><input type="text" class="set input input-sm" th:value="${card.set}" /></td>
+                <td data-label="player"><input type="text" class="player input input-sm" th:value="${card.player}" /></td>
+                <td data-label="auto"><input type="checkbox" class="auto checkbox checkbox-sm" th:checked="${card.auto}" /></td>
+                <td data-label="insert"><input type="text" class="insert input input-sm" th:value="${card.insert}" /></td>
+                <td data-label="parallel"><input type="text" class="parallel input input-sm" th:value="${card.parallel}" /></td>
+                <td data-label="numbered"><input type="text" class="numbered input input-sm" th:value="${card.numbered}" /></td>
+                <td data-label="grade"><input type="text" class="grade input input-sm" th:value="${card.grade}" /></td>
+                <td data-label="value"><input type="text" class="value input input-sm" th:value="${card.value}" /></td>
+                <td data-label="tags">
+                  <div class="tag-picker">
+                    <input type="hidden" th:each="t : ${card.tags}" th:value="${t.id}" />
+                  </div>
+                </td>
+                <td class="rg-cell-actions">
+                  <div class="rg-row-actions">
+                    <button class="copy btn btn-xs btn-outline btn-accent">copy</button>
+                    <button class="paste btn btn-xs btn-outline btn-accent">paste</button>
+                    <button class="clear btn btn-xs btn-outline btn-error">clear</button>
+                    <button class="card-remove-butt btn btn-xs btn-outline btn-error" th:attr="data-card-id=${card.id}">delete</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   </div>
-
 
 </body>
 

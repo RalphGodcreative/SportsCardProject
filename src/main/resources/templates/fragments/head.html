@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>head fragments</title>
+</head>
+<body>
+
+  <!--
+    Site stylesheets, in load order.
+
+      daisyui.css  vendored daisyUI 5.7.25 (MIT). Components only — this build
+                   also carries Tailwind's Preflight, which rgneon.css puts back
+                   the browser defaults for.
+      rgneon.css   the theme: daisyUI colour slots mapped onto the palette the
+                   old style.css used, plus the layout primitives daisyUI's
+                   markup would otherwise need Tailwind utilities for.
+
+    style.css is gone. Every page is migrated, and it had to go rather than
+    merely stop being used: it defined its own .btn, .btn-primary,
+    .btn-secondary and .dropdown-content, and loading after daisyUI it won
+    every one of those collisions.
+  -->
+  <th:block th:fragment="styles">
+    <link rel="stylesheet" th:href="@{/assets/daisyui.css}" />
+    <link rel="stylesheet" th:href="@{/assets/rgneon.css}" />
+  </th:block>
+
+</body>
+</html>
