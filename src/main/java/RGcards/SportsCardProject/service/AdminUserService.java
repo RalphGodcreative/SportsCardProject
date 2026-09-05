@@ -1,16 +1,9 @@
 package RGcards.SportsCardProject.service;
 
-import RGcards.SportsCardProject.dao.CardRepository;
-import RGcards.SportsCardProject.dao.SearchKeywordRepository;
-import RGcards.SportsCardProject.dao.TagRepository;
-import RGcards.SportsCardProject.dao.TransactionInfoRepository;
-import RGcards.SportsCardProject.dao.TransactionRepository;
 import RGcards.SportsCardProject.dao.UserRepository;
-import RGcards.SportsCardProject.entity.Card;
 import RGcards.SportsCardProject.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,11 +12,7 @@ import java.util.List;
 public class AdminUserService {
 
     private final UserRepository userRepository;
-    private final CardRepository cardRepository;
-    private final TransactionRepository transactionRepository;
-    private final TransactionInfoRepository transactionInfoRepository;
-    private final TagRepository tagRepository;
-    private final SearchKeywordRepository searchKeywordRepository;
+    private final AccountDeletionService accountDeletionService;
 
     public List<User> findAll() {
         return userRepository.findAll();
@@ -50,21 +39,9 @@ public class AdminUserService {
         userRepository.save(target);
     }
 
-    @Transactional
     public void deleteUserAndAllData(Long targetId, User actingAdmin) {
         requireNotSelf(targetId, actingAdmin, "delete your own account");
-        User target = userRepository.findById(targetId).orElseThrow();
-        requireNotLastAdmin(target, "ROLE_USER");
-
-        List<Card> cards = cardRepository.findByUserIdOrderByIdDesc(targetId);
-        for (Card card : cards) {
-            transactionInfoRepository.deleteAll(transactionInfoRepository.findByCardId(card.getId()));
-        }
-        cardRepository.deleteAll(cards);
-        transactionRepository.deleteAll(transactionRepository.findByUserId(targetId));
-        tagRepository.deleteAll(tagRepository.findByUserIdOrderByIdAsc(targetId));
-        searchKeywordRepository.deleteAll(searchKeywordRepository.findByUserId(targetId));
-        userRepository.deleteById(targetId);
+        accountDeletionService.deleteUserAndAllData(targetId);
     }
 
     private void requireNotSelf(Long targetId, User actingAdmin, String action) {

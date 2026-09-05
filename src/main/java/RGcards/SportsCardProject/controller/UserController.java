@@ -3,18 +3,24 @@ package RGcards.SportsCardProject.controller;
 import RGcards.SportsCardProject.dao.SearchKeywordRepository;
 import RGcards.SportsCardProject.dao.UserRepository;
 import RGcards.SportsCardProject.entity.User;
+import RGcards.SportsCardProject.service.AccountDeletionService;
 import RGcards.SportsCardProject.service.CardService;
 import RGcards.SportsCardProject.service.UsageLimits;
 import RGcards.SportsCardProject.util.ValidationUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/user")
@@ -26,6 +32,7 @@ public class UserController {
     private final CardService cardService;
     private final SearchKeywordRepository searchKeywordRepository;
     private final UsageLimits usageLimits;
+    private final AccountDeletionService accountDeletionService;
 
     @GetMapping("/edit")
     public String editPage(@AuthenticationPrincipal User user, Model model) {
@@ -89,6 +96,36 @@ public class UserController {
         userRepository.save(user);
 
         return "redirect:/user/edit?saved";
+    }
+
+    @PostMapping("/delete")
+    public String deleteOwnAccount(
+            @AuthenticationPrincipal(errorOnInvalidType = false) User currentUser,
+            @RequestParam String confirmUsername,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            RedirectAttributes redirectAttributes
+    ) {
+        if (currentUser == null) return "redirect:/";
+
+        // The form makes the user type their own username; re-check it here so a
+        // stray POST can never wipe an account on its own.
+        if (!currentUser.getDisplayName().equals(confirmUsername)) {
+            redirectAttributes.addFlashAttribute("error",
+                    "The username you typed did not match, so nothing was deleted.");
+            return "redirect:/user/edit";
+        }
+
+        try {
+            accountDeletionService.deleteUserAndAllData(currentUser.getId());
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/user/edit";
+        }
+
+        new SecurityContextLogoutHandler().logout(request, response,
+                SecurityContextHolder.getContext().getAuthentication());
+        return "redirect:/login?deleted";
     }
 
 }
