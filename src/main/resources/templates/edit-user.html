@@ -22,6 +22,20 @@
     <div th:if="${param.saved}" class="alert alert-success alert-soft" style="margin-bottom: 1rem;">
       <span>Changes saved.</span>
     </div>
+    <div th:if="${param.linked}" class="alert alert-success alert-soft" style="margin-bottom: 1rem;">
+      <span>Google account connected.</span>
+    </div>
+    <div th:if="${param.unlinked}" class="alert alert-success alert-soft" style="margin-bottom: 1rem;">
+      <span>Google account disconnected.</span>
+    </div>
+    <div th:if="${param.linkError}" class="alert alert-error alert-soft" style="margin-bottom: 1rem;"
+         th:switch="${param.linkError[0]}">
+      <span th:case="'google_account_taken'">That Google account is already connected to another account.</span>
+      <span th:case="'email_taken'">That Google account's email address already belongs to another account.</span>
+      <span th:case="'already_linked'">Your account is already connected to a different Google account.</span>
+      <span th:case="'email_unverified'">That Google email address is not verified, so it cannot be connected.</span>
+      <span th:case="*">Could not connect your Google account. Please try again.</span>
+    </div>
 
     <form id="profile-form" th:action="@{/user/edit}" method="post">
       <div class="rg-panel rg-panel--plain" style="margin-bottom: 1.25rem;">
@@ -41,7 +55,9 @@
           </label>
 
           <div>
-            <button type="button" class="btn btn-sm btn-outline btn-primary" id="toggle-pwd">Change Password</button>
+            <button type="button" class="btn btn-sm btn-outline btn-primary" id="toggle-pwd"
+                    th:attr="data-closed-label=${user.password == null} ? 'Set a password' : 'Change Password'"
+                    th:text="${user.password == null} ? 'Set a password' : 'Change Password'">Change Password</button>
           </div>
 
           <div id="pwd-section" style="display:none; flex-direction: column; gap: 1rem;">
@@ -73,6 +89,34 @@
         </div>
       </div>
     </form>
+
+    <div class="rg-panel rg-panel--plain" style="margin-bottom: 1.25rem;">
+      <h2 class="rg-panel__title" style="color: var(--color-primary);">Sign-in methods</h2>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <div>
+          <div style="font-size: 0.9rem; font-weight: 700;">Google</div>
+          <p th:if="${user.googleSub != null}" style="margin: 0.25rem 0 0; font-size: 0.8125rem; color: var(--rg-muted);">
+            Connected &mdash; &quot;Continue with Google&quot; signs you into this account.
+          </p>
+          <p th:if="${user.googleSub == null}" style="margin: 0.25rem 0 0; font-size: 0.8125rem; color: var(--rg-muted);">
+            Not connected. Connect it to sign in with Google as well as with your password.
+          </p>
+        </div>
+
+        <form th:if="${user.googleSub == null}" th:action="@{/user/link/google}" method="post">
+          <button type="submit" class="btn btn-sm btn-outline btn-primary">Connect Google</button>
+        </form>
+        <form th:if="${user.googleSub != null}" th:action="@{/user/unlink/google}" method="post">
+          <button type="submit" class="btn btn-sm btn-outline">Disconnect</button>
+        </form>
+      </div>
+
+      <p th:if="${user.password == null}" style="margin: 0.75rem 0 0; font-size: 0.8125rem; color: var(--rg-muted);">
+        You have no password yet, so Google is currently your only way in. Set one above to also
+        sign in with your email address.
+      </p>
+    </div>
 
     <div class="rg-panel rg-panel--plain">
       <h2 class="rg-panel__title" style="color: var(--color-primary);">Your usage</h2>
@@ -151,6 +195,7 @@
     // on the profile form.
     var form = document.getElementById('profile-form');
     var pwdOpen = false;
+    var pwdClosedLabel = toggleBtn.getAttribute('data-closed-label') || 'Change Password';
 
     function setRule(el, met, text) {
       el.textContent = (met ? '✓ ' : '✗ ') + text;
@@ -173,7 +218,7 @@
     toggleBtn.addEventListener('click', function () {
       pwdOpen = !pwdOpen;
       pwdSection.style.display = pwdOpen ? 'flex' : 'none';
-      toggleBtn.textContent = pwdOpen ? 'Cancel Password Change' : 'Change Password';
+      toggleBtn.textContent = pwdOpen ? 'Cancel Password Change' : pwdClosedLabel;
       if (!pwdOpen) {
         pwdInput.value = '';
         confirmInput.value = '';

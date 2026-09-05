@@ -1,5 +1,7 @@
 package RGcards.SportsCardProject.config;
 
+import RGcards.SportsCardProject.security.OAuth2LoginFailureHandler;
+import RGcards.SportsCardProject.security.OAuth2LoginSuccessHandler;
 import RGcards.SportsCardProject.service.AppUserDetailsService;
 import RGcards.SportsCardProject.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,8 @@ public class SecurityConfig {
 
     private final AppUserDetailsService userDetailsService;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -57,7 +61,10 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
                 )
-                .defaultSuccessUrl("/", true)
+                // Handlers rather than defaultSuccessUrl: a "connect Google" round trip has
+                // to land back on the profile page, and a failure has to say what went wrong.
+                .successHandler(oAuth2LoginSuccessHandler)
+                .failureHandler(oAuth2LoginFailureHandler)
             )
             .logout(logout -> logout
                 .logoutSuccessUrl("/login?logout")
