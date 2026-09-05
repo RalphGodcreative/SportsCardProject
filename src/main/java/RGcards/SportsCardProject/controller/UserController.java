@@ -3,6 +3,7 @@ package RGcards.SportsCardProject.controller;
 import RGcards.SportsCardProject.dao.SearchKeywordRepository;
 import RGcards.SportsCardProject.dao.UserRepository;
 import RGcards.SportsCardProject.entity.User;
+import RGcards.SportsCardProject.security.AccountLinkSession;
 import RGcards.SportsCardProject.service.AccountDeletionService;
 import RGcards.SportsCardProject.service.CardService;
 import RGcards.SportsCardProject.service.UsageLimits;
@@ -35,10 +36,15 @@ public class UserController {
     private final AccountDeletionService accountDeletionService;
 
     @GetMapping("/edit")
-    public String editPage(@AuthenticationPrincipal User user, Model model) {
+    public String editPage(@AuthenticationPrincipal(errorOnInvalidType = false) User user, Model model) {
         if (user == null) return "redirect:/";
-        model.addAttribute("user", user);
-        addUsageAttributes(model, user);
+        // Read the account back from the DB: the SecurityContext principal is a snapshot
+        // from sign-in time, so it still shows the old values right after a save or a
+        // Google connect/disconnect.
+        User fresh = userRepository.findById(user.getId()).orElse(null);
+        if (fresh == null) return "redirect:/";
+        model.addAttribute("user", fresh);
+        addUsageAttributes(model, fresh);
         return "edit-user";
     }
 
@@ -96,6 +102,43 @@ public class UserController {
         userRepository.save(user);
 
         return "redirect:/user/edit?saved";
+    }
+
+    /**
+     * Starts the Google round trip in "linking" mode. A POST so Spring Security's CSRF
+     * token protects it &mdash; nobody can be walked into connecting an account by a link.
+     */
+    @PostMapping("/link/google")
+    public String linkGoogle(
+            @AuthenticationPrincipal(errorOnInvalidType = false) User currentUser,
+            HttpServletRequest request
+    ) {
+        if (currentUser == null) return "redirect:/";
+        AccountLinkSession.start(request, currentUser.getId());
+        return "redirect:/oauth2/authorization/google";
+    }
+
+    @PostMapping("/unlink/google")
+    public String unlinkGoogle(
+            @AuthenticationPrincipal(errorOnInvalidType = false) User currentUser,
+            RedirectAttributes redirectAttributes
+    ) {
+        if (currentUser == null) return "redirect:/";
+
+        User user = userRepository.findById(currentUser.getId()).orElseThrow();
+        if (user.getGoogleSub() == null) {
+            return "redirect:/user/edit";
+        }
+        // Disconnecting the only way in would lock the account out for good.
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Set a password first, otherwise disconnecting Google would leave you no way to sign in.");
+            return "redirect:/user/edit";
+        }
+
+        user.setGoogleSub(null);
+        userRepository.save(user);
+        return "redirect:/user/edit?unlinked";
     }
 
     @PostMapping("/delete")

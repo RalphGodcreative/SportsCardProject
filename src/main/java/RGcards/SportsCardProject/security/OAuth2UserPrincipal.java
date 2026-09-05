@@ -19,6 +19,7 @@ public class OAuth2UserPrincipal extends User implements OAuth2User {
         setEnabled(user.isEnabled());
         setAiCallCount(user.getAiCallCount());
         setMaxAiCallsOverride(user.getMaxAiCallsOverride());
+        setGoogleSub(user.getGoogleSub());
         this.attributes = attributes;
     }
 

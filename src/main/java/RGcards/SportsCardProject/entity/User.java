@@ -42,6 +42,10 @@ public class User implements UserDetails {
     @Column(name = "max_ai_calls_override")
     private Integer maxAiCallsOverride;
 
+    /** Google's stable subject id, set once the account is linked to a Google login. */
+    @Column(name = "google_sub", unique = true)
+    private String googleSub;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role));
