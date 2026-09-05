@@ -44,6 +44,7 @@
       <p class="rg-auth-msg" th:if="${param.error}" style="color: var(--color-error);">Invalid email or password.</p>
       <p class="rg-auth-msg" th:if="${param.logout}" style="color: var(--color-success);">You have been signed out.</p>
       <p class="rg-auth-msg" th:if="${param.registered}" style="color: var(--color-success);">Account created &mdash; you can now sign in.</p>
+      <p class="rg-auth-msg" th:if="${param.deleted}" style="color: var(--color-success);">Your account and all of its data have been deleted.</p>
 
       <p class="rg-auth-msg" th:if="${registrationEnabled}">
         Don't have an account? <a href="/register" class="link link-primary">Register</a>

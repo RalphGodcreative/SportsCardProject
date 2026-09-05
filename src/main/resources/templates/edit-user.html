@@ -99,6 +99,42 @@
       </div>
     </div>
 
+    <div class="rg-panel" style="margin-top: 1.25rem; border-color: rgba(255, 92, 122, 0.28);">
+      <h2 class="rg-panel__title" style="color: var(--color-error); text-shadow: 0 0 8px rgba(255, 92, 122, 0.35);">Danger zone</h2>
+      <p style="margin: -0.5rem 0 1rem; font-size: 0.8125rem; color: var(--rg-muted);">
+        Deleting your account also erases every card, transaction, tag and saved keyword you own.
+        This cannot be undone.
+      </p>
+      <button type="button" class="btn btn-sm btn-outline btn-error" id="open-delete">Delete my account</button>
+    </div>
+
+    <!-- daisyUI modal, opened by adding .modal-open (same pattern as allCard.html). -->
+    <div id="delete-modal" class="modal">
+      <div class="modal-box" style="max-width: 30rem;">
+        <h3 style="margin: 0 0 0.75rem; font-size: 1.05rem; font-weight: 700; color: var(--color-error);">
+          Delete your account?
+        </h3>
+        <p style="margin: 0 0 1.25rem; font-size: 0.875rem; line-height: 1.7;">
+          Everything you have stored here goes with it &mdash; cards, transactions, tags and saved
+          keywords. There is no way to get it back.
+        </p>
+        <form th:action="@{/user/delete}" method="post">
+          <label class="rg-field">
+            <span class="rg-field__label">
+              Type <span style="color: var(--color-error);" th:text="${user.displayName}"></span> to confirm
+            </span>
+            <input type="text" name="confirmUsername" id="confirm-username" class="input"
+                   autocomplete="off" required th:data-username="${user.displayName}" />
+          </label>
+          <div class="modal-action">
+            <button type="button" class="btn btn-sm btn-outline" id="cancel-delete">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-error" id="confirm-delete" disabled>Delete forever</button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-backdrop" id="delete-modal-backdrop"></div>
+    </div>
+
   </div>
 
   <script>
@@ -163,6 +199,30 @@
         confirmError.style.display = 'block';
         confirmInput.setCustomValidity('Passwords do not match.');
       }
+    });
+
+    var deleteModal = document.getElementById('delete-modal');
+    var confirmUsername = document.getElementById('confirm-username');
+    var confirmDeleteBtn = document.getElementById('confirm-delete');
+
+    function closeDeleteModal() {
+      deleteModal.classList.remove('modal-open');
+      confirmUsername.value = '';
+      confirmDeleteBtn.disabled = true;
+    }
+
+    document.getElementById('open-delete').addEventListener('click', function () {
+      deleteModal.classList.add('modal-open');
+      confirmUsername.focus();
+    });
+
+    document.getElementById('cancel-delete').addEventListener('click', closeDeleteModal);
+    document.getElementById('delete-modal-backdrop').addEventListener('click', closeDeleteModal);
+
+    // Arm the delete button only once the typed name matches exactly; the
+    // controller re-checks it, this is just to stop a stray click.
+    confirmUsername.addEventListener('input', function () {
+      confirmDeleteBtn.disabled = confirmUsername.value !== confirmUsername.dataset.username;
     });
   </script>
 </body>
