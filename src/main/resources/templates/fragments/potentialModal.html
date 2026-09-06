@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Page-level assets for the AI potential dialog. Include once, in <head>,
+     after jQuery. -->
+<th:block th:fragment="assets">
+  <script type="text/javascript" th:src="@{/js/potential-modal.js}"></script>
+</th:block>
+
+<!-- The dialog itself. Include once per page, as a direct child of <body> so
+     nothing can become its containing block and break position: fixed.
+     Opened with PotentialModal.open(cardId); the flat .modal-open rule in
+     rgneon.css is what makes the box appear on browsers without CSS nesting. -->
+<div th:fragment="modal" id="potential-modal" class="modal rg-modal"
+     role="dialog" aria-modal="true" aria-labelledby="potential-modal-title" aria-hidden="true">
+  <div class="modal-box">
+    <span class="rg-modal__grip" aria-hidden="true"></span>
+
+    <div class="rg-modal__head">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/>
+        <path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/>
+      </svg>
+      <h3 class="rg-modal__title" id="potential-modal-title">AI Price Rise Potential</h3>
+      <button type="button" id="potential-modal-x" class="rg-modal__x" aria-label="Close">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="potential-modal-body" class="rg-modal__body">
+      <span class="rg-modal__loading">
+        <span class="loading loading-dots loading-sm"></span>
+        Asking the AI about this card…
+      </span>
+    </div>
+
+    <div class="rg-modal__foot">
+      <button type="button" id="potential-modal-close" class="btn btn-sm btn-outline btn-error">Close</button>
+    </div>
+  </div>
+  <div id="potential-modal-backdrop" class="modal-backdrop"></div>
+</div>
+
+</body>
+</html>
