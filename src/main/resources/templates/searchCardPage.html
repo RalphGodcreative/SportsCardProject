@@ -187,35 +187,8 @@
           window.open(link, "_blank");
         });
 
-        function formatAnalysis(text) {
-          var escaped = $("<div>").text(text).html();
-          var formatted = escaped.replace(/\*\*Potential Rating:\*\*\s*(Low|Medium|High)/gi, function (match, rating) {
-            return "<strong>Potential Rating:</strong> <span class=\"rating-" + rating.toLowerCase() + "\">" + rating + "</span>";
-          });
-          formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-          formatted = formatted.replace(/\n/g, "<br>");
-          return formatted;
-        }
-
         $("#result").on("click", ".potential-btn", function () {
-          var cardId = $(this).data("id");
-          $("#potential-modal-body").text("Loading...");
-          $("#potential-modal").addClass("modal-open");
-          $.ajax({
-            url: "/cardRest/" + cardId + "/potential",
-            type: "GET",
-            success: function (response) {
-              var data = typeof response === "string" ? JSON.parse(response) : response;
-              $("#potential-modal-body").html(formatAnalysis(data.analysis || data.error || "No response."));
-            },
-            error: function () {
-              $("#potential-modal-body").text("Failed to fetch analysis.");
-            },
-          });
-        });
-
-        $("#potential-modal-close, #potential-modal-backdrop").on("click", function () {
-          $("#potential-modal").removeClass("modal-open");
+          PotentialModal.open($(this).data("id"));
         });
 
         $("#result").on("click", ".cancel", function () {
@@ -266,23 +239,12 @@
 
     <th:block th:replace="~{fragments/head :: styles}"></th:block>
     <th:block th:replace="~{fragments/tagCell :: assets}"></th:block>
+    <th:block th:replace="~{fragments/potentialModal :: assets}"></th:block>
   </head>
   <body>
     <div th:replace="~{banner.html :: header}"></div>
 
-    <!-- AI potential. daisyUI modal, opened by adding .modal-open. -->
-    <div id="potential-modal" class="modal">
-      <div class="modal-box" style="max-width: 34rem;">
-        <h3 style="margin: 0 0 0.75rem; font-size: 1.125rem; font-weight: 900; color: var(--rg-ai); text-shadow: 0 0 10px rgba(246, 76, 189, 0.5);">
-          AI Price Rise Potential
-        </h3>
-        <div id="potential-modal-body" style="line-height: 1.8;">Loading...</div>
-        <div class="modal-action">
-          <button id="potential-modal-close" class="btn btn-sm btn-outline btn-error">Close</button>
-        </div>
-      </div>
-      <div id="potential-modal-backdrop" class="modal-backdrop"></div>
-    </div>
+    <div th:replace="~{fragments/potentialModal :: modal}"></div>
 
     <div class="rg-page rg-page--wide">
 

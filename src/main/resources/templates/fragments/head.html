@@ -7,7 +7,7 @@
 <body>
 
   <!--
-    Site stylesheets, in load order.
+    Site stylesheets, in load order, plus the one script every page wants.
 
       daisyui.css  vendored daisyUI 5.7.25 (MIT). Components only — this build
                    also carries Tailwind's Preflight, which rgneon.css puts back
@@ -24,6 +24,11 @@
   <th:block th:fragment="styles">
     <link rel="stylesheet" th:href="@{/assets/daisyui.css}" />
     <link rel="stylesheet" th:href="@{/assets/rgneon.css}" />
+
+    <!-- Adds the duplicate top scrollbar to any .rg-table-card wide enough to
+         scroll sideways. Deferred and vanilla, so it is safe on the pages that
+         do not load jQuery. -->
+    <script defer type="text/javascript" th:src="@{/js/table-top-scroll.js}"></script>
   </th:block>
 
 </body>

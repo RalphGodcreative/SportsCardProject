@@ -24,23 +24,33 @@
       <nav class="rg-nav-desktop">
         <a class="btn btn-sm btn-ghost" href="/random">Randomizer</a>
 
-        <div class="dropdown">
-          <div tabindex="0" role="button" class="btn btn-sm btn-ghost">
-            Cards
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        <!-- Split control: the label is a plain link to the card home page,
+             the caret beside it opens the menu. Before this, "Cards" only
+             opened the dropdown and /card was unreachable from the navbar. -->
+        <div class="rg-nav-split">
+          <a class="btn btn-sm btn-ghost rg-nav-split__link" href="/card">Cards</a>
+          <!-- The link is deliberately OUTSIDE .dropdown: daisyUI opens the menu
+               on :focus-within, so a link inside it would pop the menu open on
+               its way to /card. -->
+          <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-sm btn-ghost rg-nav-split__caret"
+                 aria-label="Open cards menu" aria-haspopup="true">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <ul tabindex="0" class="dropdown-content menu rounded-box rg-menu">
+              <li><a href="/card">Card management</a></li>
+              <li><a href="/card/addNewCard">Add new card</a></li>
+              <li><a href="/card/addTransaction">Add transaction</a></li>
+              <li><a href="/card/sellTransaction">Add sales</a></li>
+              <li><a href="/card/cards">View cards</a></li>
+              <li><a href="/card/searchCard">Search cards</a></li>
+              <li><a href="/transactions/">View transactions</a></li>
+              <li><a href="/tag">Manage tags</a></li>
+              <li sec:authorize="hasAuthority('ROLE_ADMIN')">
+                <a href="/card/allCard">See all cards <span class="badge badge-sm badge-secondary">admin</span></a>
+              </li>
+            </ul>
           </div>
-          <ul tabindex="0" class="dropdown-content menu rounded-box rg-menu">
-            <li><a href="/card/addNewCard">Add new card</a></li>
-            <li><a href="/card/addTransaction">Add transaction</a></li>
-            <li><a href="/card/sellTransaction">Add sales</a></li>
-            <li><a href="/card/cards">View cards</a></li>
-            <li><a href="/card/searchCard">Search cards</a></li>
-            <li><a href="/transactions/">View transactions</a></li>
-            <li><a href="/tag">Manage tags</a></li>
-            <li sec:authorize="hasAuthority('ROLE_ADMIN')">
-              <a href="/card/allCard">See all cards <span class="badge badge-sm badge-secondary">admin</span></a>
-            </li>
-          </ul>
         </div>
 
         <a class="btn btn-sm btn-ghost" href="/crawler">Yahoo拍賣 追蹤</a>
@@ -86,6 +96,7 @@
           <li><a href="/crawler">Yahoo拍賣 追蹤</a></li>
 
           <li class="menu-title">Cards</li>
+          <li><a href="/card">Card management</a></li>
           <li><a href="/card/addNewCard">Add new card</a></li>
           <li><a href="/card/addTransaction">Add transaction</a></li>
           <li><a href="/card/sellTransaction">Add sales</a></li>
