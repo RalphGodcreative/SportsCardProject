@@ -85,6 +85,26 @@
           $("#included-empty").toggle(cardIds.length === 0);
         }
 
+        // note is collapsed until asked for: the card tables are the main
+        // event. The label keeps a dot when a collapsed note still holds text,
+        // so a filled note is never invisible.
+        function syncNoteToggle() {
+          var open = !$("#note-row").prop("hidden");
+          var filled = $.trim($("#note-text").val()) !== "";
+          $("#note-toggle")
+            .text(open ? "− note" : filled ? "note •" : "+ note")
+            .attr("aria-expanded", open ? "true" : "false");
+        }
+
+        $("#note-toggle").on("click", function () {
+          var open = $("#note-row").prop("hidden");
+          $("#note-row").prop("hidden", !open);
+          syncNoteToggle();
+          if (open) $("#note-text").trigger("focus");
+        });
+
+        $("#note-text").on("input", syncNoteToggle);
+
         $("#add-transaction").on("click", function () {
           if(cardIds.length==0){
             alert("no card added");
@@ -161,7 +181,17 @@
 
           $("#include-card tbody").append(includedCard);
           refreshIncludedCount();
+          scrollToIncluded();
         });
+
+        // Same idea in the other direction: after a card joins the sale, show
+        // the list it joined, count badge and Add Transaction button included.
+        function scrollToIncluded() {
+          var el = document.getElementById("included-top");
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
 
         // Bring the results panel into view; #result carries a scroll-margin-top
         // in rgneon.css so the fixed navbar does not cover the heading.
@@ -220,6 +250,9 @@
                 // handler wants keeps its own element: .auto must read exactly
                 // "true"/"false", and .numbered is split on "/".
                 resultCards += '<tr class="card-row">' +
+                  '<td class="rg-cell-actions" data-label="action">' +
+                    '<div class="rg-actions"><button class="btn btn-xs btn-success add-card">add to sale</button></div>' +
+                  '</td>' +
                   '<td data-label="id"><span class="id rg-num">' + esc(card.id) + '</span></td>' +
                   '<td data-label="year"><span class="year rg-num">' + esc(card.year) + '</span></td>' +
                   '<td data-label="sports"><span class="sports">' + esc(card.sports) + '</span></td>' +
@@ -233,9 +266,6 @@
                   '<td data-label="grade"><span class="grade">' + esc(card.grade) + '</span></td>' +
                   '<td data-label="value"><span class="value rg-num">' + esc(card.value) + '</span></td>' +
                   '<td data-label="tags"><span class="tags">' + TagPicker.chipsHtml(card.tags) + '</span></td>' +
-                  '<td class="rg-cell-actions" data-label="action">' +
-                    '<div class="rg-actions"><button class="btn btn-xs btn-success add-card">add to sale</button></div>' +
-                  '</td>' +
                 '</tr>';
               });
               $("#result-body").append(resultCards);
@@ -312,44 +342,44 @@
 
     <div class="rg-page rg-page--wide">
 
-      <div class="rg-page-head">
+      <div class="rg-page-head rg-page-head--tight">
         <h1>Add new sale</h1>
-        <p>記錄一筆賣出。先填交易資料，再從下方搜尋並加入這筆交易賣掉的卡片。</p>
       </div>
 
-      <div class="rg-panel" id="add-tran" style="margin-bottom: 1.25rem;">
-        <h2 class="rg-panel__title">Transaction</h2>
-        <div class="rg-form-grid">
-          <label class="rg-field">
+      <div class="rg-panel rg-panel--tight" id="add-tran" style="margin-bottom: 1rem;">
+        <div class="rg-form-row">
+          <label class="rg-field" style="width: 10rem;">
             <span class="rg-field__label">date <span style="color: var(--rg-pink);">*</span></span>
-            <input type="date" id="date" class="input" />
+            <input type="date" id="date" class="input input-sm" />
           </label>
-          <label class="rg-field">
+          <label class="rg-field" style="width: 8.5rem;">
             <span class="rg-field__label">type <span style="color: var(--rg-pink);">*</span></span>
-            <select id="type" class="select">
+            <select id="type" class="select select-sm">
               <option value="Sell">Sell</option>
               <option value="Trade">Trade</option>
             </select>
           </label>
-          <label class="rg-field">
+          <label class="rg-field" style="width: 10rem;">
             <span class="rg-field__label">amount <span style="color: var(--rg-pink);">*</span></span>
-            <input type="text" id="amount" class="input" placeholder="整筆交易總金額" />
+            <input type="text" id="amount" class="input input-sm" placeholder="總金額" />
           </label>
-          <label class="rg-field" style="grid-column: 1 / -1;">
-            <span class="rg-field__label">note</span>
-            <textarea id="note-text" name="note" class="textarea" rows="2" style="width: 100%;"></textarea>
-          </label>
+          <button type="button" id="note-toggle" class="btn btn-sm btn-outline btn-accent"
+                  aria-expanded="false" aria-controls="note-row">+ note</button>
+        </div>
+        <div id="note-row" hidden style="margin-top: 0.75rem;">
+          <textarea id="note-text" name="note" class="textarea" rows="2"
+                    placeholder="備註（選填）" style="width: 100%;"></textarea>
         </div>
       </div>
 
-      <div class="rg-toolbar">
-        <span style="font-size: 0.875rem; color: var(--rg-muted);">這筆交易賣掉的卡片</span>
+      <div class="rg-table-head" id="included-top">
+        <span class="rg-table-head__label">這筆交易賣掉的卡片</span>
         <span class="badge badge-secondary badge-outline" id="included-count">0 cards</span>
         <span class="rg-spacer"></span>
         <button id="add-transaction" class="btn btn-sm btn-success">Add Transaction</button>
       </div>
 
-      <div id="included-empty" class="alert alert-info alert-soft" style="margin-bottom: 1.25rem;">
+      <div id="included-empty" class="alert alert-info alert-soft" style="margin-bottom: 1rem;">
         <span>還沒有加入任何卡片。用下面的搜尋找到卡片後按 <strong>add to sale</strong>。</span>
       </div>
 
@@ -440,9 +470,10 @@
         </div>
 
         <div class="rg-table-card" id="result-table">
-          <table id="result-card" class="table table-zebra rg-table rg-card-table">
+          <table id="result-card" class="table table-zebra rg-table rg-card-table rg-freeze-first">
             <thead>
               <tr>
+                <th>action</th>
                 <th>id</th>
                 <th>year</th>
                 <th>sports</th>
@@ -456,7 +487,6 @@
                 <th>grade</th>
                 <th>value</th>
                 <th>tags</th>
-                <th>action</th>
               </tr>
             </thead>
             <tbody id="result-body"></tbody>
