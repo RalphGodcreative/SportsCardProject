@@ -351,6 +351,19 @@ img.add-note { display: inline-block; }
   overflow-x: auto;
 }
 
+/* A bare caption row above a table card: label left, actions right. Unlike
+   .rg-toolbar it has no panel chrome, and it sits outside .rg-table-card so it
+   does not slide away when a wide table scrolls sideways. */
+.rg-table-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.rg-table-head__label { font-size: 0.875rem; color: var(--rg-muted); }
+
 /* Keeps the purple gradient header the app has always had. */
 .rg-table thead th {
   background: linear-gradient(45deg, rgba(124, 58, 237, 0.5), rgba(202, 71, 245, 0.3));
@@ -474,6 +487,28 @@ img.add-note { display: inline-block; }
 }
 
 .rg-field .input { width: 100%; }
+
+/* Compact variants, for form pages where a table below is the main event and
+   the transaction fields are only a short header. */
+.rg-page-head--tight { margin-bottom: 0.875rem; }
+.rg-page-head--tight h1 { margin: 0; font-size: 1.375rem; }
+
+.rg-panel--tight { padding: 0.875rem 1rem; }
+
+/* Fields sized to their content and sitting on one baseline, rather than
+   stretched across .rg-form-grid's equal columns. */
+.rg-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1rem;
+}
+
+.rg-form-row .rg-field { flex: 0 1 auto; }
+
+@media (max-width: 640px) {
+  .rg-form-row .rg-field { flex: 1 1 100%; width: auto !important; }
+}
 
 .rg-check {
   display: flex;
