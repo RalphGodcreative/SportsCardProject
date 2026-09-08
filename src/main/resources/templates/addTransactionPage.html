@@ -132,6 +132,26 @@
           });
         }
 
+        // note is collapsed until asked for: the card table is the main event.
+        // The label keeps a dot when a collapsed note still holds text, so a
+        // filled note is never invisible.
+        function syncNoteToggle() {
+          var open = !$("#note-row").prop("hidden");
+          var filled = $.trim($("#note-text").val()) !== "";
+          $("#note-toggle")
+            .text(open ? "− note" : filled ? "note •" : "+ note")
+            .attr("aria-expanded", open ? "true" : "false");
+        }
+
+        $("#note-toggle").on("click", function () {
+          var open = $("#note-row").prop("hidden");
+          $("#note-row").prop("hidden", !open);
+          syncNoteToggle();
+          if (open) $("#note-text").trigger("focus");
+        });
+
+        $("#note-text").on("input", syncNoteToggle);
+
         $("#add-card").on("click", function () {
           addCard();
         });
@@ -231,7 +251,7 @@
         <h3 style="margin: 0 0 0.875rem; font-size: 1.125rem; font-weight: 900; color: var(--color-warning);">如何使用這個頁面</h3>
         <div style="font-size: 0.875rem; line-height: 1.7; color: var(--rg-muted);">
           <p><strong style="color: var(--color-base-content);">交易資料（上方）</strong><br />
-            date / type / amount 為必填，note 可選填。<br />
+            date / type / amount 為必填；note 可選填，按上方的 <strong style="color: var(--color-base-content);">+ note</strong> 展開。<br />
             amount 填整筆交易的總金額，不是單張卡的價格。</p>
 
           <p><strong style="color: var(--color-base-content);">交易類型</strong><br />
@@ -243,7 +263,7 @@
             （以上皆為卡片「取得」的紀錄；賣出請至 Sell 頁面。）</p>
 
           <p><strong style="color: var(--color-base-content);">卡片列表（下方）</strong><br />
-            按 add card 逐張加入這筆交易的卡片。標 * 為必填。</p>
+            按卡片表格右上的 add more card 逐張加入這筆交易的卡片。標 * 為必填。</p>
           <ul style="padding-left: 1.25rem;">
             <li><span style="color: var(--rg-pink);">*</span> year — 卡片年份，例：2026、2024-25</li>
             <li>sports — 運動項目，例：Baseball、Basketball</li>
@@ -276,7 +296,7 @@
 
     <div class="rg-page rg-page--wide">
 
-      <div class="rg-page-head">
+      <div class="rg-page-head rg-page-head--tight">
         <h1>
           Add new transaction
           <button id="guide-toggle" class="btn btn-sm btn-circle btn-ghost" aria-label="How to use this page" title="How to use this page">
@@ -287,19 +307,17 @@
             </svg>
           </button>
         </h1>
-        <p>記錄一筆「取得」卡片的交易，並逐張加入這筆交易帶進來的卡片。</p>
       </div>
 
-      <div class="rg-panel" id="add-tran" style="margin-bottom: 1.25rem;">
-        <h2 class="rg-panel__title">Transaction</h2>
-        <div class="rg-form-grid">
-          <label class="rg-field">
+      <div class="rg-panel rg-panel--tight" id="add-tran" style="margin-bottom: 1rem;">
+        <div class="rg-form-row">
+          <label class="rg-field" style="width: 10rem;">
             <span class="rg-field__label">date <span style="color: var(--rg-pink);">*</span></span>
-            <input type="date" id="date" class="input" />
+            <input type="date" id="date" class="input input-sm" />
           </label>
-          <label class="rg-field">
+          <label class="rg-field" style="width: 8.5rem;">
             <span class="rg-field__label">type <span style="color: var(--rg-pink);">*</span></span>
-            <select id="type" class="select">
+            <select id="type" class="select select-sm">
               <option value="Break">Break</option>
               <option value="Buy">Buy</option>
               <option value="Trade">Trade</option>
@@ -307,21 +325,23 @@
               <option value="Giveaway">Giveaway</option>
             </select>
           </label>
-          <label class="rg-field">
+          <label class="rg-field" style="width: 10rem;">
             <span class="rg-field__label">amount <span style="color: var(--rg-pink);">*</span></span>
-            <input type="text" id="amount" class="input" placeholder="整筆交易總金額" />
+            <input type="text" id="amount" class="input input-sm" placeholder="總金額" />
           </label>
-          <label class="rg-field" style="grid-column: 1 / -1;">
-            <span class="rg-field__label">note</span>
-            <textarea id="note-text" name="note" class="textarea" rows="2" style="width: 100%;"></textarea>
-          </label>
+          <button type="button" id="note-toggle" class="btn btn-sm btn-outline btn-accent"
+                  aria-expanded="false" aria-controls="note-row">+ note</button>
+        </div>
+        <div id="note-row" hidden style="margin-top: 0.75rem;">
+          <textarea id="note-text" name="note" class="textarea" rows="2"
+                    placeholder="備註（選填）" style="width: 100%;"></textarea>
         </div>
       </div>
 
-      <div class="rg-toolbar">
-        <span style="font-size: 0.875rem; color: var(--rg-muted);">這筆交易帶進來的卡片</span>
+      <div class="rg-table-head">
+        <span class="rg-table-head__label">這筆交易的卡片⬇️</span>
         <span class="rg-spacer"></span>
-        <button id="add-card" class="btn btn-sm btn-success">add card</button>
+        <button id="add-card" class="btn btn-sm btn-success">add more card</button>
       </div>
 
       <div class="rg-table-card">
