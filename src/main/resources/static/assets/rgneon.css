@@ -251,7 +251,7 @@ img.add-note { display: inline-block; }
   padding: 2rem 1.5rem 3rem;
 }
 
-.rg-page--wide { max-width: 1400px; }
+.rg-page--wide { max-width: min(1900px, 97vw); }
 
 .rg-page-head { margin-bottom: 1.5rem; }
 
