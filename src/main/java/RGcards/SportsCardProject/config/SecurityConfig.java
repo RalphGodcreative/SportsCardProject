@@ -45,6 +45,7 @@ public class SecurityConfig {
                     "/", "/random", "/randomize",
                     "/login", "/register",
                     "/recommendation",
+                    "/bowman",
                     "/assets/**", "/css/**", "/js/**", "/images/**", "/img/**"
                 ).permitAll()
                 .requestMatchers("/admin/**", "/card/allCard", "/crawler/search-all", "/crawler/search-all-async").hasAuthority("ROLE_ADMIN")
