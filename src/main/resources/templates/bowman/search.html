@@ -7,12 +7,14 @@
   <th:block th:replace="~{fragments/head :: styles}"></th:block>
   <style>
     /* Few short columns, so bigger text and tighter cells; the card wraps the
-       table instead of stretching it across the wide page. Desktop only: below
-       768px the shared styles turn rows into cards. */
-    @media (min-width: 769px) {
-      .bowman-results { width: fit-content; max-width: 100%; margin-inline: auto; }
-      .bowman-table { font-size: 1.05rem; width: auto; }
-      .bowman-table :where(th, td) { padding: 0.3rem 1.25rem; }
+       table instead of stretching it across the wide page. The table does not use
+       rg-card-table, so on phones it stays a normal table and scrolls sideways. */
+    .bowman-results { width: fit-content; max-width: 100%; margin-inline: auto; overflow-x: auto; }
+    .bowman-table { font-size: 1.05rem; width: auto; white-space: nowrap; }
+    .bowman-table :where(th, td) { padding: 0.3rem 1.25rem; }
+    @media (max-width: 768px) {
+      .bowman-table { font-size: 0.9rem; }
+      .bowman-table :where(th, td) { padding: 0.3rem 0.6rem; }
     }
     .bowman-sort { cursor: pointer; user-select: none; }
     .bowman-sort::after { content: " ↕"; opacity: 0.35; }
@@ -87,7 +89,7 @@
       </div>
 
       <div class="rg-table-card bowman-results" th:unless="${results.empty}">
-        <table class="table table-zebra rg-table rg-card-table bowman-table">
+        <table class="table table-zebra rg-table bowman-table">
           <thead>
             <tr>
               <th class="bowman-sort" data-type="num" title="Sort by year">year</th>
