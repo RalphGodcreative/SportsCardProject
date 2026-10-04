@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>1st Bowman Search</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <th:block th:replace="~{fragments/head :: styles}"></th:block>
+  <style>
+    /* Few short columns, so bigger text and tighter cells; the card wraps the
+       table instead of stretching it across the wide page. Desktop only: below
+       768px the shared styles turn rows into cards. */
+    @media (min-width: 769px) {
+      .bowman-results { width: fit-content; max-width: 100%; margin-inline: auto; }
+      .bowman-table { font-size: 1.05rem; width: auto; }
+      .bowman-table :where(th, td) { padding: 0.3rem 1.25rem; }
+    }
+    .bowman-sort { cursor: pointer; user-select: none; }
+    .bowman-sort::after { content: " ↕"; opacity: 0.35; }
+    .bowman-sort[data-dir="asc"]::after { content: " ↑"; opacity: 1; }
+    .bowman-sort[data-dir="desc"]::after { content: " ↓"; opacity: 1; }
+  </style>
+</head>
+<body>
+  <div th:replace="~{banner.html :: header}"></div>
+
+  <div class="rg-page rg-page--wide">
+
+    <div class="rg-page-head">
+      <span class="badge badge-secondary badge-outline" style="margin-bottom: 0.5rem;">1st Bowman Checklist</span>
+      <h1>1st Bowman search</h1>
+      <p>Search the 1st Bowman card by player, or by set. Results appear after you search.</p>
+      <p>尋找球員的1st Bowman card在哪個系列，或是看特定的Bowman系列有哪些1st</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+
+      <!-- Search 1: by player -->
+      <form method="get" action="/bowman" class="rg-panel rg-panel--plain">
+        <h2 class="rg-panel__title">Search by player</h2>
+        <div style="display: flex; gap: 0.5rem; align-items: end;">
+          <label style="flex: 1;">
+            <span class="rg-tile__meta">Player</span>
+            <input type="text" name="player" class="input" style="width: 100%;" maxlength="100"
+                   placeholder="e.g. Jackson Chourio" required th:value="${player}" />
+          </label>
+          <button type="submit" class="btn btn-success">Search</button>
+        </div>
+      </form>
+
+      <!-- Search 2: by set (year + set name) -->
+      <form method="get" action="/bowman" class="rg-panel rg-panel--plain">
+        <h2 class="rg-panel__title">Search by set</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: end;">
+          <label style="flex: 0 1 7rem;">
+            <span class="rg-tile__meta">Year</span>
+            <select name="year" class="select" style="width: 100%;">
+              <option value="">Any</option>
+              <option th:each="y : ${years}" th:value="${y}" th:text="${y}"
+                      th:selected="${year != null and year == y}">2025</option>
+            </select>
+          </label>
+          <label style="flex: 1 1 10rem;">
+            <span class="rg-tile__meta">Set name</span>
+            <select name="setName" class="select" style="width: 100%;">
+              <option value="">Any</option>
+              <option th:each="n : ${setNames}" th:value="${n}" th:text="${n}"
+                      th:selected="${setName == n}">Bowman</option>
+            </select>
+          </label>
+          <button type="submit" class="btn btn-success">Search</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- results is null until a search has been run -->
+    <th:block th:if="${results != null}">
+
+      <div class="rg-stat-row" style="margin-bottom: 1rem;">
+        <div class="rg-stat-pill">
+          <strong th:text="${#lists.size(results)}">0</strong>
+          <span th:text="${#lists.size(results) == 1 ? 'card found' : 'cards found'}">cards found</span>
+        </div>
+      </div>
+
+      <div class="alert alert-info alert-soft" th:if="${results.empty}">
+        <span><strong>No matches.</strong> Try a shorter player name or a different set.</span>
+      </div>
+
+      <div class="rg-table-card bowman-results" th:unless="${results.empty}">
+        <table class="table table-zebra rg-table rg-card-table bowman-table">
+          <thead>
+            <tr>
+              <th class="bowman-sort" data-type="num" title="Sort by year">year</th>
+              <th class="bowman-sort" title="Sort by set">set</th>
+              <th class="bowman-sort" title="Sort by card number">no</th>
+              <th class="bowman-sort" title="Sort by player">player</th>
+              <th class="bowman-sort" title="Sort by auto">auto(簽名)</th>
+              <th>search</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="row : ${results}">
+              <td data-label="year" class="rg-num" th:text="${row.set.year}">2025</td>
+              <td data-label="set" th:text="${row.set.name}">Bowman</td>
+              <td data-label="no" th:text="${row.no}">BP-1</td>
+              <td data-label="player" class="rg-player" th:text="${row.player}">Player</td>
+              <td data-label="auto" th:text="${row.auto == true ? 'Yes' : 'No'}">No</td>
+              <td data-label="search" th:with="q=${row.set.year + ' ' + row.set.name + ' 1st ' + row.player + ' ' + row.no + (row.auto == true ? ' auto' : '')},
+                           yq=${row.set.year + ' Bowman 1st ' + row.player + (row.auto == true ? ' 簽名' : '')}">
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  <a class="btn btn-sm btn-outline" target="_blank" rel="noopener noreferrer"
+                     th:href="@{https://www.ebay.com/sch/i.html(_nkw=${q})}">eBay</a>
+                  <a class="btn btn-sm btn-outline" target="_blank" rel="noopener noreferrer"
+                     th:href="@{https://tw.bid.yahoo.com/search/auction/product(p=${yq})}">Yahoo 拍賣</a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </th:block>
+  </div>
+
+  <script>
+    // Click a column header to sort the rows; click again to reverse.
+    document.querySelectorAll('.bowman-table').forEach(function (table) {
+      var body = table.tBodies[0];
+      var heads = Array.prototype.slice.call(table.querySelectorAll('th.bowman-sort'));
+
+      heads.forEach(function (th, col) {
+        th.addEventListener('click', function () {
+          var dir = th.dataset.dir === 'asc' ? 'desc' : 'asc';
+          var numeric = th.dataset.type === 'num';
+          heads.forEach(function (h) { h.removeAttribute('data-dir'); });
+          th.dataset.dir = dir;
+
+          var rows = Array.prototype.slice.call(body.rows);
+          rows.sort(function (a, b) {
+            var x = a.cells[col].textContent.trim();
+            var y = b.cells[col].textContent.trim();
+            var c = numeric
+              ? (parseFloat(x) || 0) - (parseFloat(y) || 0)
+              : x.localeCompare(y, undefined, { numeric: true, sensitivity: 'base' });
+            return dir === 'asc' ? c : -c;
+          });
+          rows.forEach(function (r) { body.appendChild(r); });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
