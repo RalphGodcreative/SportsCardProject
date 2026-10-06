@@ -23,6 +23,8 @@ public class AdminSettingsController {
     @GetMapping
     public String view(Model model) {
         model.addAttribute("registrationEnabled", appSettingService.isRegistrationEnabled());
+        model.addAttribute("maxUsers", appSettingService.getMaxUsers());
+        model.addAttribute("userCount", appSettingService.getUserCount());
         model.addAttribute("testMaxCards", usageLimits.getTestMaxCards());
         model.addAttribute("testMaxKeywords", usageLimits.getTestMaxKeywords());
         model.addAttribute("testMaxAiCalls", usageLimits.getTestMaxAiCalls());
@@ -35,6 +37,12 @@ public class AdminSettingsController {
     @PostMapping("/registration")
     public String setRegistration(@RequestParam boolean enabled) {
         appSettingService.setRegistrationEnabled(enabled);
+        return "redirect:/admin/settings";
+    }
+
+    @PostMapping("/max-users")
+    public String setMaxUsers(@RequestParam int maxUsers) {
+        appSettingService.setMaxUsers(Math.max(0, maxUsers));
         return "redirect:/admin/settings";
     }
 

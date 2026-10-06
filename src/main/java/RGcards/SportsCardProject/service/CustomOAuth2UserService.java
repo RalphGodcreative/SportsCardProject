@@ -107,6 +107,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (!appSettingService.isRegistrationEnabled()) {
             throw error("registration_disabled", "Registration is currently closed");
         }
+        if (appSettingService.isUserCapReached()) {
+            throw error("registration_full", "Registration is full");
+        }
         User newUser = new User();
         newUser.setEmail(email);
         newUser.setUsername(resolveUsername(name, email));

@@ -32,6 +32,23 @@
                   th:text="${registrationEnabled} ? 'Turn Off' : 'Turn On'"></button>
         </form>
       </div>
+
+      <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--color-base-300);">
+        <div style="flex-grow: 1; min-width: 16rem;">
+          <div style="font-weight: 700; margin-bottom: 0.25rem;">Max users</div>
+          <div style="font-size: 0.8125rem; color: var(--rg-muted);">
+            Total accounts allowed (all roles). New sign-ups stop once reached. 0 = unlimited.
+          </div>
+        </div>
+        <span class="badge"
+              th:classappend="${maxUsers > 0 and userCount >= maxUsers} ? 'badge-error' : 'badge-success'"
+              th:text="${userCount + ' / ' + (maxUsers > 0 ? maxUsers : '∞')}"></span>
+        <form th:action="@{/admin/settings/max-users}" method="post" style="margin:0; display: flex; gap: 0.5rem;">
+          <input type="number" name="maxUsers" min="0" class="input input-sm" style="width: 7rem;"
+                 th:value="${maxUsers}" required />
+          <button type="submit" class="btn btn-sm btn-outline btn-primary">Save</button>
+        </form>
+      </div>
     </div>
 
     <div class="rg-panel rg-panel--plain">

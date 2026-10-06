@@ -39,6 +39,8 @@ ebay.api.base-url=https://api.ebay.com
 # Seed default only, used when the app_settings row is missing (fresh DB). Once the
 # migration's INSERT has run, the admin-controlled DB value wins and this is ignored.
 app.registration.enabled=false
+# Cap on total accounts (0 = unlimited). Same seed-default rule as above (migration V15).
+app.registration.max-users=0
 
 # Per-role monthly usage caps live in the app_settings table (seeded by migration
 # V11, admin-editable at /admin/settings). Not set here -- UsageLimits has inline
