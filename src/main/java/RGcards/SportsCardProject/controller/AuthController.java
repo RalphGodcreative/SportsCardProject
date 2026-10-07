@@ -29,6 +29,7 @@ public class AuthController {
     @GetMapping("/register")
     public String registerPage() {
         if (!appSettingService.isRegistrationEnabled()) return "redirect:/login";
+        if (appSettingService.isUserCapReached()) return "redirect:/login?registrationFull";
         return "register";
     }
 
@@ -40,6 +41,7 @@ public class AuthController {
             Model model
     ) {
         if (!appSettingService.isRegistrationEnabled()) return "redirect:/login";
+        if (appSettingService.isUserCapReached()) return "redirect:/login?registrationFull";
         email = email.toLowerCase();
         if (!ValidationUtil.isValidEmail(email)) {
             model.addAttribute("error", "Please enter a valid email address.");

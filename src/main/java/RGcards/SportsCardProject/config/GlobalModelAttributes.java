@@ -16,7 +16,7 @@ public class GlobalModelAttributes {
 
     @ModelAttribute("registrationEnabled")
     public boolean registrationEnabled() {
-        return appSettingService.isRegistrationEnabled();
+        return appSettingService.isRegistrationOpen();
     }
 
     @ModelAttribute("displayUsername")

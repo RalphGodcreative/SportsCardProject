@@ -45,10 +45,12 @@
       <p class="rg-auth-msg" th:if="${param.oauthError}" style="color: var(--color-error);"
          th:switch="${param.oauthError[0]}">
         <span th:case="'registration_disabled'">Registration is currently closed.</span>
+        <span th:case="'registration_full'">Registration is full &mdash; we're not accepting new accounts right now.</span>
         <span th:case="'account_disabled'">This account has been disabled.</span>
         <span th:case="'email_unverified'">Your Google email address is not verified.</span>
         <span th:case="*">Could not sign in with Google. Please try again.</span>
       </p>
+      <p class="rg-auth-msg" th:if="${param.registrationFull}" style="color: var(--color-error);">Registration is full &mdash; we're not accepting new accounts right now.</p>
       <p class="rg-auth-msg" th:if="${param.logout}" style="color: var(--color-success);">You have been signed out.</p>
       <p class="rg-auth-msg" th:if="${param.registered}" style="color: var(--color-success);">Account created &mdash; you can now sign in.</p>
       <p class="rg-auth-msg" th:if="${param.deleted}" style="color: var(--color-success);">Your account and all of its data have been deleted.</p>
