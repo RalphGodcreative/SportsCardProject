@@ -34,34 +34,31 @@
           <div class="rg-split__main">
 
             <div class="rg-panel">
-              <h2 class="rg-panel__title">Identity</h2>
               <div class="rg-form-grid">
-                <label class="rg-field" style="grid-column: 1 / -1;">
-                  <span class="rg-field__label">player <span style="color: var(--rg-pink);">*</span></span>
-                  <input type="text" name="player" class="input" placeholder="Aaron Judge" />
-                </label>
                 <label class="rg-field">
                   <span class="rg-field__label">year <span style="color: var(--rg-pink);">*</span></span>
                   <input type="text" name="year" class="input" placeholder="2026 · 2024-25" />
                 </label>
                 <label class="rg-field">
-                  <span class="rg-field__label">set <span style="color: var(--rg-pink);">*</span></span>
-                  <input type="text" name="set" class="input" placeholder="Chrome" />
+                  <span class="rg-field__label">sports</span>
+                  <input type="text" name="sports" class="input" placeholder="Baseball" />
                 </label>
                 <label class="rg-field">
                   <span class="rg-field__label">publisher</span>
                   <input type="text" name="publisher" class="input" placeholder="Topps" />
                 </label>
                 <label class="rg-field">
-                  <span class="rg-field__label">sports</span>
-                  <input type="text" name="sports" class="input" placeholder="Baseball" />
+                  <span class="rg-field__label">set <span style="color: var(--rg-pink);">*</span></span>
+                  <input type="text" name="set" class="input" placeholder="Chrome" />
                 </label>
-              </div>
-            </div>
-
-            <div class="rg-panel">
-              <h2 class="rg-panel__title">Variant</h2>
-              <div class="rg-form-grid">
+                <label class="rg-field">
+                  <span class="rg-field__label">player <span style="color: var(--rg-pink);">*</span></span>
+                  <input type="text" name="player" class="input" placeholder="Aaron Judge" />
+                </label>
+                <label class="rg-field">
+                  <span class="rg-field__label">auto</span>
+                  <input type="checkbox" name="auto" class="checkbox checkbox-sm" />
+                </label>
                 <label class="rg-field">
                   <span class="rg-field__label">insert</span>
                   <input type="text" name="insert" class="input" placeholder="Kaboom" />
@@ -74,16 +71,6 @@
                   <span class="rg-field__label">numbered</span>
                   <input type="text" name="numbered" class="input" placeholder="021/199" />
                 </label>
-              </div>
-              <label class="rg-check" style="margin-top: 1rem;">
-                <input type="checkbox" name="auto" class="checkbox checkbox-sm" />
-                <span><strong>Autograph</strong> &mdash; 這是一張簽名卡</span>
-              </label>
-            </div>
-
-            <div class="rg-panel">
-              <h2 class="rg-panel__title">Condition &amp; value</h2>
-              <div class="rg-form-grid">
                 <label class="rg-field">
                   <span class="rg-field__label">grade</span>
                   <input type="text" name="grade" class="input" placeholder="PSA 10" />
@@ -98,13 +85,15 @@
                        inputs, so this plain GET form submits tagIds=1&tagIds=2 -->
                   <div class="tag-picker" data-name="tagIds"></div>
                 </div>
+                <div style="grid-column: 1 / -1;">
+                  <button type="button" id="note-toggle" class="btn btn-sm btn-outline btn-accent"
+                          aria-expanded="false" aria-controls="note-row">+ note</button>
+                  <div id="note-row" hidden style="margin-top: 0.75rem;">
+                    <textarea id="note-text" name="note" class="textarea" rows="3" style="width: 100%;"
+                              placeholder="在 Yahoo 拍賣買的，背面有出廠傷"></textarea>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div class="rg-panel">
-              <h2 class="rg-panel__title">Note</h2>
-              <textarea id="note-text" name="note" class="textarea" rows="3" style="width: 100%;"
-                        placeholder="在 Yahoo 拍賣入手，賣家附鑑定單…"></textarea>
             </div>
 
             <div class="rg-form-actions">
@@ -130,6 +119,7 @@
               <div><dt>grade</dt><dd>鑑定分數，例：PSA 10、BGS 9.5</dd></div>
               <div><dt>value</dt><dd>這張卡的價值，例：299</dd></div>
               <div><dt>tags</dt><dd>標籤，一張卡可有多個（詳見 Tag 頁面）</dd></div>
+              <div><dt>note</dt><dd>備註，選填；按 <strong>+ note</strong> 展開，例：在 Yahoo 拍賣買的，背面有出廠傷</dd></div>
             </dl>
           </aside>
 
@@ -137,5 +127,27 @@
       </form>
 
     </div>
+
+    <script>
+      // note is collapsed until asked for. The label keeps a dot when a
+      // collapsed note still holds text, so a filled note is never invisible.
+      (function () {
+        var toggle = document.getElementById('note-toggle');
+        var row = document.getElementById('note-row');
+        var text = document.getElementById('note-text');
+        function sync() {
+          var open = !row.hidden;
+          var filled = text.value.trim() !== '';
+          toggle.textContent = open ? '− note' : filled ? 'note •' : '+ note';
+          toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        toggle.addEventListener('click', function () {
+          row.hidden = !row.hidden;
+          sync();
+          if (!row.hidden) text.focus();
+        });
+        text.addEventListener('input', sync);
+      })();
+    </script>
   </body>
 </html>
