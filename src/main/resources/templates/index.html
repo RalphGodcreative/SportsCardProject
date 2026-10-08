@@ -25,12 +25,24 @@
         <p style="margin: 0 auto 2rem; max-width: 38rem; font-size: 1.0625rem; line-height: 1.65; color: var(--rg-muted); text-wrap: pretty;">
           還有 Yahoo 拍賣每日關注特定關鍵字，把握入手心儀卡片好機會
         </p>
-
         <div style="display: flex; gap: 0.875rem; justify-content: center; flex-wrap: wrap;">
           <a class="btn btn-success" href="/login" sec:authorize="isAnonymous()">Login</a>
           <a class="btn btn-success" href="/card" sec:authorize="isAuthenticated()">Go to Cards</a>
           <a class="btn btn-outline btn-accent" href="/random">Try the Randomizer</a>
         </div>
+
+        <a href="/bowman" style="display: block; margin: 2rem auto 0; max-width: 38rem; padding: 1.25rem 1.5rem; text-decoration: none; border-radius: 0.75rem; background: linear-gradient(135deg, rgba(49, 246, 181, 0.10), rgba(202, 71, 245, 0.08)); border: 1px solid rgba(49, 246, 181, 0.5); box-shadow: 0 0 22px rgba(49, 246, 181, 0.22), inset 0 0 18px rgba(49, 246, 181, 0.05); transition: all 0.2s ease;"
+           onmouseover="this.style.boxShadow='0 0 32px rgba(49,246,181,0.4), inset 0 0 18px rgba(49,246,181,0.08)'"
+           onmouseout="this.style.boxShadow='0 0 22px rgba(49,246,181,0.22), inset 0 0 18px rgba(49,246,181,0.05)'">
+          <span class="badge badge-accent badge-outline" style="letter-spacing: 0.18em; margin-bottom: 0.75rem;">免登入 · NO LOGIN NEEDED</span>
+          <span style="display: block; margin-bottom: 0.5rem; font-size: 1.5rem; font-weight: 900; color: var(--color-accent); text-shadow: 0 0 14px rgba(49, 246, 181, 0.5);">
+            1st Bowman Search
+          </span>
+          <span style="display: block; margin-bottom: 1rem; font-size: 1.0625rem; line-height: 1.65; color: #e2e8f0; text-wrap: pretty;">
+            尋找MLB球員的 1st Bowman 在哪個系列，或瀏覽特定系列的所有 1st
+          </span>
+          <span class="btn btn-accent" style="box-shadow: 0 0 14px rgba(49, 246, 181, 0.4);">Search 1st Bowman →</span>
+        </a>
       </section>
 
       <!-- features -->
