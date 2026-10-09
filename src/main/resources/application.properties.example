@@ -14,12 +14,15 @@ spring.thymeleaf.suffix=.html
 spring.thymeleaf.mode=HTML
 
 # Email Configuration
-spring.mail.host=smtp.gmail.com
-spring.mail.port=587
-spring.mail.username=${GMAIL_USERNAME}
-spring.mail.password=${GMAIL_APP_PASSWORD}
+spring.mail.host=${MAIL_HOST}
+spring.mail.port=${MAIL_PORT:587}
+spring.mail.username=${MAIL_USERNAME}
+spring.mail.password=${MAIL_PASSWORD}
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
+
+app.mail.from=${MAIL_FROM}
+app.mail.from-name=${MAIL_FROM_NAME:RG Sports Cards}
 
 # Static Resources
 spring.web.resources.static-locations=classpath:/static/

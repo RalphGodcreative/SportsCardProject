@@ -223,6 +223,9 @@ sudo journalctl -u sportscard -f
 ```
 
 > Full migration guide: [`docs/GCP_MIGRATION.md`](docs/GCP_MIGRATION.md)
+>
+> Branded email setup (`@rgsportscards.com` via Cloudflare + an ESP):
+> [`docs/impl-branded-email.md`](docs/impl-branded-email.md)
 
 ## Development
 

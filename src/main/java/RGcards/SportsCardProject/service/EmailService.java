@@ -74,6 +74,7 @@ public class EmailService {
      */
     public void sendSimpleEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(env.getProperty("app.mail.from"));
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
@@ -94,8 +95,9 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            String fromAddress = env.getProperty("spring.mail.username");
-            helper.setFrom(fromAddress, "RG Sports Cards");
+            String fromAddress = env.getProperty("app.mail.from");
+            String fromName = env.getProperty("app.mail.from-name", "RG Sports Cards");
+            helper.setFrom(fromAddress, fromName);
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
