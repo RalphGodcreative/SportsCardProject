@@ -67,7 +67,7 @@ OUTBOUND (an ESP - Cloudflare cannot do this)
         |  SMTP :587
         v
   Brevo / Resend / SES  --signed with DKIM-->  the user's inbox
-        From: RG Sports Cards <alerts@rgsportscards.com>
+        From: RG Sports Cards <notifications@rgsportscards.com>
 ```
 
 Both halves authenticate against the same domain's DNS, which is why the SPF record has to be
@@ -92,7 +92,7 @@ address.
 2. Make the code changes: `app.mail.from` in `EmailService`, `MAIL_*` placeholders in **both**
    properties files → [5.1](#51-decouple-from-from-the-smtp-username), [5.2](#52-properties)
 3. Add the empty-digest guard → [5.4](#54-stop-sending-empty-digests)
-4. Confirm in Mailpit's UI that `From:` reads `alerts@rgsportscards.com` and the digest renders,
+4. Confirm in Mailpit's UI that `From:` reads `notifications@rgsportscards.com` and the digest renders,
    including the empty-keyword section
 
 ### Stage 2 — Provider (external, but nothing live changes yet)
@@ -126,7 +126,7 @@ into, so enable it first or you'll merge and then find a second record appear.
 ### Stage 4 — Production deploy (the only step that can cause downtime)
 
 12. Update `/etc/sportscard/env` with `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`,
-    `MAIL_FROM`, `MAIL_REPLY_TO` → [5.3](#53-vm-environment-file)
+    `MAIL_FROM` → [5.3](#53-vm-environment-file)
 
     > **⚠️ Env file before JAR.** Spring fails fast on an unresolvable `${MAIL_HOST}`. Deploy
     > the new JAR against the old env file and the app will not start.
@@ -165,12 +165,14 @@ Full commands and expected output in [Part 7](#part-7--verify).
 
 | Address | Purpose | Handled by |
 |---|---|---|
-| `alerts@rgsportscards.com` | `From:` on the daily crawler digest | ESP (outbound) |
-| `support@rgsportscards.com` | `Reply-To:`, and the address users write to | Cloudflare Email Routing (inbound) |
+| `notifications@rgsportscards.com` | `From:` on the daily crawler digest | ESP (outbound) |
+| `support@rgsportscards.com` | Inbound contact address (no `Reply-To:` set for now) | Cloudflare Email Routing (inbound) |
 | `dmarc@rgsportscards.com` | DMARC aggregate report destination | Cloudflare Email Routing (inbound) |
 
-**Do not use `noreply@`.** It blocks replies, reads as cold to users, and engagement signals
-(including replies) feed inbox-placement reputation. `alerts@` with a working `Reply-To:` is
+**Do not use `noreply@`.** It reads as cold to users, and engagement signals
+(including replies) feed inbox-placement reputation. `notifications@` is friendlier; no
+`Reply-To:` is set for now, so replies go to the From address itself (add a Cloudflare Email
+Routing rule for it if you want to receive them).
 strictly better and costs nothing.
 
 ---
@@ -280,7 +282,7 @@ while SPF/DKIM settle. Once reports show consistent passes for a week or two, ti
 
 ### 4.4 Optional hardening — a sending subdomain
 
-Sending from `alerts@send.rgsportscards.com` instead of `alerts@rgsportscards.com` isolates bulk-send
+Sending from `notifications@send.rgsportscards.com` instead of `notifications@rgsportscards.com` isolates bulk-send
 reputation from the root domain, and **sidesteps the SPF merge in 4.1 entirely** (the subdomain
 gets its own SPF record, so there is no collision with Email Routing).
 
@@ -307,7 +309,6 @@ with:
 String fromAddress = env.getProperty("app.mail.from");
 String fromName    = env.getProperty("app.mail.from-name", "RG Sports Cards");
 helper.setFrom(fromAddress, fromName);
-helper.setReplyTo(env.getProperty("app.mail.reply-to", fromAddress));
 ```
 
 And give `sendSimpleEmail` (line 75) the `From` it currently lacks:
@@ -331,7 +332,6 @@ spring.mail.properties.mail.smtp.starttls.enable=true
 
 app.mail.from=${MAIL_FROM}
 app.mail.from-name=${MAIL_FROM_NAME:RG Sports Cards}
-app.mail.reply-to=${MAIL_REPLY_TO:support@rgsportscards.com}
 ```
 
 Renaming `GMAIL_USERNAME`/`GMAIL_APP_PASSWORD` to `MAIL_*` keeps the provider out of the
@@ -346,8 +346,7 @@ MAIL_HOST=smtp-relay.brevo.com
 MAIL_PORT=587
 MAIL_USERNAME=<provider smtp username>
 MAIL_PASSWORD=<provider smtp key>
-MAIL_FROM=alerts@rgsportscards.com
-MAIL_REPLY_TO=support@rgsportscards.com
+MAIL_FROM=notifications@rgsportscards.com
 ```
 
 Then remove the now-unused `GMAIL_USERNAME` / `GMAIL_APP_PASSWORD` lines.
@@ -457,8 +456,7 @@ Then send a real one:
    ```
 3. Send a digest to a [mail-tester.com](https://www.mail-tester.com) address. Aim for 9/10 or
    better; it names exactly what's missing.
-4. Confirm the `From:` reads `RG Sports Cards <alerts@rgsportscards.com>` and that replying lands at
-   `support@rgsportscards.com`.
+4. Confirm the `From:` reads `RG Sports Cards <notifications@rgsportscards.com>`.
 
 ---
 
@@ -572,8 +570,7 @@ spring.mail.password=
 spring.mail.properties.mail.smtp.auth=false
 spring.mail.properties.mail.smtp.starttls.enable=false
 
-app.mail.from=alerts@rgsportscards.com
-app.mail.reply-to=support@rgsportscards.com
+app.mail.from=notifications@rgsportscards.com
 ```
 
 > **Both `auth` and `starttls` must be `false`.** Mailpit requires neither, and leaving the
@@ -676,5 +673,5 @@ whether or not there were results, so for template work prefer the 10.1 preview 
 - [ ] `dig` shows exactly one SPF record, plus DKIM and DMARC
 - [ ] A real digest shows SPF/DKIM/DMARC all `PASS` in Gmail's "Show original"
 - [ ] mail-tester.com score ≥ 9/10
-- [ ] `From:` is `alerts@rgsportscards.com`; replies reach `support@rgsportscards.com`
+- [ ] `From:` is `notifications@rgsportscards.com`
 - [ ] Gmail App Password kept active until the above passes
