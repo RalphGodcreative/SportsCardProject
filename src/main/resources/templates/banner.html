@@ -22,8 +22,6 @@
 
       <!-- ---------- desktop ---------- -->
       <nav class="rg-nav-desktop">
-        <a class="btn btn-sm btn-ghost" href="/random">Randomizer</a>
-
         <!-- Split control: the label is a plain link to the card home page,
              the caret beside it opens the menu. Before this, "Cards" only
              opened the dropdown and /card was unreachable from the navbar. -->
@@ -55,6 +53,7 @@
 
         <a class="btn btn-sm btn-ghost" href="/crawler">Yahoo拍賣 追蹤</a>
         <a class="btn btn-sm btn-ghost rg-nav-glow" href="/bowman">1st Bowman Search</a>
+        <a class="btn btn-sm btn-ghost" href="/random">Randomizer</a>
       </nav>
 
       <span class="rg-spacer"></span>
@@ -93,9 +92,9 @@
           <li sec:authorize="isAuthenticated()"><a href="/user/edit">Edit profile</a></li>
 
           <li class="menu-title">Browse</li>
-          <li><a href="/random">Randomizer</a></li>
           <li><a href="/bowman" class="rg-nav-glow">1st Bowman Search</a></li>
           <li><a href="/crawler">Yahoo拍賣 追蹤</a></li>
+          <li><a href="/random">Randomizer</a></li>
 
           <li class="menu-title">Cards</li>
           <li><a href="/card">Card management</a></li>
