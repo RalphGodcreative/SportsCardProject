@@ -149,6 +149,21 @@ img.add-note { display: inline-block; }
 .rg-glow-primary { text-shadow: 0 0 8px rgba(56, 201, 250, 0.5); }
 .rg-glow-secondary { text-shadow: 0 0 16px rgba(202, 71, 245, 0.4); }
 
+/* 1st Bowman Search in the navbar: one of the site's two main entries, so it
+   glows in its home-page colour (mint, .rg-door--accent) instead of sitting
+   flat among the other nav items. Used on the desktop button and the mobile
+   menu link. */
+.rg-nav-glow,
+.rg-menu .rg-nav-glow {
+  color: var(--color-accent);
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(49, 246, 181, 0.55), 0 0 14px rgba(49, 246, 181, 0.35);
+}
+
+.rg-nav-glow:hover {
+  text-shadow: 0 0 8px rgba(49, 246, 181, 0.8), 0 0 20px rgba(49, 246, 181, 0.5);
+}
+
 /* --------------------------------------------------------------------------
    5. Layout helpers.
    daisyUI ships the components (.btn, .menu, .dropdown, .card, .table) but
