@@ -107,8 +107,8 @@
               <td data-label="no" th:text="${row.no}">BP-1</td>
               <td data-label="player" class="rg-player" th:text="${row.player}">Player</td>
               <td data-label="auto" th:text="${row.auto == true ? 'Yes' : 'No'}">No</td>
-              <td data-label="search" th:with="q=${row.set.year + ' ' + row.set.name + ' 1st ' + row.player + ' ' + row.no + (row.auto == true ? ' auto' : '')},
-                           yq=${row.set.year + ' Bowman 1st ' + row.player + (row.auto == true ? ' 簽名' : '')}">
+              <td data-label="search" th:with="q=${row.set.year + ' ' + row.set.name + ' 1st ' + row.player + ' ' + (row.auto == true ? ' auto' : '')},
+                           yq=${row.set.year + ' Bowman 1st ' + row.player + (row.auto == true ? ' 簽' : '')}">
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
                   <a class="btn btn-sm btn-outline" target="_blank" rel="noopener noreferrer"
                      th:href="@{https://www.ebay.com/sch/i.html(_nkw=${q})}">eBay</a>
