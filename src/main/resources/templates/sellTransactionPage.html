@@ -8,6 +8,15 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
+    <style>
+      #guide-toggle { cursor: pointer; transition: color .15s, background-color .15s; }
+      #guide-toggle:hover,
+      #guide-toggle:focus-visible {
+        color: var(--color-info);
+        background-color: color-mix(in srgb, var(--color-info) 12%, transparent);
+      }
+    </style>
+
     <script
       type="text/javascript"
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
@@ -330,8 +339,27 @@
 
         refreshIncludedCount();
 
+        $("#guide-toggle").on("click", function () {
+          showGuide();
+        });
+
+        $("#guide").on("click", function (e) {
+          if (e.target.id === "guide") hideGuide();
+        });
+
+        $(document).on("keydown", function (e) {
+          if (e.key === "Escape") hideGuide();
+        });
+
         //end of ready
       });
+
+      function showGuide() {
+        $("#guide").addClass("modal-open");
+      }
+      function hideGuide() {
+        $("#guide").removeClass("modal-open");
+      }
     </script>
 
     <th:block th:replace="~{fragments/head :: styles}"></th:block>
@@ -340,10 +368,51 @@
   <body>
     <div th:replace="~{banner.html :: header}"></div>
 
+    <!-- How-to. Closes on a click landing on #guide itself, i.e. outside the box. -->
+    <div id="guide" class="modal">
+      <div class="modal-box" style="max-width: 38rem;">
+        <h3 style="margin: 0 0 0.875rem; font-size: 1.125rem; font-weight: 900; color: var(--color-warning);">如何使用這個頁面</h3>
+        <div style="font-size: 0.875rem; line-height: 1.7; color: var(--rg-muted);">
+          <p><strong style="color: var(--color-base-content);">交易資料（上方）</strong><br />
+            date / type / amount 為必填；note 可選填，按上方的 <strong style="color: var(--color-base-content);">+ note</strong> 展開。<br />
+            amount 填整筆交易的總金額，不是單張卡的價格。</p>
+
+          <p><strong style="color: var(--color-base-content);">交易類型</strong><br />
+            Sell — 賣出<br />
+            Trade — 換出（拿去交換的卡）<br />
+            （以上皆為卡片「出售／送出」的紀錄；取得請至 Add Transaction 頁面。）</p>
+
+          <p><strong style="color: var(--color-base-content);">找卡片（下方）</strong><br />
+            在 Find cards to sell 填任意欄位，空白的欄位會被忽略，按 search 搜尋。<br />
+            在結果表格中按 <strong style="color: var(--color-base-content);">add to sale</strong> 把卡片加入這筆交易；同一張卡只能加入一次。<br />
+            clear — 收起搜尋結果</p>
+
+          <p><strong style="color: var(--color-base-content);">這筆交易賣掉的卡片（中間）</strong><br />
+            show / hide — 顯示或收起卡片的簡要資訊<br />
+            remove — 從這筆交易移除這張卡</p>
+
+          <p>至少加入一張卡片後，按 Add Transaction 儲存整筆交易。</p>
+        </div>
+        <div class="modal-action">
+          <button class="btn btn-sm btn-ghost" onclick="hideGuide()">Close</button>
+        </div>
+      </div>
+    </div>
+
     <div class="rg-page rg-page--wide">
 
       <div class="rg-page-head rg-page-head--tight">
-        <h1>Add new sale</h1>
+        <h1>
+          Add new sale
+          <button id="guide-toggle" class="btn btn-sm btn-ghost" aria-label="如何使用這頁面" title="如何使用這頁面">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="9" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.7" />
+              <path stroke-linecap="round" d="M12 16.75h.01" />
+            </svg>
+            如何使用這頁面
+          </button>
+        </h1>
       </div>
 
       <div class="rg-panel rg-panel--tight" id="add-tran" style="margin-bottom: 1rem;">
@@ -400,24 +469,32 @@
         <h2 class="rg-panel__title">Find cards to sell</h2>
         <div class="rg-form-grid">
           <label class="rg-field">
-            <span class="rg-field__label">player</span>
-            <input type="text" id="player" class="input" placeholder="Aaron Judge" />
+            <span class="rg-field__label">id</span>
+            <input type="text" id="id" class="input" />
           </label>
           <label class="rg-field">
             <span class="rg-field__label">year</span>
-            <input type="text" id="year" class="input" />
-          </label>
-          <label class="rg-field">
-            <span class="rg-field__label">set</span>
-            <input type="text" id="set" class="input" />
-          </label>
-          <label class="rg-field">
-            <span class="rg-field__label">publisher</span>
-            <input type="text" id="publisher" class="input" />
+            <input type="text" id="year" class="input" placeholder="2024" />
           </label>
           <label class="rg-field">
             <span class="rg-field__label">sports</span>
-            <input type="text" id="sports" class="input" />
+            <input type="text" id="sports" class="input" placeholder="Baseball" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">publisher</span>
+            <input type="text" id="publisher" class="input" placeholder="Topps" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">set</span>
+            <input type="text" id="set" class="input" placeholder="Chrome" />
+          </label>
+          <label class="rg-field">
+            <span class="rg-field__label">player</span>
+            <input type="text" id="player" class="input" placeholder="Aaron Judge" />
+          </label>
+          <label class="rg-check">
+            <input type="checkbox" id="auto" class="checkbox checkbox-sm" />
+            <span>auto only</span>
           </label>
           <label class="rg-field">
             <span class="rg-field__label">insert</span>
@@ -433,24 +510,16 @@
           </label>
           <label class="rg-field">
             <span class="rg-field__label">grade</span>
-            <input type="text" id="grade" class="input" />
+            <input type="text" id="grade" class="input" placeholder="PSA 10" />
           </label>
           <label class="rg-field">
             <span class="rg-field__label">value</span>
             <input type="text" id="value" class="input" />
           </label>
-          <label class="rg-field">
-            <span class="rg-field__label">id</span>
-            <input type="text" id="id" class="input" />
-          </label>
           <div class="rg-field">
             <span class="rg-field__label">tags</span>
             <div class="tag-picker" id="tag-filter"></div>
           </div>
-          <label class="rg-check">
-            <input type="checkbox" id="auto" class="checkbox checkbox-sm" />
-            <span>auto only</span>
-          </label>
         </div>
         <div class="rg-form-actions">
           <button id="search-butt" class="btn btn-success">search</button>
