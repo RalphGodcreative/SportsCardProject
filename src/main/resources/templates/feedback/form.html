@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feedback</title>
+  <th:block th:replace="~{fragments/head :: styles}"></th:block>
+</head>
+<body>
+  <div th:replace="~{banner.html :: header}"></div>
+
+  <div class="rg-page">
+
+    <div class="rg-page-head">
+      <h1>Feedback</h1>
+      <p>有建議或發現問題？告訴我們。</p>
+    </div>
+
+    <div class="alert alert-success alert-soft" th:if="${success}" style="margin-bottom: 1.25rem;">
+      <span th:text="${success}"></span>
+    </div>
+    <div class="alert alert-error alert-soft" th:if="${error}" style="margin-bottom: 1.25rem;">
+      <span th:text="${error}"></span>
+    </div>
+
+    <form th:action="@{/feedback}" method="post" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <input type="radio" name="type" value="OPINION" class="radio radio-sm radio-primary" checked />
+          <span>意見 Opinion</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <input type="radio" name="type" value="BUG" class="radio radio-sm radio-primary" />
+          <span>Bug 回報</span>
+        </label>
+      </div>
+
+      <div>
+        <textarea id="feedback-content" name="content" maxlength="2000" required rows="6"
+                  class="textarea textarea-bordered" style="width: 100%;"
+                  placeholder="請輸入內容…" th:text="${draft}"></textarea>
+        <div style="font-size: 0.75rem; color: var(--rg-dim); text-align: right;">
+          <span id="feedback-count">0</span> / 2000
+        </div>
+      </div>
+
+      <div><button type="submit" class="btn btn-primary">Submit</button></div>
+    </form>
+
+    <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem;">My feedback</h2>
+
+    <p th:if="${#lists.isEmpty(myFeedback)}" style="color: var(--rg-dim);">還沒有送出任何回饋</p>
+
+    <div th:each="f : ${myFeedback}" class="rg-table-card" style="padding: 0.875rem 1rem; margin-bottom: 0.75rem;">
+      <div style="display: flex; gap: 0.75rem; align-items: center; margin-bottom: 0.375rem;">
+        <span class="badge badge-sm"
+              th:classappend="${f.type.name() == 'BUG' ? 'badge-error' : 'badge-neutral'}"
+              th:text="${f.type.name() == 'BUG' ? 'Bug' : 'Opinion'}"></span>
+        <span style="font-size: 0.75rem; color: var(--rg-dim);"
+              th:text="${#temporals.format(f.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+      </div>
+      <div style="white-space: pre-wrap;" th:text="${f.content}"></div>
+    </div>
+
+  </div>
+
+  <script>
+    (function () {
+      var ta = document.getElementById('feedback-content');
+      var count = document.getElementById('feedback-count');
+      function update() { count.textContent = ta.value.length; }
+      ta.addEventListener('input', update);
+      update();
+    })();
+  </script>
+</body>
+</html>

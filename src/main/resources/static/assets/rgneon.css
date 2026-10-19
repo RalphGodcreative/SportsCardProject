@@ -251,6 +251,7 @@ img.add-note { display: inline-block; }
 .rg-menu .rg-menu__key { color: var(--color-primary); font-weight: 700; }
 .rg-menu .rg-menu__key--browse { color: #D57DF7; }
 .rg-menu .rg-menu__key--organize { color: var(--color-accent); font-weight: 400; }
+.rg-menu .rg-menu__key--feedback { color: var(--color-secondary); font-weight: 700; }
 
 .rg-user-initial {
   display: flex;

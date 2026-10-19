@@ -69,10 +69,12 @@
           </div>
           <ul tabindex="0" class="dropdown-content menu rounded-box rg-menu">
             <li><a href="/user/edit">Edit profile</a></li>
+            <li><a href="/feedback" class="rg-menu__key rg-menu__key--feedback">Feedback</a></li>
             <li sec:authorize="hasAuthority('ROLE_ADMIN')" class="menu-title">Admin</li>
             <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/recommendations">Recommendations</a></li>
             <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/users">Users</a></li>
             <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/settings">Settings</a></li>
+            <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/feedback" class="rg-menu__key rg-menu__key--feedback">Feedback</a></li>
             <li>
               <form th:action="@{/logout}" method="post">
                 <button type="submit">Logout</button>
@@ -90,6 +92,7 @@
         <ul tabindex="0" class="dropdown-content menu rounded-box rg-menu rg-menu--wide">
           <li sec:authorize="isAuthenticated()" class="menu-title" th:text="${displayUsername}">User</li>
           <li sec:authorize="isAuthenticated()"><a href="/user/edit">Edit profile</a></li>
+          <li sec:authorize="isAuthenticated()"><a href="/feedback" class="rg-menu__key rg-menu__key--feedback">Feedback</a></li>
 
           <li class="menu-title">Browse</li>
           <li><a href="/bowman" class="rg-nav-glow">1st Bowman Search</a></li>
@@ -111,6 +114,7 @@
           <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/recommendations">Recommendations</a></li>
           <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/users">Users</a></li>
           <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/settings">Settings</a></li>
+          <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/feedback" class="rg-menu__key rg-menu__key--feedback">Feedback</a></li>
 
           <li sec:authorize="isAnonymous()"><a href="/login">Login</a></li>
           <li sec:authorize="isAuthenticated()">
