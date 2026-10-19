@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Member Feedback</title>
+  <th:block th:replace="~{fragments/head :: styles}"></th:block>
+</head>
+<body>
+  <div th:replace="~{banner.html :: header}"></div>
+
+  <div class="rg-page rg-page--wide">
+
+    <div class="rg-page-head">
+      <h1>Member feedback</h1>
+      <p>會員送出的意見與 Bug 回報，最新的在前。</p>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+      <a href="/admin/feedback" class="btn btn-sm"
+         th:classappend="${selectedType == null ? 'btn-primary' : 'btn-outline'}">All</a>
+      <a th:each="t : ${types}" th:href="@{/admin/feedback(type=${t})}" class="btn btn-sm"
+         th:classappend="${selectedType == t ? 'btn-primary' : 'btn-outline'}"
+         th:text="${t.name() == 'BUG' ? 'Bug' : 'Opinion'}"></a>
+    </div>
+
+    <div class="rg-table-card">
+      <table class="table table-zebra rg-table">
+        <thead>
+          <tr>
+            <th style="width: 10rem;">Date</th>
+            <th style="width: 6rem;">Type</th>
+            <th style="width: 14rem;">User</th>
+            <th>Content</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${#lists.isEmpty(rows)}">
+            <td colspan="4" style="color: var(--rg-dim);">沒有任何回饋</td>
+          </tr>
+          <tr th:each="row : ${rows}">
+            <td th:text="${#temporals.format(row.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+            <td>
+              <span class="badge badge-sm"
+                    th:classappend="${row.type.name() == 'BUG' ? 'badge-error' : 'badge-neutral'}"
+                    th:text="${row.type.name() == 'BUG' ? 'Bug' : 'Opinion'}"></span>
+            </td>
+            <td>
+              <th:block th:if="${row.username != null}">
+                <div style="font-weight: 700;" th:text="${row.username}"></div>
+                <div style="font-size: 0.75rem; color: var(--rg-dim);" th:text="${row.email}"></div>
+              </th:block>
+              <span th:if="${row.username == null}" style="color: var(--rg-dim);">已刪除的使用者</span>
+            </td>
+            <td style="white-space: pre-wrap;" th:text="${row.content}"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</body>
+</html>
