@@ -1,0 +1,1 @@
+ALTER TABLE bowman_checklists ADD COLUMN IF NOT EXISTS team VARCHAR(255);
