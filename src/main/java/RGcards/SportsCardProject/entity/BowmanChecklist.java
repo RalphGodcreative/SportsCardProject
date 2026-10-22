@@ -21,6 +21,8 @@ public class BowmanChecklist {
 
     private String player;
 
+    private String team;
+
     private Boolean auto;
 
     @ManyToOne(fetch = FetchType.LAZY)

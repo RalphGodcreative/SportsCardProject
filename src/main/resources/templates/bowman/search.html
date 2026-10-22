@@ -97,6 +97,7 @@
               <th class="bowman-sort" title="Sort by card number">no</th>
               <th class="bowman-sort" title="Sort by player">player</th>
               <th class="bowman-sort" title="Sort by auto">auto(簽名)</th>
+              <th class="bowman-sort" title="Sort by team">team</th>
               <th>search</th>
             </tr>
           </thead>
@@ -107,6 +108,7 @@
               <td data-label="no" th:text="${row.no}">BP-1</td>
               <td data-label="player" class="rg-player" th:text="${row.player}">Player</td>
               <td data-label="auto" th:text="${row.auto == true ? 'Yes' : 'No'}">No</td>
+              <td data-label="team" th:text="${row.team}">Yankees</td>
               <td data-label="search" th:with="q=${row.set.year + ' ' + row.set.name + ' 1st ' + row.player + ' ' + (row.auto == true ? ' auto' : '')},
                            yq=${row.set.year + ' Bowman 1st ' + row.player + (row.auto == true ? ' 簽' : '')}">
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
