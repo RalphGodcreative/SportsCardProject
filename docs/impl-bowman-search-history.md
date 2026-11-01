@@ -134,7 +134,7 @@ public record AdminBowmanSearchRow(
         LocalDateTime createdAt
 ) {}
 
-public record BowmanSearchCount(String label, Long count) {}
+public record BowmanPlayerSearchCount(String player, Long count) {}
 public record BowmanSetSearchCount(Short year, String setName, Long count) {}
 ```
 
@@ -153,14 +153,14 @@ public interface BowmanSearchHistoryRepository extends JpaRepository<BowmanSearc
 
     /** Most-searched players since a date, case-insensitive. */
     @Query("""
-            SELECT new RGcards.SportsCardProject.dto.BowmanSearchCount(LOWER(h.player), COUNT(h))
+            SELECT new RGcards.SportsCardProject.dto.BowmanPlayerSearchCount(LOWER(h.player), COUNT(h))
             FROM BowmanSearchHistory h
             WHERE h.searchType = RGcards.SportsCardProject.enums.BowmanSearchType.PLAYER
               AND h.createdAt >= :since
             GROUP BY LOWER(h.player)
             ORDER BY COUNT(h) DESC
             """)
-    List<BowmanSearchCount> findTopPlayers(@Param("since") LocalDateTime since, Pageable pageable);
+    List<BowmanPlayerSearchCount> findTopPlayers(@Param("since") LocalDateTime since, Pageable pageable);
 
     /** Most-searched sets since a date. */
     @Query("""
@@ -297,8 +297,6 @@ Same shell as `admin/feedback.html` (`rg-page rg-page--wide`, `rg-table-card`).
 - **Top sets** table: Year · Set · Searches (show "any" when year or set is null).
 - **Latest searches** table: Time (`yyyy-MM-dd HH:mm`) · Type badge · Query (player, or
   year + set) · User (username, or muted 「訪客」 / *guest*).
-- Use the `mobile-cards` classes so the tables collapse on phones (see
-  `responsive-tables.css`).
 - All search text is user input — **always `th:text`**, never `th:utext`.
 
 ---
