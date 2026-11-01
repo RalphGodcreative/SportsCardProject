@@ -75,6 +75,7 @@
             <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/users">Users</a></li>
             <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/settings">Settings</a></li>
             <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/feedback" class="rg-menu__key rg-menu__key--feedback">Feedback</a></li>
+            <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/bowman-searches">Bowman searches</a></li>
             <li>
               <form th:action="@{/logout}" method="post">
                 <button type="submit">Logout</button>
@@ -115,6 +116,7 @@
           <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/users">Users</a></li>
           <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/settings">Settings</a></li>
           <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/feedback" class="rg-menu__key rg-menu__key--feedback">Feedback</a></li>
+          <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/bowman-searches">Bowman searches</a></li>
 
           <li sec:authorize="isAnonymous()"><a href="/login">Login</a></li>
           <li sec:authorize="isAuthenticated()">

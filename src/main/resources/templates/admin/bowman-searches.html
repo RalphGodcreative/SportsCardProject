@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bowman Searches</title>
+  <th:block th:replace="~{fragments/head :: styles}"></th:block>
+</head>
+<body>
+  <div th:replace="~{banner.html :: header}"></div>
+
+  <div class="rg-page rg-page--wide">
+
+    <div class="rg-page-head">
+      <h1>Bowman searches</h1>
+      <p>1st Bowman 查詢紀錄：最常被搜尋的球員與卡盒，以及最新的查詢。</p>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+      <a th:each="d : ${periods}" th:href="@{/admin/bowman-searches(days=${d})}" class="btn btn-sm"
+         th:classappend="${days == d ? 'btn-primary' : 'btn-outline'}"
+         th:text="${'Last ' + d + ' days'}"></a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+      <div class="rg-table-card">
+        <table class="table table-zebra rg-table">
+          <thead>
+            <tr>
+              <th>Top players</th>
+              <th style="width: 6rem;">Searches</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:if="${#lists.isEmpty(topPlayers)}">
+              <td colspan="2" style="color: var(--rg-dim);">沒有球員查詢</td>
+            </tr>
+            <tr th:each="row : ${topPlayers}">
+              <td th:text="${row.player}"></td>
+              <td class="rg-num" th:text="${row.count}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="rg-table-card">
+        <table class="table table-zebra rg-table">
+          <thead>
+            <tr>
+              <th style="width: 5rem;">Year</th>
+              <th>Top sets</th>
+              <th style="width: 6rem;">Searches</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:if="${#lists.isEmpty(topSets)}">
+              <td colspan="3" style="color: var(--rg-dim);">沒有卡盒查詢</td>
+            </tr>
+            <tr th:each="row : ${topSets}">
+              <td class="rg-num" th:text="${row.year != null ? row.year : 'any'}"></td>
+              <td th:text="${row.setName != null ? row.setName : 'any'}"></td>
+              <td class="rg-num" th:text="${row.count}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h2 style="font-weight: 700; margin-bottom: 0.5rem;">Latest searches</h2>
+    <div class="rg-table-card">
+      <table class="table table-zebra rg-table">
+        <thead>
+          <tr>
+            <th style="width: 10rem;">Date</th>
+            <th style="width: 6rem;">Type</th>
+            <th>Query</th>
+            <th style="width: 14rem;">User</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${#lists.isEmpty(latest)}">
+            <td colspan="4" style="color: var(--rg-dim);">沒有任何查詢紀錄</td>
+          </tr>
+          <tr th:each="row : ${latest}">
+            <td th:text="${#temporals.format(row.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+            <td>
+              <span class="badge badge-sm"
+                    th:classappend="${row.searchType.name() == 'PLAYER' ? 'badge-primary' : 'badge-neutral'}"
+                    th:text="${row.searchType.name() == 'PLAYER' ? 'Player' : 'Set'}"></span>
+            </td>
+            <td th:if="${row.searchType.name() == 'PLAYER'}" th:text="${row.player}"></td>
+            <td th:unless="${row.searchType.name() == 'PLAYER'}"
+                th:text="${(row.year != null ? row.year : 'any year') + ' · ' + (row.setName != null ? row.setName : 'any set')}"></td>
+            <td>
+              <span th:if="${row.username != null}" style="font-weight: 700;" th:text="${row.username}"></span>
+              <span th:if="${row.username == null}" style="color: var(--rg-dim);">訪客 / guest</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</body>
+</html>
