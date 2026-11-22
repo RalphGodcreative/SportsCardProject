@@ -8,9 +8,13 @@ import java.util.List;
 
 public interface CardSetRepository extends JpaRepository<CardSet, Integer> {
 
-    @Query("SELECT DISTINCT s.year FROM CardSet s WHERE s.year IS NOT NULL ORDER BY s.year DESC")
+    // The sets table holds every Topps/Panini product, but only some have 1st Bowman
+    // checklist rows; these feed the Bowman search dropdowns, so scope them to those.
+    @Query("SELECT DISTINCT s.year FROM CardSet s WHERE s.year IS NOT NULL " +
+            "AND EXISTS (SELECT 1 FROM BowmanChecklist bc WHERE bc.set = s) ORDER BY s.year DESC")
     List<Short> findDistinctYears();
 
-    @Query("SELECT DISTINCT s.name FROM CardSet s WHERE s.name IS NOT NULL ORDER BY s.name")
+    @Query("SELECT DISTINCT s.name FROM CardSet s WHERE s.name IS NOT NULL " +
+            "AND EXISTS (SELECT 1 FROM BowmanChecklist bc WHERE bc.set = s) ORDER BY s.name")
     List<String> findDistinctNames();
 }
