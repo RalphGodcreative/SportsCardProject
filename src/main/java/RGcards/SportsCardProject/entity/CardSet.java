@@ -21,4 +21,7 @@ public class CardSet {
     private String publisher;
 
     private String name;
+
+    @Column(nullable = false, length = 32)
+    private String sport;
 }
