@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -16,6 +18,7 @@ public class AppSettingService {
 
     public static final String REGISTRATION_ENABLED = "registration.enabled";
     public static final String REGISTRATION_MAX_USERS = "registration.max-users";
+    public static final String SELL_SIGNALS_USD_TO_TWD = "sell_signals.usd_to_twd";
 
     private final AppSettingRepository appSettingRepository;
     private final UserRepository userRepository;
@@ -26,8 +29,12 @@ public class AppSettingService {
     @Value("${app.registration.max-users:0}")
     private int maxUsersDefault;
 
+    @Value("${app.sell-signals.usd-to-twd:32.0}")
+    private BigDecimal usdToTwdDefault;
+
     private volatile boolean registrationEnabled;
     private volatile int maxUsers;
+    private volatile BigDecimal usdToTwd;
 
     @PostConstruct
     void load() {
@@ -37,6 +44,9 @@ public class AppSettingService {
         maxUsers = appSettingRepository.findById(REGISTRATION_MAX_USERS)
                 .map(s -> Integer.parseInt(s.getValue()))
                 .orElse(maxUsersDefault);
+        usdToTwd = appSettingRepository.findById(SELL_SIGNALS_USD_TO_TWD)
+                .map(s -> new BigDecimal(s.getValue()))
+                .orElse(usdToTwdDefault);
         log.info("Registration enabled: {}, max users: {}", registrationEnabled, maxUsers == 0 ? "unlimited" : maxUsers);
     }
 
@@ -75,6 +85,18 @@ public class AppSettingService {
     /** Whether a new account may be created right now: switch on and cap not reached. */
     public boolean isRegistrationOpen() {
         return registrationEnabled && !isUserCapReached();
+    }
+
+    /** USD to TWD rate used by Sell Signals to compare eBay prices with TWD cost. */
+    public BigDecimal getUsdToTwd() {
+        return usdToTwd;
+    }
+
+    public void setUsdToTwd(BigDecimal value) {
+        if (value == null || value.signum() <= 0) throw new IllegalArgumentException("rate must be > 0");
+        save(SELL_SIGNALS_USD_TO_TWD, value.toPlainString());
+        usdToTwd = value;
+        log.info("Admin set USD to TWD rate: {}", value);
     }
 
     private void save(String key, String value) {

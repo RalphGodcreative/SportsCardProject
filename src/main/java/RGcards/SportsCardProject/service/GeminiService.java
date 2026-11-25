@@ -71,9 +71,19 @@ public class GeminiService {
         JsonNode candidates = root.get("candidates");
 
         if (candidates != null && candidates.isArray() && !candidates.isEmpty()) {
-            JsonNode parts = candidates.get(0).get("content").get("parts");
-            if (parts != null && parts.isArray() && !parts.isEmpty()) {
-                return parts.get(0).get("text").asText();
+            // Grounded (google_search) answers can come back split over several parts.
+            JsonNode parts = candidates.get(0).path("content").path("parts");
+            if (parts.isArray() && !parts.isEmpty()) {
+                StringBuilder text = new StringBuilder();
+                for (JsonNode part : parts) {
+                    JsonNode t = part.get("text");
+                    if (t != null && !t.isNull()) {
+                        text.append(t.asText());
+                    }
+                }
+                if (!text.isEmpty()) {
+                    return text.toString();
+                }
             }
         }
 

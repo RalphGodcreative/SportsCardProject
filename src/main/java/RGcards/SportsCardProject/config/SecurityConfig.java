@@ -48,7 +48,9 @@ public class SecurityConfig {
                     "/bowman",
                     "/assets/**", "/css/**", "/js/**", "/images/**", "/img/**"
                 ).permitAll()
-                .requestMatchers("/admin/**", "/card/allCard", "/crawler/search-all", "/crawler/search-all-async").hasAuthority("ROLE_ADMIN")
+                // "/sell-signals/**" is admin-only while it is tuned; remove it here to open it to members
+                .requestMatchers("/admin/**", "/card/allCard", "/crawler/search-all", "/crawler/search-all-async",
+                        "/sell-signals", "/sell-signals/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

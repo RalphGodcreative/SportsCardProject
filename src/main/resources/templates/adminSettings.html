@@ -51,6 +51,23 @@
       </div>
     </div>
 
+    <div class="rg-panel rg-panel--plain" style="margin-bottom: 1.25rem;">
+      <h2 class="rg-panel__title" style="color: var(--color-primary);">Sell signals</h2>
+      <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <div style="flex-grow: 1; min-width: 16rem;">
+          <div style="font-weight: 700; margin-bottom: 0.25rem;">USD → TWD rate</div>
+          <div style="font-size: 0.8125rem; color: var(--rg-muted);">
+            Converts eBay USD asking prices to compare with TWD cost. Saved on each scan; older scans keep their rate.
+          </div>
+        </div>
+        <form th:action="@{/admin/settings/sell-signals}" method="post" style="margin:0; display: flex; gap: 0.5rem;">
+          <input type="number" name="usdToTwd" min="0.0001" step="0.0001" class="input input-sm" style="width: 8rem;"
+                 th:value="${usdToTwd}" required />
+          <button type="submit" class="btn btn-sm btn-outline btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+
     <div class="rg-panel rg-panel--plain">
       <h2 class="rg-panel__title" style="color: var(--color-primary);">Usage limits</h2>
       <form th:action="@{/admin/settings/usage-limits}" method="post" style="margin:0;">

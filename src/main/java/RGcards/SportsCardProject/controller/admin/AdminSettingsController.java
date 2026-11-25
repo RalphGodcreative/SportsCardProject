@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
+
 @Controller
 @RequestMapping("/admin/settings")
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class AdminSettingsController {
         model.addAttribute("userMaxCards", usageLimits.getUserMaxCards());
         model.addAttribute("userMaxKeywords", usageLimits.getUserMaxKeywords());
         model.addAttribute("userMaxAiCalls", usageLimits.getUserMaxAiCalls());
+        model.addAttribute("usdToTwd", appSettingService.getUsdToTwd());
         return "adminSettings";
     }
 
@@ -43,6 +46,14 @@ public class AdminSettingsController {
     @PostMapping("/max-users")
     public String setMaxUsers(@RequestParam int maxUsers) {
         appSettingService.setMaxUsers(Math.max(0, maxUsers));
+        return "redirect:/admin/settings";
+    }
+
+    @PostMapping("/sell-signals")
+    public String setSellSignals(@RequestParam BigDecimal usdToTwd) {
+        if (usdToTwd.signum() > 0) {
+            appSettingService.setUsdToTwd(usdToTwd);
+        }
         return "redirect:/admin/settings";
     }
 

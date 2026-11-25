@@ -57,7 +57,7 @@ Real sold data comes later from the Yahoo TW sold-price history (see *Later*).
 | Currency | eBay prices are USD. Transaction amounts are **TWD** (confirmed 2026-11-25). Convert using an admin-editable `sell_signals.usd_to_twd` value in `app_settings` (default `32.0`), saved on each run so old runs stay reproducible. No live FX API in v1. |
 | Minimum data | A card needs **≥ 3 matched listings** to be ranked. Fewer means "Not enough listings" and the card is not ranked. |
 | Score | `gain = low_ask_twd / cost - 1`, then `score = gain * min(1, listings / 5)`. Thin markets are discounted. Pure function, unit-tested. |
-| AI | **One** Gemini call per run (`gemini-2.5-flash`, `useSearch = true`) for the **top 5** ranked cards only. The prompt passes in the numbers and asks only for reasons. |
+| AI | **One** Gemini call per run (`gemini-2.5-flash`, `useSearch = true`) for the **top 5** ranked cards **that are above cost** (a card at a loss isn't a sell candidate). No such cards means `SKIPPED`. The prompt passes in the numbers and asks only for reasons. |
 | AI usage limit | One run = one AI call against `users.ai_call_count` / `UsageLimits.maxAiCalls`, same check-and-increment as `CardAiService`. At the limit, the run still works but saves no AI reasons (`ai_status = SKIPPED`). |
 | Cooldown | One run per user per **24 h** for non-admins. **Admins bypass it**, which is all users in v1, so you can re-run freely while tuning the match filters. Within the cooldown, `POST /run` just redirects to the latest run with a flash message. Bounds eBay quota once members get access (Browse default is 5,000 calls/day app-wide; 20 cards × users adds up). |
 | History | Every run is saved and nothing is overwritten (same approach as `recommendations`). The page shows the latest run. Older runs are kept for later trend features. |
@@ -112,8 +112,8 @@ CREATE TABLE sell_signal_items (
     gain_pct         NUMERIC,
     score            NUMERIC,
     ebay_query       VARCHAR(255) NOT NULL,
-    sample_listings  TEXT,                  -- JSON array, max 3: {title, price, url}
-    ai_reason        TEXT,
+    sample_listings  VARCHAR(4000),         -- JSON array, max 3: {title, price, url}
+    ai_reason        VARCHAR(2000),
     CONSTRAINT chk_sell_signal_item_status
         CHECK (status IN ('RANKED', 'NO_COST', 'TOO_FEW_LISTINGS', 'EBAY_ERROR')),
     CONSTRAINT fk_sell_signal_item_run  FOREIGN KEY (run_id)  REFERENCES sell_signal_runs(id) ON DELETE CASCADE,
@@ -130,8 +130,9 @@ Notes:
 - `ON DELETE CASCADE` on both: deleting a card or a user removes their signals. Check
   `AccountDeletionService`. If it deletes rows manually in order, add the two tables there
   before `cards` / `users`, or rely on the cascade.
-- `sample_listings` is `TEXT` holding JSON, not `jsonb`, so it maps to a plain `String` under
-  `ddl-auto=validate` without a custom Hibernate type.
+- `sample_listings` is `VARCHAR` holding JSON, not `jsonb`, so it maps to a plain `String` under
+  `ddl-auto=validate` without a custom Hibernate type. `VARCHAR` rather than `TEXT` matches the
+  rest of the schema (`feedback.content`); the service drops samples until the JSON fits.
 - `rank` is a reserved-ish word in some SQL dialects. It is fine in Postgres, but quote it or
   rename it to `rank_no` if Hibernate complains.
 
