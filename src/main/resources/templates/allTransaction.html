@@ -10,36 +10,16 @@
       type="text/javascript"
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     ></script>
+    <script type="text/javascript" th:src="@{/js/pager.js}"></script>
     <script type="text/javascript">
       $(document).ready(function () {
-        var transactionCounts = $("#transaction-counts").val();
-        var currentPage = $("#current-page").val();
-        var totalPages = Math.floor(transactionCounts / 10);
-        if (transactionCounts % 10 > 0) {
-          totalPages++;
-        }
-
-        for (let i = 1; i <= totalPages; i++) {
-          let cls = "index join-item btn btn-sm";
-          if (i == currentPage) {
-            cls += " btn-active current-index";
-          }
-          $("#page-index").append(
-            '<a class="' + cls + '" href="/transactions/?page=' + i + '">' + i + '</a>'
-          );
-        }
-
-        $("#first-page").on("click", function () {
-          if (currentPage != 1) window.location.href = "/transactions/?page=1";
-        });
-        $("#last-page").on("click", function () {
-          if (currentPage != totalPages) window.location.href = "/transactions/?page=" + totalPages;
-        });
-        $("#prev-page").on("click", function () {
-          if (currentPage != 1) window.location.href = "/transactions/?page=" + (parseInt(currentPage) - 1);
-        });
-        $("#next-page").on("click", function () {
-          if (currentPage != totalPages) window.location.href = "/transactions/?page=" + (parseInt(currentPage) + 1);
+        RGPager.render({
+          control: "#page-control",
+          range: "#pager-range",
+          total: $("#transaction-counts").val(),
+          page: $("#current-page").val(),
+          pageSize: 10,
+          href: function (p) { return "/transactions/?page=" + p; }
         });
       });
     </script>
@@ -67,6 +47,11 @@
         <a href="/card/addTransaction" class="btn btn-sm btn-outline btn-accent">add transaction</a>
         <a href="/card/sellTransaction" class="btn btn-sm btn-outline btn-accent">add sales</a>
       </div>
+
+      <p class="rg-pager__summary">
+        Showing <strong id="pager-range">0–0</strong>
+        of <strong th:text="${transactionCounts}">0</strong> transactions
+      </p>
 
       <div class="rg-table-card">
         <table class="table table-zebra rg-table" id="contain-table">
@@ -96,16 +81,9 @@
         </table>
       </div>
 
-      <div class="rg-pager">
-        <span class="rg-spacer"></span>
-        <div class="join" id="page-control">
-          <button class="join-item btn btn-sm" id="first-page">&lt;&lt;</button>
-          <button class="join-item btn btn-sm" id="prev-page">&lt;</button>
-          <span id="page-index" style="display: contents;"></span>
-          <button class="join-item btn btn-sm" id="next-page">&gt;</button>
-          <button class="join-item btn btn-sm" id="last-page">&gt;&gt;</button>
-        </div>
-      </div>
+      <nav class="rg-pager rg-pager--center" aria-label="Transaction pages">
+        <div class="join rg-pager__ctrl" id="page-control"></div>
+      </nav>
 
       <input type="hidden" id="transaction-counts" th:value="${transactionCounts}" />
       <input type="hidden" id="current-page" th:value="${page}" />
