@@ -12,6 +12,7 @@
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{/js/util.js}"></script>
+  <script type="text/javascript" th:src="@{/js/pager.js}"></script>
   <script>
     $(document).ready(function () {
       $.ajaxSetup({
@@ -23,42 +24,14 @@
         }
       });
 
-      var cardCounts = $("#card-counts").val();
-      var currentPage = $("#current-page").val();
-      var totalPages = Math.floor(cardCounts / 10);
-      if (cardCounts % 10 > 0) {
-        totalPages++;
-      }
-
-      for (let i = 1; i <= totalPages; i++) {
-        let cls = "index join-item btn btn-sm";
-        if (i == currentPage) {
-          cls += " btn-active current-index";
-        }
-        $("#page-index").append(
-          '<a class="' + cls + '" href="/card/cards?page=' + i + '">' + i + '</a>'
-        );
-      }
-
-      //to switch page
-      $("#first-page").on("click", function () {
-        if (currentPage != 1)
-          window.location.href = "/card/cards?page=" + 1;
-      });
-      $("#last-page").on("click", function () {
-        if (currentPage != totalPages)
-          window.location.href = "/card/cards?page=" + totalPages;
-      });
-      $("#prev-page").on("click", function () {
-        if (currentPage != 1)
-          window.location.href = "/card/cards?page=" + (currentPage - 1);
-      });
-      $("#next-page").on("click", function () {
-        if (currentPage != totalPages) {
-          var currentPageNumber = parseInt(currentPage);
-          window.location.href =
-            "/card/cards?page=" + (currentPageNumber + 1);
-        }
+      var currentPage = parseInt($("#current-page").val(), 10) || 1;
+      RGPager.render({
+        control: "#page-control",
+        range: "#pager-range",
+        total: $("#card-counts").val(),
+        page: currentPage,
+        pageSize: 10,
+        href: function (p) { return "/card/cards?page=" + p; }
       });
 
       $(".modify").on("click", function () {
@@ -168,6 +141,11 @@
       <a href="/card/addNewCard" class="btn btn-sm btn-success">add new card</a>
     </div>
 
+    <p class="rg-pager__summary">
+      Showing <strong id="pager-range">0–0</strong>
+      of <strong th:text="${cardCounts}">0</strong> cards
+    </p>
+
     <div class="rg-table-card">
       <table class="table table-zebra rg-table rg-card-table" id="card-table">
         <thead>
@@ -209,19 +187,9 @@
       </table>
     </div>
 
-    <div class="rg-pager">
-      <span style="font-size: 0.8125rem; color: var(--rg-dim);">
-        total cards: <span th:text="${cardCounts}">0</span>
-      </span>
-      <span class="rg-spacer"></span>
-      <div class="join" id="page-control">
-        <button class="join-item btn btn-sm" id="first-page">&lt;&lt;</button>
-        <button class="join-item btn btn-sm" id="prev-page">&lt;</button>
-        <span id="page-index" style="display: contents;"></span>
-        <button class="join-item btn btn-sm" id="next-page">&gt;</button>
-        <button class="join-item btn btn-sm" id="last-page">&gt;&gt;</button>
-      </div>
-    </div>
+    <nav class="rg-pager rg-pager--center" aria-label="Card pages">
+      <div class="join rg-pager__ctrl" id="page-control"></div>
+    </nav>
 
     <input type="hidden" id="card-counts" th:value="${cardCounts}" />
     <input type="hidden" id="current-page" th:value="${page}" />

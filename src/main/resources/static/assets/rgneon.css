@@ -513,6 +513,66 @@ img.add-note { display: inline-block; }
   margin-top: 1.25rem;
 }
 
+/* Pages that put the summary above the table and the controls centred below. */
+.rg-pager--center { justify-content: center; }
+
+.rg-pager__summary {
+  margin: 0 0 0.625rem;
+  font-size: 0.8125rem;
+  color: var(--rg-dim);
+}
+.rg-pager__summary strong {
+  color: var(--color-base-content);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.rg-pager__ctrl {
+  border: 1px solid var(--color-base-300);
+  border-radius: var(--radius-field);
+  background: var(--color-base-200);
+}
+.rg-pager__btn {
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding-inline: 0.625rem;
+  border: 0;
+  background: transparent;
+  color: var(--rg-muted);
+  font-variant-numeric: tabular-nums;
+  transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+.rg-pager__btn:not(.btn-disabled):not(.btn-primary):hover {
+  background: rgba(56, 201, 250, 0.1);
+  color: var(--color-primary);
+}
+.rg-pager__btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+.rg-pager__btn.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-primary-content);
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(56, 201, 250, 0.45);
+}
+.rg-pager__btn.btn-disabled,
+.rg-pager__btn:disabled {
+  background: transparent;
+  color: var(--color-base-300);
+  opacity: 1;
+}
+.rg-pager__gap { min-width: 1.75rem; padding-inline: 0; color: var(--rg-dim) !important; }
+.rg-pager__compact { display: none; cursor: default; color: var(--color-base-content); }
+
+@media (max-width: 640px) {
+  .rg-pager { justify-content: center; }
+  .rg-pager .rg-spacer { display: none; }
+  .rg-pager__btn { min-width: 2.75rem; height: 2.75rem; }
+  .rg-pager__num, .rg-pager__edge { display: none; }
+  .rg-pager__compact { display: inline-flex; min-width: 5rem; }
+}
+
 /* ---- Panels and forms ---------------------------------------------------- */
 
 .rg-panel {
