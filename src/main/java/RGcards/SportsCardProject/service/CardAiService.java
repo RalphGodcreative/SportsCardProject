@@ -1,9 +1,7 @@
 package RGcards.SportsCardProject.service;
 
-import RGcards.SportsCardProject.dao.UserRepository;
 import RGcards.SportsCardProject.entity.Card;
 import RGcards.SportsCardProject.entity.User;
-import RGcards.SportsCardProject.exception.LimitExceededException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,23 +11,14 @@ import org.springframework.stereotype.Service;
 public class CardAiService {
 
     private final GeminiService geminiService;
-    private final UsageLimits usageLimits;
-    private final UserRepository userRepository;
+    private final AiCallGuard aiCallGuard;
 
     public String analyzeCardPotential(Card card, User principal) throws JsonProcessingException {
-        int maxAiCalls = usageLimits.maxAiCalls(principal);
-        if (principal.getAiCallCount() >= maxAiCalls) {
-            throw new LimitExceededException("Monthly AI call limit reached (" + maxAiCalls + ")");
-        }
+        aiCallGuard.requireRemaining(principal);
 
-        String result = geminiService.generateContent(buildPrompt(card), "gemini-2.5-flash", true);
+        String result = geminiService.generateContent(buildPrompt(card), true);
 
-        // principal may be an OAuth2UserPrincipal (a User subclass used only as the
-        // security principal, not a JPA entity) -- save a real entity, not the principal
-        User user = userRepository.findById(principal.getId()).orElseThrow();
-        user.setAiCallCount(user.getAiCallCount() + 1);
-        userRepository.save(user);
-
+        aiCallGuard.recordCall(principal);
         return result;
     }
 

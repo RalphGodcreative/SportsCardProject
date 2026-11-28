@@ -1,5 +1,6 @@
 package RGcards.SportsCardProject.controller.admin;
 
+import RGcards.SportsCardProject.enums.GeminiModel;
 import RGcards.SportsCardProject.service.AppSettingService;
 import RGcards.SportsCardProject.service.UsageLimits;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.math.BigDecimal;
 
 @Controller
 @RequestMapping("/admin/settings")
@@ -31,7 +34,18 @@ public class AdminSettingsController {
         model.addAttribute("userMaxCards", usageLimits.getUserMaxCards());
         model.addAttribute("userMaxKeywords", usageLimits.getUserMaxKeywords());
         model.addAttribute("userMaxAiCalls", usageLimits.getUserMaxAiCalls());
+        model.addAttribute("usdToTwd", appSettingService.getUsdToTwd());
+        model.addAttribute("geminiModels", GeminiModel.values());
+        model.addAttribute("geminiModel", appSettingService.getGeminiModel());
         return "adminSettings";
+    }
+
+    @PostMapping("/gemini-model")
+    public String setGeminiModel(@RequestParam String model) {
+        GeminiModel.fromId(model).ifPresentOrElse(
+                appSettingService::setGeminiModel,
+                () -> log.warn("Ignored unknown Gemini model: {}", model));
+        return "redirect:/admin/settings";
     }
 
     @PostMapping("/registration")
@@ -43,6 +57,14 @@ public class AdminSettingsController {
     @PostMapping("/max-users")
     public String setMaxUsers(@RequestParam int maxUsers) {
         appSettingService.setMaxUsers(Math.max(0, maxUsers));
+        return "redirect:/admin/settings";
+    }
+
+    @PostMapping("/sell-signals")
+    public String setSellSignals(@RequestParam BigDecimal usdToTwd) {
+        if (usdToTwd.signum() > 0) {
+            appSettingService.setUsdToTwd(usdToTwd);
+        }
         return "redirect:/admin/settings";
     }
 
