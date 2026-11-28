@@ -16,7 +16,7 @@ public class CardAiService {
     public String analyzeCardPotential(Card card, User principal) throws JsonProcessingException {
         aiCallGuard.requireRemaining(principal);
 
-        String result = geminiService.generateContent(buildPrompt(card), "gemini-2.5-flash", true);
+        String result = geminiService.generateContent(buildPrompt(card), true);
 
         aiCallGuard.recordCall(principal);
         return result;

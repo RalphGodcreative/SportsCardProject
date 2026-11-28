@@ -48,7 +48,7 @@ public class RecommendationAiService {
             sport
         );
 
-        String raw = geminiService.generateContent(prompt, "gemini-2.5-flash", true);
+        String raw = geminiService.generateContent(prompt, true);
         log.info("Gemini raw response for sport={}: {}", sport, raw);
 
         String player = extractField(raw, "Player:");

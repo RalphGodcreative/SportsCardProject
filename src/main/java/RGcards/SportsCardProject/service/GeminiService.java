@@ -1,5 +1,6 @@
 package RGcards.SportsCardProject.service;
 
+import RGcards.SportsCardProject.enums.GeminiModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,20 +26,25 @@ public class GeminiService {
     private String geminiApiKey;
 
     private static final String GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/";
-    private static final String DEFAULT_MODEL = "gemini-2.5-flash";
-
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final AppSettingService appSettingService;
 
     public String generateContent(String prompt) throws JsonProcessingException {
-        return generateContent(prompt, DEFAULT_MODEL, false);
+        return generateContent(prompt, false);
     }
 
-    public String generateContent(String prompt, String model) throws JsonProcessingException {
-        return generateContent(prompt, model, false);
-    }
-
-    public String generateContent(String prompt, String model, boolean useSearch) throws JsonProcessingException {
+    /**
+     * Calls the model chosen in admin settings. Search grounding is requested only when
+     * that model has it on the free tier; otherwise the prompt runs ungrounded.
+     */
+    public String generateContent(String prompt, boolean wantSearch) throws JsonProcessingException {
+        GeminiModel selected = appSettingService.getGeminiModel();
+        String model = selected.getId();
+        boolean useSearch = wantSearch && selected.isFreeSearchGrounding();
+        if (wantSearch && !useSearch) {
+            log.debug("Model {} has no free search grounding; sending without google_search", model);
+        }
         String url = GEMINI_BASE_URL + model + ":generateContent?key=" + geminiApiKey;
 
         List<Map<String, Object>> contents = List.of(

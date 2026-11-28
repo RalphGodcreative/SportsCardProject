@@ -3,6 +3,7 @@ package RGcards.SportsCardProject.service;
 import RGcards.SportsCardProject.dao.AppSettingRepository;
 import RGcards.SportsCardProject.dao.UserRepository;
 import RGcards.SportsCardProject.entity.AppSetting;
+import RGcards.SportsCardProject.enums.GeminiModel;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ public class AppSettingService {
     public static final String REGISTRATION_ENABLED = "registration.enabled";
     public static final String REGISTRATION_MAX_USERS = "registration.max-users";
     public static final String SELL_SIGNALS_USD_TO_TWD = "sell_signals.usd_to_twd";
+    public static final String GEMINI_MODEL = "gemini.model";
 
     private final AppSettingRepository appSettingRepository;
     private final UserRepository userRepository;
@@ -35,6 +37,7 @@ public class AppSettingService {
     private volatile boolean registrationEnabled;
     private volatile int maxUsers;
     private volatile BigDecimal usdToTwd;
+    private volatile GeminiModel geminiModel;
 
     @PostConstruct
     void load() {
@@ -47,6 +50,11 @@ public class AppSettingService {
         usdToTwd = appSettingRepository.findById(SELL_SIGNALS_USD_TO_TWD)
                 .map(s -> new BigDecimal(s.getValue()))
                 .orElse(usdToTwdDefault);
+        // A saved model that is no longer in the catalog falls back to the default.
+        geminiModel = appSettingRepository.findById(GEMINI_MODEL)
+                .flatMap(s -> GeminiModel.fromId(s.getValue()))
+                .orElse(GeminiModel.DEFAULT);
+        log.info("Gemini model: {}", geminiModel.getId());
         log.info("Registration enabled: {}, max users: {}", registrationEnabled, maxUsers == 0 ? "unlimited" : maxUsers);
     }
 
@@ -97,6 +105,18 @@ public class AppSettingService {
         save(SELL_SIGNALS_USD_TO_TWD, value.toPlainString());
         usdToTwd = value;
         log.info("Admin set USD to TWD rate: {}", value);
+    }
+
+    /** Gemini model used by every AI feature. */
+    public GeminiModel getGeminiModel() {
+        return geminiModel;
+    }
+
+    public void setGeminiModel(GeminiModel model) {
+        if (model == null) throw new IllegalArgumentException("model is required");
+        save(GEMINI_MODEL, model.getId());
+        geminiModel = model;
+        log.info("Admin set Gemini model: {}", model.getId());
     }
 
     private void save(String key, String value) {

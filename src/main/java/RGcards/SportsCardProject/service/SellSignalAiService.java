@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SellSignalAiService {
 
-    static final String MODEL = "gemini-2.5-flash";
     static final int MAX_REASON_LENGTH = 1000;
 
     /**
@@ -43,7 +42,7 @@ public class SellSignalAiService {
         if (candidates.isEmpty()) {
             return Map.of();
         }
-        String raw = geminiService.generateContent(buildPrompt(candidates), MODEL, true);
+        String raw = geminiService.generateContent(buildPrompt(candidates), true);
         Set<Integer> ids = candidates.stream().map(c -> c.card().getId()).collect(Collectors.toSet());
         return parse(raw, ids);
     }
