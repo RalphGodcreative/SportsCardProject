@@ -48,7 +48,7 @@
                 <a href="/card/allCard">See all cards <span class="badge badge-sm badge-secondary">admin</span></a>
               </li>
               <li sec:authorize="hasAuthority('ROLE_ADMIN')">
-                <a href="/sell-signals">Sell signals <span class="badge badge-sm badge-secondary">admin</span></a>
+                <a href="/sell-signals">Cards to sell now <span class="badge badge-sm badge-secondary">admin</span></a>
               </li>
             </ul>
           </div>
@@ -113,7 +113,7 @@
           <li><a href="/transactions/">View transactions</a></li>
           <li><a href="/tag" class="rg-menu__key rg-menu__key--organize">Manage tags</a></li>
           <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/card/allCard">See all cards</a></li>
-          <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/sell-signals">Sell signals</a></li>
+          <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/sell-signals">Cards to sell now</a></li>
 
           <li sec:authorize="hasAuthority('ROLE_ADMIN')" class="menu-title">Admin</li>
           <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="/admin/recommendations">Recommendations</a></li>

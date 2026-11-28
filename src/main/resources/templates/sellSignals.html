@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sell Signals</title>
+  <title>Cards to Sell Now</title>
   <th:block th:replace="~{fragments/head :: styles}"></th:block>
 </head>
 <body>
@@ -42,7 +42,7 @@
   <div class="rg-page rg-page--wide" th:with="run=${page.run}">
 
     <div class="rg-page-head">
-      <h1>Sell Signals <span class="badge badge-sm badge-secondary">admin</span></h1>
+      <h1>Cards to Sell Now <span class="badge badge-sm badge-secondary">admin</span></h1>
       <p>依目前 eBay 掛賣價與你的買入成本，找出現在可能值得考慮出售的卡。</p>
     </div>
 
@@ -85,130 +85,111 @@
         <span>AI reasons unavailable for this scan.</span>
       </div>
 
-      <h2 style="font-weight: 700; margin-bottom: 0.25rem;">Worth considering selling</h2>
-      <p style="font-size: 0.8125rem; color: var(--rg-muted); margin: 0 0 0.5rem;">
-        依「掛賣價 vs. 成本」排序；掛賣筆數少於 5 筆時分數會打折。AI 只說明前 5 張高於成本的卡。
-      </p>
-      <div class="rg-table-card" style="margin-bottom: 1.5rem;">
-        <table class="table table-zebra rg-table">
-          <thead>
-            <tr>
-              <th style="width: 3rem;">#</th>
-              <th>Card</th>
-              <th style="width: 7rem;">Cost ≈</th>
-              <th style="width: 9rem;">Listed from</th>
-              <th style="width: 8rem;">Median ask</th>
-              <th style="width: 6rem;">Gain</th>
-              <th style="width: 5rem;">Listings</th>
-              <th>Why now</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:if="${#lists.isEmpty(page.ranked)}">
-              <td colspan="8" style="color: var(--rg-dim);">沒有可排名的卡（需要買入成本與至少 3 筆相符的 eBay 掛賣）。</td>
-            </tr>
-            <tr th:each="row : ${page.ranked}"
-                th:with="top=${row.item.rank <= 5 and row.item.gainPct.signum() > 0}"
-                th:style="${top ? 'font-weight: 500;' : 'opacity: 0.85;'}">
-              <td class="rg-num">
-                <span class="badge badge-sm" th:classappend="${top ? 'badge-primary' : 'badge-ghost'}"
-                      th:text="${row.item.rank}"></span>
-              </td>
-              <td>
-                <th:block th:replace="~{:: cardCell(${row.card})}"></th:block>
-                <th:block th:replace="~{:: samples(${row})}"></th:block>
-              </td>
-              <td class="rg-num" th:text="${#numbers.formatInteger(row.item.costBasisTwd, 1, 'COMMA') + ' TWD'}"></td>
-              <td class="rg-num">
-                <div th:text="${'$' + #numbers.formatDecimal(row.item.lowAskUsd, 1, 'COMMA', 2, 'POINT')}"></div>
-                <div style="font-size: 0.75rem; color: var(--rg-muted);"
-                     th:text="${'≈ ' + #numbers.formatInteger(row.lowAskTwd, 1, 'COMMA') + ' TWD'}"></div>
-              </td>
-              <td class="rg-num" th:text="${'$' + #numbers.formatDecimal(row.item.medianAskUsd, 1, 'COMMA', 2, 'POINT')}"></td>
-              <td class="rg-num">
-                <span class="badge badge-sm"
-                      th:classappend="${row.item.gainPct.signum() >= 0 ? 'badge-success' : 'badge-error'}"
-                      th:text="${(row.item.gainPct.signum() >= 0 ? '+' : '') + #numbers.formatDecimal(row.item.gainPct, 1, 0) + '%'}"></span>
-              </td>
-              <td class="rg-num" th:text="${row.item.listingCount}"></td>
-              <td style="font-size: 0.875rem;">
-                <span th:if="${row.item.aiReason}" th:text="${row.item.aiReason}"></span>
-                <span th:unless="${row.item.aiReason}" style="color: var(--rg-dim);">—</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="rg-sell-head">
+        <div>
+          <h2>Worth considering selling</h2>
+          <p>依「掛賣價 vs. 成本」排序；掛賣筆數少於 5 筆時分數會打折。AI 只說明前 5 張高於成本的卡。</p>
+        </div>
+        <div class="rg-sell-legend" th:if="${!#lists.isEmpty(page.ranked)}">
+          <span><span class="rg-sell-legend__cost"></span>Cost</span>
+          <span><span class="rg-sell-legend__fill"></span>Gain to lowest ask</span>
+          <span><span class="rg-sell-legend__median"></span>Median ask</span>
+        </div>
       </div>
 
-      <th:block th:if="${!#lists.isEmpty(page.noCost)}">
-        <h2 style="font-weight: 700; margin-bottom: 0.25rem;">No cost data</h2>
-        <p style="font-size: 0.8125rem; color: var(--rg-muted); margin: 0 0 0.5rem;">
-          這些卡沒有買入交易，無法計算獲利。<a href="/card/addTransaction">新增買入交易</a>即可列入排名。
-        </p>
-        <div class="rg-table-card" style="margin-bottom: 1.5rem;">
-          <table class="table table-zebra rg-table">
-            <thead>
-              <tr>
-                <th>Card</th>
-                <th style="width: 9rem;">Listed from</th>
-                <th style="width: 5rem;">Listings</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="row : ${page.noCost}">
-                <td>
-                  <th:block th:replace="~{:: cardCell(${row.card})}"></th:block>
-                  <th:block th:replace="~{:: samples(${row})}"></th:block>
-                </td>
-                <td class="rg-num">
-                  <th:block th:if="${row.item.lowAskUsd}">
-                    <div th:text="${'$' + #numbers.formatDecimal(row.item.lowAskUsd, 1, 'COMMA', 2, 'POINT')}"></div>
-                    <div style="font-size: 0.75rem; color: var(--rg-muted);"
-                         th:text="${'≈ ' + #numbers.formatInteger(row.lowAskTwd, 1, 'COMMA') + ' TWD'}"></div>
-                  </th:block>
-                  <span th:unless="${row.item.lowAskUsd}" style="color: var(--rg-dim);">—</span>
-                </td>
-                <td class="rg-num" th:text="${row.item.listingCount}"></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </th:block>
+      <div class="rg-sell-empty" th:if="${#lists.isEmpty(page.ranked)}" style="margin-bottom: 1.5rem;">
+        沒有可排名的卡（需要買入成本與至少 3 筆相符的 eBay 掛賣）。
+      </div>
 
-      <details th:if="${!#lists.isEmpty(page.unpriced)}" style="margin-bottom: 1.5rem;">
-        <summary style="cursor: pointer; font-weight: 700;"
-                 th:text="${'Not enough listings / eBay error (' + #lists.size(page.unpriced) + ')'}"></summary>
-        <div class="rg-table-card" style="margin-top: 0.5rem;">
-          <table class="table table-zebra rg-table">
-            <thead>
-              <tr>
-                <th>Card</th>
-                <th style="width: 10rem;">Status</th>
-                <th style="width: 5rem;">Listings</th>
-                <th>eBay query</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="row : ${page.unpriced}">
-                <td><th:block th:replace="~{:: cardCell(${row.card})}"></th:block></td>
-                <td>
-                  <span class="badge badge-sm"
-                        th:classappend="${row.item.status.name() == 'EBAY_ERROR' ? 'badge-error' : 'badge-neutral'}"
-                        th:text="${row.item.status.name() == 'EBAY_ERROR' ? 'eBay error' : 'Too few listings'}"></span>
-                </td>
-                <td class="rg-num" th:text="${row.item.listingCount}"></td>
-                <td style="font-size: 0.8125rem; color: var(--rg-muted);" th:text="${row.item.ebayQuery}"></td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="rg-sell-list" th:unless="${#lists.isEmpty(page.ranked)}">
+        <div th:each="row : ${page.ranked}" class="rg-sell-row"
+             th:with="top=${row.item.rank <= 5 and row.item.gainPct.signum() > 0},
+                      up=${row.item.gainPct.signum() > 0},
+                      lad=${row.ladder()}"
+             th:classappend="${top ? 'rg-sell-row--top' : 'rg-sell-row--muted'}">
+          <div class="rg-sell-row__main">
+            <div class="rg-sell-rank" th:text="${row.item.rank}">1</div>
+            <div class="rg-sell-card">
+              <th:block th:replace="~{:: cardCell(${row.card})}"></th:block>
+            </div>
+            <div class="rg-sell-ladder">
+              <div class="rg-sell-ladder__track" th:if="${lad}" aria-hidden="true">
+                <div class="rg-sell-ladder__fill" th:classappend="${lad.up() ? 'rg-sell-ladder__fill--up' : ''}"
+                     th:style="|left: ${lad.fillLeftPct()}%; width: ${lad.fillWidthPct()}%;|"></div>
+                <div class="rg-sell-ladder__cost" th:style="|left: ${lad.costPct()}%;|"></div>
+                <div class="rg-sell-ladder__median" th:if="${lad.medianPct() != null}"
+                     th:style="|left: ${lad.medianPct()}%;|"></div>
+              </div>
+              <div class="rg-sell-ladder__labels">
+                <span>Cost <strong th:text="${#numbers.formatInteger(row.item.costBasisTwd, 1, 'COMMA')}"></strong></span>
+                <span>From <strong th:text="${'$' + #numbers.formatDecimal(row.item.lowAskUsd, 1, 'COMMA', 2, 'POINT')}"></strong>
+                  <th:block th:text="${'≈ ' + #numbers.formatInteger(row.lowAskTwd, 1, 'COMMA')}"></th:block></span>
+                <span th:if="${row.item.medianAskUsd}"
+                      th:text="${'Median $' + #numbers.formatDecimal(row.item.medianAskUsd, 1, 'COMMA', 2, 'POINT')}"></span>
+              </div>
+            </div>
+            <div class="rg-sell-gain">
+              <div class="rg-sell-gain__pct" th:classappend="${up ? 'rg-sell-gain__pct--up' : ''}"
+                   th:text="${(row.item.gainPct.signum() >= 0 ? '+' : '') + #numbers.formatDecimal(row.item.gainPct, 1, 0) + '%'}"></div>
+              <div class="rg-sell-gain__count" th:text="${row.item.listingCount + ' listings'}"></div>
+            </div>
+          </div>
+          <div class="rg-sell-why" th:if="${row.item.aiReason}">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F64CBD"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+            <span><strong>Why now · </strong><th:block th:text="${row.item.aiReason}"></th:block></span>
+          </div>
+          <div class="rg-sell-extra" th:if="${!#lists.isEmpty(row.samples)}">
+            <th:block th:replace="~{:: samples(${row})}"></th:block>
+          </div>
         </div>
-      </details>
+      </div>
+
+      <div class="rg-sell-side" th:if="${!#lists.isEmpty(page.noCost) or !#lists.isEmpty(page.unpriced)}">
+        <div class="rg-sell-panel" th:if="${!#lists.isEmpty(page.noCost)}">
+          <h3>No cost data <span class="badge badge-sm badge-ghost" th:text="${#lists.size(page.noCost)}"></span></h3>
+          <p>這些卡沒有買入交易，無法計算獲利。<a href="/card/addTransaction">新增買入交易</a>即可列入排名。</p>
+          <div class="rg-sell-panel__row" th:each="row : ${page.noCost}">
+            <div style="min-width: 0;">
+              <th:block th:replace="~{:: cardCell(${row.card})}"></th:block>
+              <th:block th:replace="~{:: samples(${row})}"></th:block>
+            </div>
+            <div class="rg-sell-panel__value">
+              <th:block th:if="${row.item.lowAskUsd}">
+                <div th:text="${'from $' + #numbers.formatDecimal(row.item.lowAskUsd, 1, 'COMMA', 2, 'POINT')}"></div>
+                <div style="font-size: 0.75rem; color: var(--rg-muted);"
+                     th:text="${'≈ ' + #numbers.formatInteger(row.lowAskTwd, 1, 'COMMA') + ' TWD · ' + row.item.listingCount + ' listings'}"></div>
+              </th:block>
+              <span th:unless="${row.item.lowAskUsd}" style="color: var(--rg-dim);">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rg-sell-panel" th:if="${!#lists.isEmpty(page.unpriced)}">
+          <h3>Couldn't price <span class="badge badge-sm badge-ghost" th:text="${#lists.size(page.unpriced)}"></span></h3>
+          <p>相符的 eBay 掛賣少於 3 筆，或 eBay 查詢失敗。</p>
+          <div class="rg-sell-panel__row" th:each="row : ${page.unpriced}">
+            <div style="min-width: 0;">
+              <th:block th:replace="~{:: cardCell(${row.card})}"></th:block>
+              <div class="rg-sell-panel__query" th:if="${row.item.ebayQuery}"
+                   th:text="${'eBay query: ' + row.item.ebayQuery}"></div>
+            </div>
+            <div class="rg-sell-panel__value">
+              <span class="badge badge-sm"
+                    th:classappend="${row.item.status.name() == 'EBAY_ERROR' ? 'badge-error' : 'badge-neutral'}"
+                    th:text="${row.item.status.name() == 'EBAY_ERROR'
+                              ? 'eBay error'
+                              : 'Too few listings · ' + (row.item.listingCount == null ? 0 : row.item.listingCount)}"></span>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </th:block>
 
     <p style="font-size: 0.8125rem; color: var(--rg-dim); margin-top: 1rem;">
       Based on current eBay asking prices, not completed sales. Not financial advice.
-      「Listed from」為相符掛賣價的第 25 百分位；成本為買入交易金額平均分攤到該筆交易的每張卡。
+      「From」為相符掛賣價的第 25 百分位；成本為買入交易金額平均分攤到該筆交易的每張卡。
     </p>
 
   </div>
